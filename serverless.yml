@@ -1,0 +1,19 @@
+service: slicy
+frameworkVersion: "3"
+useDotenv: true
+plugins:
+  - serverless-finch
+provider:
+  tags:
+    project: ${self:service}
+  lambdaHashingVersion: "20201221"
+  versionFunctions: false
+  name: aws
+  runtime: nodejs16.x
+  region: eu-central-1
+custom:
+  client:
+    bucketName: ttt-${self:service}-client-${opt:stage,'dev'}
+    distributionFolder: build
+    tags:
+      project: ${self:service}
