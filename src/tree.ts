@@ -1,9 +1,14 @@
+export type Color = string;
+export type Shape = string;
+
 export interface Branch {
   nodes: [Node, Node, Node, Node];
 }
 
 export interface Leaf {
-  color: string;
+  fg: Color;
+  bg: Color;
+  shape: Shape;
 }
 
 export type Node = Branch | Leaf;

@@ -53,14 +53,54 @@
 }
 
 .palette {
+	display: flex;
+}
+
+.palette-colors {
 	position: relative;
 	width: 500px;
 	height: 50px;
+	margin: 10px;
 }
 
-.palette > * {
+.palette-colors > * {
 	position: relative;
 	width: 50px;
 	height: 50px;
 	float: left;
+}
+
+.palette-selection {
+	position: relative;
+	width: 50px;
+	height: 50px;
+}
+
+.palette-selection > * {
+	width: 50px;
+	height: 50px;
+	position: absolute;
+}
+
+.palette-selection > * {
+	border: 2px solid black;
+}
+
+.palette-selection > .fg-color {
+	top: 8px;
+	left: 8px;
+}
+
+.shapes {
+	position: relative;
+	width: 250px;
+	height: 100px;
+	display: grid;
+	grid-template-columns: repeat(5, 50px);
+}
+
+.shapes > * {
+	position: relative;
+	width: 50px;
+	height: 50px;
 }

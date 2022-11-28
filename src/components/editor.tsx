@@ -1,31 +1,65 @@
 import { createContext, h } from "preact";
 import { useState } from "preact/hooks";
 import { Tile } from "./tile";
-import { Node } from "../tree";
-import { Palette } from "./palette";
+import { Color, Node, Shape } from "../tree";
+import { ColorPalette } from "./color-palette";
+import { ShapePalette } from "./shape-palette";
+import { ToolPalette } from "./tool-palette";
+
+type Mode = "color" | "shape" | "cut";
 
 interface EditorContextType {
-  color: string;
-  setColor: (color: string) => void;
+  mode: Mode;
+  bgColor: Color;
+  fgColor: Color;
+  shape: Shape;
+  setMode: (mode: Mode) => void;
+  setFgColor: (color: Color) => void;
+  setBgColor: (color: Color) => void;
+  setShape: (shape: Shape) => void;
 }
 
 export const EditorContext = createContext<EditorContextType>({
-  color: "red",
-  setColor: () => 0,
+  mode: "color",
+  bgColor: "red",
+  fgColor: "red",
+  shape: "meh",
+  setMode: () => 0,
+  setBgColor: () => 0,
+  setFgColor: () => 0,
+  setShape: () => 0,
 });
 
 export const Editor = () => {
   const [root, setRoot] = useState<Node>({
-    color: "red",
+    bg: "red",
+    fg: "red",
+    shape: "meh",
   });
-  const [color, setColor] = useState("red");
+  const [bgColor, setBgColor] = useState<Color>("red");
+  const [fgColor, setFgColor] = useState<Color>("red");
+  const [shape, setShape] = useState<Shape>("meh");
+  const [mode, setMode] = useState<Mode>("color");
 
   return (
-    <EditorContext.Provider value={{ color, setColor }}>
+    <EditorContext.Provider
+      value={{
+        bgColor,
+        setBgColor,
+        fgColor,
+        setFgColor,
+        shape,
+        setShape,
+        mode,
+        setMode,
+      }}
+    >
       <div className="editor-root">
         <Tile node={root} setNode={setRoot} />
       </div>
-      <Palette />
+      <ToolPalette />
+      <ColorPalette />
+      <ShapePalette />
     </EditorContext.Provider>
   );
 };
