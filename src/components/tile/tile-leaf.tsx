@@ -2,13 +2,14 @@ import { h } from "preact";
 import { useCallback, useContext } from "preact/hooks";
 import { Leaf } from "../../tree";
 import { EditorContext } from "../editor";
+import { Svg } from "./svg";
 import { TileProps } from "./tile";
 
 export const TileLeaf = (props: TileProps<Leaf>) => {
-  const { fgColor, bgColor, shape, mode } = useContext(EditorContext);
+  const { color, shape, mode } = useContext(EditorContext);
   const { node, setNode } = props;
   const handleClick = useCallback(
-    (e: MouseEvent) => {
+    (e: MouseEvent, isRightClick: boolean) => {
       e.preventDefault();
 
       switch (mode) {
@@ -20,8 +21,7 @@ export const TileLeaf = (props: TileProps<Leaf>) => {
         case "color":
           setNode({
             ...node,
-            fg: bgColor,
-            bg: fgColor,
+            [isRightClick ? "bg" : "fg"]: color,
           });
           break;
         case "shape":
@@ -32,20 +32,18 @@ export const TileLeaf = (props: TileProps<Leaf>) => {
           break;
       }
     },
-    [node, setNode, fgColor, bgColor, shape, mode]
+    [node, setNode, color, shape, mode]
   );
 
   return (
     <div
       class="node"
       style={{ backgroundColor: props.node.bg }}
-      onClick={handleClick}
-      onContextMenu={(e) => {
-        e.preventDefault();
-        handleClick(e);
-      }}
+      onClick={(e) => handleClick(e, false)}
+      onContextMenu={(e) => handleClick(e, true)}
     >
-      <div class="overlay">{node.shape}</div>
+      <Svg fill={node.fg} />
+      <div className="overlay" />
     </div>
   );
 };

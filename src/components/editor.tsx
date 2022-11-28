@@ -10,23 +10,19 @@ type Mode = "color" | "shape" | "cut";
 
 interface EditorContextType {
   mode: Mode;
-  bgColor: Color;
-  fgColor: Color;
+  color: Color;
   shape: Shape;
   setMode: (mode: Mode) => void;
-  setFgColor: (color: Color) => void;
-  setBgColor: (color: Color) => void;
+  setColor: (color: Color) => void;
   setShape: (shape: Shape) => void;
 }
 
 export const EditorContext = createContext<EditorContextType>({
   mode: "color",
-  bgColor: "red",
-  fgColor: "red",
+  color: "red",
   shape: "meh",
   setMode: () => 0,
-  setBgColor: () => 0,
-  setFgColor: () => 0,
+  setColor: () => 0,
   setShape: () => 0,
 });
 
@@ -36,18 +32,15 @@ export const Editor = () => {
     fg: "red",
     shape: "meh",
   });
-  const [bgColor, setBgColor] = useState<Color>("red");
-  const [fgColor, setFgColor] = useState<Color>("red");
+  const [color, setColor] = useState<Color>("red");
   const [shape, setShape] = useState<Shape>("meh");
   const [mode, setMode] = useState<Mode>("color");
 
   return (
     <EditorContext.Provider
       value={{
-        bgColor,
-        setBgColor,
-        fgColor,
-        setFgColor,
+        color,
+        setColor,
         shape,
         setShape,
         mode,
