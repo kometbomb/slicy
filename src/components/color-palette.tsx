@@ -1,9 +1,8 @@
 import { h } from "preact";
 import { useCallback, useContext } from "preact/hooks";
 import { Color } from "src/tree";
+import { colors } from "./colors";
 import { EditorContext } from "./editor";
-
-const palette = ["black", "white", "red", "blue"];
 
 export const ColorPalette = () => {
   const { color, setColor, setMode } = useContext(EditorContext);
@@ -17,14 +16,14 @@ export const ColorPalette = () => {
   return (
     <div className="palette">
       <div className="palette-selection">
-        <div className="bg-color" style={{ backgroundColor: color }} />
+        <div className="bg-color" style={{ backgroundColor: colors[color] }} />
       </div>
       <div className="palette-colors">
-        {palette.map((color) => (
+        {colors.map((color, index) => (
           <div
             key={color}
             style={{ backgroundColor: color }}
-            onClick={() => handleClick(color)}
+            onClick={() => handleClick(index)}
           />
         ))}
       </div>

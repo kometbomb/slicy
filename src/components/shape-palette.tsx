@@ -2,8 +2,7 @@ import { h } from "preact";
 import { useCallback, useContext } from "preact/hooks";
 import { Shape } from "src/tree";
 import { EditorContext } from "./editor";
-
-const shapes: Shape[] = ["🐈", "💩", "🤖", "💀"];
+import { shapes } from "./shapes";
 
 export const ShapePalette = () => {
   const { shape, setShape, setMode } = useContext(EditorContext);
@@ -16,10 +15,13 @@ export const ShapePalette = () => {
   );
   return (
     <div className="shapes">
-      {shapes.map((paletteShape) => (
-        <div key={paletteShape} onClick={() => handleClick(paletteShape)}>
-          {paletteShape}
-          {shape === paletteShape ? "v" : "_"}
+      {shapes.map((PaletteShape, index) => (
+        <div
+          key={index}
+          onClick={() => handleClick(index)}
+          className={shape === index ? "selected" : ""}
+        >
+          <PaletteShape fill="black" />
         </div>
       ))}
     </div>

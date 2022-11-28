@@ -1,7 +1,0 @@
-import { h } from "preact";
-
-export const Svg = ({ fill }: { fill: string }) => (
-  <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
-    <rect fill={fill} stroke={fill} x="2" y="2" width="6" height="6" />
-  </svg>
-);

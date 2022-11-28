@@ -1,5 +1,5 @@
-export type Color = string;
-export type Shape = string;
+export type Color = number;
+export type Shape = number;
 
 export interface Branch {
   nodes: [Node, Node, Node, Node];

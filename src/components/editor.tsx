@@ -6,7 +6,7 @@ import { ColorPalette } from "./color-palette";
 import { ShapePalette } from "./shape-palette";
 import { ToolPalette } from "./tool-palette";
 
-type Mode = "color" | "shape" | "cut";
+export type Mode = "color" | "shape" | "cut";
 
 interface EditorContextType {
   mode: Mode;
@@ -19,8 +19,8 @@ interface EditorContextType {
 
 export const EditorContext = createContext<EditorContextType>({
   mode: "color",
-  color: "red",
-  shape: "meh",
+  color: 0,
+  shape: 0,
   setMode: () => 0,
   setColor: () => 0,
   setShape: () => 0,
@@ -28,12 +28,12 @@ export const EditorContext = createContext<EditorContextType>({
 
 export const Editor = () => {
   const [root, setRoot] = useState<Node>({
-    bg: "red",
-    fg: "red",
-    shape: "meh",
+    bg: 0,
+    fg: 0,
+    shape: 0,
   });
-  const [color, setColor] = useState<Color>("red");
-  const [shape, setShape] = useState<Shape>("meh");
+  const [color, setColor] = useState<Color>(0);
+  const [shape, setShape] = useState<Shape>(0);
   const [mode, setMode] = useState<Mode>("color");
 
   return (

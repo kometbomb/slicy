@@ -1,18 +1,34 @@
 import { h } from "preact";
 import { useContext } from "preact/hooks";
-import { EditorContext } from "./editor";
+import { EditorContext, Mode } from "./editor";
+
+const ToolButton = ({
+  mode,
+  icon,
+  label,
+}: {
+  label: string;
+  icon: string;
+  mode: Mode;
+}) => {
+  const { mode: editorMode, setMode } = useContext(EditorContext);
+  return (
+    <div
+      onClick={() => setMode(mode)}
+      className={editorMode === mode ? "selected" : ""}
+      title={label}
+    >
+      {icon}
+    </div>
+  );
+};
 
 export const ToolPalette = () => {
-  const { mode, setMode } = useContext(EditorContext);
   return (
     <div className="tools">
-      <div onClick={() => setMode("cut")}>Cut{mode === "cut" ? "v" : "_"}</div>
-      <div onClick={() => setMode("color")}>
-        Color{mode === "color" ? "v" : "_"}
-      </div>
-      <div onClick={() => setMode("shape")}>
-        Shape{mode === "shape" ? "v" : "_"}
-      </div>
+      <ToolButton label="Cut" mode="cut" icon="✂️" />
+      <ToolButton label="Color" mode="color" icon="🖌️" />
+      <ToolButton label="Shape" mode="shape" icon="🔹" />
     </div>
   );
 };

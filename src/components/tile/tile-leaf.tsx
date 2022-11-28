@@ -1,8 +1,9 @@
 import { h } from "preact";
 import { useCallback, useContext } from "preact/hooks";
 import { Leaf } from "../../tree";
+import { colors } from "../colors";
 import { EditorContext } from "../editor";
-import { Svg } from "./svg";
+import { shapes } from "../shapes";
 import { TileProps } from "./tile";
 
 export const TileLeaf = (props: TileProps<Leaf>) => {
@@ -35,14 +36,16 @@ export const TileLeaf = (props: TileProps<Leaf>) => {
     [node, setNode, color, shape, mode]
   );
 
+  const Shape = shapes[node.shape];
+
   return (
     <div
       class="node"
-      style={{ backgroundColor: props.node.bg }}
+      style={{ backgroundColor: colors[props.node.bg] }}
       onClick={(e) => handleClick(e, false)}
       onContextMenu={(e) => handleClick(e, true)}
     >
-      <Svg fill={node.fg} />
+      <Shape fill={colors[node.fg]} />
       <div className="overlay" />
     </div>
   );
