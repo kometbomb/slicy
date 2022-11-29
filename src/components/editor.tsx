@@ -5,6 +5,7 @@ import { Color, Node, Shape } from "../tree";
 import { ColorPalette } from "./color-palette";
 import { ShapePalette } from "./shape-palette";
 import { ToolPalette } from "./tool-palette";
+import { Grid } from "./grid";
 
 export type Mode = "set" | "color" | "shape" | "cut";
 
@@ -51,8 +52,10 @@ export const Editor = () => {
         <Tile node={root} setNode={setRoot} />
       </div>
       <ToolPalette />
-      <ColorPalette />
-      <ShapePalette />
+      <Grid cols={2}>
+        <ColorPalette />
+        <ShapePalette />
+      </Grid>
     </EditorContext.Provider>
   );
 };

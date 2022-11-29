@@ -2,6 +2,7 @@ import { h } from "preact";
 import { useCallback, useContext } from "preact/hooks";
 import { Shape } from "src/tree";
 import { EditorContext } from "./editor";
+import { Grid } from "./grid";
 import { shapes } from "./shapes";
 
 export const ShapePalette = () => {
@@ -14,16 +15,26 @@ export const ShapePalette = () => {
     [setMode, setShape, mode]
   );
   return (
-    <div className="shapes">
+    <Grid
+      cols={5}
+      style={{
+        width: "240px",
+        height: "96px",
+        borderWidth: "2px",
+        borderColor: "black",
+        borderStyle: "solid",
+      }}
+    >
       {shapes.map((PaletteShape, index) => (
         <div
           key={index}
           onClick={() => handleClick(index)}
           className={shape === index ? "selected" : ""}
+          style={{ minWidth: "24px", minHeight: "24px" }}
         >
           <PaletteShape fill="black" />
         </div>
       ))}
-    </div>
+    </Grid>
   );
 };

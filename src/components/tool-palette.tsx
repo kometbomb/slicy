@@ -1,6 +1,7 @@
 import { h } from "preact";
 import { useContext } from "preact/hooks";
 import { EditorContext, Mode } from "./editor";
+import { Grid } from "./grid";
 
 const ToolButton = ({
   mode,
@@ -17,6 +18,7 @@ const ToolButton = ({
       onClick={() => setMode(mode)}
       className={editorMode === mode ? "selected" : ""}
       title={label}
+      style={{ minWidth: "24px", minHeight: "24px" }}
     >
       {icon}
     </div>
@@ -25,11 +27,11 @@ const ToolButton = ({
 
 export const ToolPalette = () => {
   return (
-    <div className="tools">
+    <Grid cols={4} style={{ height: "48px", width: "240px" }}>
       <ToolButton label="Set" mode="set" icon="🚀" />
       <ToolButton label="Cut" mode="cut" icon="✂️" />
       <ToolButton label="Color" mode="color" icon="🖌️" />
       <ToolButton label="Shape" mode="shape" icon="🔹" />
-    </div>
+    </Grid>
   );
 };

@@ -108,6 +108,6 @@
 	height: 50px;
 }
 
-.tools > .selected {
-	background-color: grey;
+.selected {
+	border: 2px black solid;
 }
