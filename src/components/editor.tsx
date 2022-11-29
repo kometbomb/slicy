@@ -6,7 +6,7 @@ import { ColorPalette } from "./color-palette";
 import { ShapePalette } from "./shape-palette";
 import { ToolPalette } from "./tool-palette";
 
-export type Mode = "color" | "shape" | "cut";
+export type Mode = "set" | "color" | "shape" | "cut";
 
 interface EditorContextType {
   mode: Mode;

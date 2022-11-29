@@ -5,13 +5,13 @@ import { colors } from "./colors";
 import { EditorContext } from "./editor";
 
 export const ColorPalette = () => {
-  const { color, setColor, setMode } = useContext(EditorContext);
+  const { mode, color, setColor, setMode } = useContext(EditorContext);
   const handleClick = useCallback(
     (color: Color) => {
       setColor(color);
-      setMode("color");
+      if (mode !== "set") setMode("color");
     },
-    [setMode, setColor]
+    [setMode, setColor, mode]
   );
   return (
     <div className="palette">

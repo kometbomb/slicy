@@ -5,13 +5,13 @@ import { EditorContext } from "./editor";
 import { shapes } from "./shapes";
 
 export const ShapePalette = () => {
-  const { shape, setShape, setMode } = useContext(EditorContext);
+  const { mode, shape, setShape, setMode } = useContext(EditorContext);
   const handleClick = useCallback(
     (shape: Shape) => {
       setShape(shape);
-      setMode("shape");
+      if (mode !== "set") setMode("shape");
     },
-    [setMode, setShape]
+    [setMode, setShape, mode]
   );
   return (
     <div className="shapes">

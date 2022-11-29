@@ -14,6 +14,13 @@ export const TileLeaf = (props: TileProps<Leaf>) => {
       e.preventDefault();
 
       switch (mode) {
+        case "set":
+          setNode({
+            ...node,
+            [isRightClick ? "bg" : "fg"]: color,
+            shape,
+          });
+          break;
         case "cut":
           setNode({
             nodes: [{ ...node }, { ...node }, { ...node }, { ...node }],

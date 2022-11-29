@@ -26,6 +26,7 @@ const ToolButton = ({
 export const ToolPalette = () => {
   return (
     <div className="tools">
+      <ToolButton label="Set" mode="set" icon="🚀" />
       <ToolButton label="Cut" mode="cut" icon="✂️" />
       <ToolButton label="Color" mode="color" icon="🖌️" />
       <ToolButton label="Shape" mode="shape" icon="🔹" />
