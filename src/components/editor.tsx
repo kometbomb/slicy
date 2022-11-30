@@ -21,7 +21,7 @@ interface EditorContextType {
 }
 
 export const EditorContext = createContext<EditorContextType>({
-  mode: "color",
+  mode: "draw",
   bgColor: 0,
   fgColor: 1,
   shape: 0,
@@ -40,7 +40,7 @@ export const Editor = () => {
   const [bgColor, setBgColor] = useState<Color>(0);
   const [fgColor, setFgColor] = useState<Color>(1);
   const [shape, setShape] = useState<Shape>(0);
-  const [mode, setMode] = useState<Mode>("color");
+  const [mode, setMode] = useState<Mode>("draw");
 
   return (
     <EditorContext.Provider
