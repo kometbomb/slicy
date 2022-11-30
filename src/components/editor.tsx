@@ -63,6 +63,9 @@ export const Editor = () => {
         <ColorPalette />
         <ShapePalette />
       </Grid>
+      <div style={{ margin: "8px", padding: "8px", fontFamily: "courier" }}>
+        {JSON.stringify(root)}
+      </div>
     </EditorContext.Provider>
   );
 };
