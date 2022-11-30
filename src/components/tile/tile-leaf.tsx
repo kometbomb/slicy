@@ -7,40 +7,73 @@ import { shapes } from "../shapes";
 import { TileProps } from "./tile";
 
 export const TileLeaf = (props: TileProps<Leaf>) => {
-  const { color, shape, mode } = useContext(EditorContext);
+  const { fgColor, bgColor, shape, mode, setBgColor, setFgColor, setShape } =
+    useContext(EditorContext);
   const { node, setNode } = props;
   const handleClick = useCallback(
-    (e: MouseEvent, isRightClick: boolean) => {
+    (e: MouseEvent, button: "left" | "right") => {
       e.preventDefault();
+      e.stopPropagation();
 
       switch (mode) {
-        case "set":
-          setNode({
-            ...node,
-            [isRightClick ? "bg" : "fg"]: color,
-            shape,
-          });
+        case "draw":
+          if (button === "left")
+            setNode({
+              ...node,
+              fg: fgColor,
+              bg: bgColor,
+              shape,
+            });
+          else {
+            setShape(node.shape);
+            setFgColor(node.fg);
+            setBgColor(node.bg);
+          }
+
           break;
+
         case "cut":
-          setNode({
-            nodes: [{ ...node }, { ...node }, { ...node }, { ...node }],
-          });
+          if (button === "left")
+            setNode({
+              nodes: [{ ...node }, { ...node }, { ...node }, { ...node }],
+            });
+          else alert(":(");
           break;
+
         case "color":
-          setNode({
-            ...node,
-            [isRightClick ? "bg" : "fg"]: color,
-          });
+          if (button === "left")
+            setNode({
+              ...node,
+              fg: fgColor,
+            });
+          else
+            setNode({
+              ...node,
+              bg: bgColor,
+            });
           break;
-        case "shape":
+
+        case "tile":
           setNode({
             ...node,
             shape,
           });
           break;
       }
+
+      return false;
     },
-    [node, setNode, color, shape, mode]
+    [
+      node,
+      setNode,
+      fgColor,
+      bgColor,
+      shape,
+      mode,
+      setBgColor,
+      setFgColor,
+      setShape,
+    ]
   );
 
   const Shape = shapes[node.shape];
@@ -49,8 +82,8 @@ export const TileLeaf = (props: TileProps<Leaf>) => {
     <div
       class="node"
       style={{ backgroundColor: colors[props.node.bg] }}
-      onClick={(e) => handleClick(e, false)}
-      onContextMenu={(e) => handleClick(e, true)}
+      onClick={(e) => handleClick(e, "left")}
+      onContextMenu={(e) => handleClick(e, "right")}
     >
       <Shape fill={colors[node.fg]} />
       <div className="overlay" />

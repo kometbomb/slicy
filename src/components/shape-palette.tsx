@@ -6,13 +6,14 @@ import { Grid } from "./grid";
 import { shapes } from "./shapes";
 
 export const ShapePalette = () => {
-  const { mode, shape, setShape, setMode } = useContext(EditorContext);
+  const { shape, setShape } = useContext(EditorContext);
   const handleClick = useCallback(
-    (shape: Shape) => {
+    (e: MouseEvent, shape: Shape) => {
+      e.preventDefault();
+      e.stopPropagation();
       setShape(shape);
-      if (mode !== "set") setMode("shape");
     },
-    [setMode, setShape, mode]
+    [setShape]
   );
   return (
     <Grid
@@ -28,7 +29,7 @@ export const ShapePalette = () => {
       {shapes.map((PaletteShape, index) => (
         <div
           key={index}
-          onClick={() => handleClick(index)}
+          onClick={(e) => handleClick(e, index)}
           className={shape === index ? "selected" : ""}
           style={{ minWidth: "24px", minHeight: "24px" }}
         >

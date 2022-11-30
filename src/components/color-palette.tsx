@@ -6,18 +6,16 @@ import { EditorContext } from "./editor";
 import { Grid } from "./grid";
 
 export const ColorPalette = () => {
-  const {
-    mode,
-    color: selectedColor,
-    setColor,
-    setMode,
-  } = useContext(EditorContext);
+  const { fgColor, bgColor, setFgColor, setBgColor } =
+    useContext(EditorContext);
   const handleClick = useCallback(
-    (color: Color) => {
-      setColor(color);
-      if (mode !== "set") setMode("color");
+    (e: MouseEvent, color: Color, button: "left" | "right") => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (button === "left") setFgColor(color);
+      else setBgColor(color);
     },
-    [setMode, setColor, mode]
+    [setFgColor, setBgColor]
   );
   return (
     <Grid
@@ -33,14 +31,17 @@ export const ColorPalette = () => {
       {colors.map((color, index) => (
         <div
           key={color}
-          className={selectedColor === index ? "selected" : ""}
           style={{
             backgroundColor: color,
             minHeight: "24px",
             minWidth: "24px",
           }}
-          onClick={() => handleClick(index)}
-        />
+          onClick={(e) => handleClick(e, index, "left")}
+          onContextMenu={(e) => handleClick(e, index, "right")}
+        >
+          {index === fgColor && "F"}
+          {index === bgColor && "B"}
+        </div>
       ))}
     </Grid>
   );

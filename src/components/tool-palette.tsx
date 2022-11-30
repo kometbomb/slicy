@@ -28,10 +28,10 @@ const ToolButton = ({
 export const ToolPalette = () => {
   return (
     <Grid cols={4} style={{ height: "48px", width: "240px" }}>
-      <ToolButton label="Set" mode="set" icon="🚀" />
-      <ToolButton label="Cut" mode="cut" icon="✂️" />
-      <ToolButton label="Color" mode="color" icon="🖌️" />
-      <ToolButton label="Shape" mode="shape" icon="🔹" />
+      <ToolButton label="Set" mode="cut" icon="✂️" />
+      <ToolButton label="Cut" mode="draw" icon="🖌️" />
+      <ToolButton label="Color" mode="color" icon="c" />
+      <ToolButton label="Tile" mode="tile" icon="🔹" />
     </Grid>
   );
 };
