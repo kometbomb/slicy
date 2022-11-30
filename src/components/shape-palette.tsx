@@ -1,12 +1,13 @@
 import { h } from "preact";
 import { useCallback, useContext } from "preact/hooks";
 import { Shape } from "src/tree";
+import { colors } from "./colors";
 import { EditorContext } from "./editor";
 import { Grid } from "./grid";
 import { shapes } from "./shapes";
 
 export const ShapePalette = () => {
-  const { shape, setShape } = useContext(EditorContext);
+  const { shape, setShape, fgColor, bgColor } = useContext(EditorContext);
   const handleClick = useCallback(
     (e: MouseEvent, shape: Shape) => {
       e.preventDefault();
@@ -30,10 +31,13 @@ export const ShapePalette = () => {
         <div
           key={index}
           onClick={(e) => handleClick(e, index)}
-          className={shape === index ? "selected" : ""}
-          style={{ minWidth: "24px", minHeight: "24px" }}
+          style={{
+            minWidth: "24px",
+            minHeight: "24px",
+            backgroundColor: index === shape ? colors[bgColor] : "white",
+          }}
         >
-          <PaletteShape fill="black" />
+          <PaletteShape fill={index === shape ? colors[fgColor] : "grey"} />
         </div>
       ))}
     </Grid>
