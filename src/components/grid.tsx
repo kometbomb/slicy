@@ -1,4 +1,4 @@
-import { h } from "preact";
+import { ComponentChildren, h } from "preact";
 import { JSXInternal } from "preact/src/jsx";
 
 export const Grid = ({
@@ -10,7 +10,7 @@ export const Grid = ({
   gap?: number;
   cols?: number;
   style?: JSXInternal.CSSProperties;
-  children: JSX.Element[];
+  children: ComponentChildren;
 }) => (
   <div
     style={{
