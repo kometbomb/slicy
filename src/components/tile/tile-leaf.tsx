@@ -9,7 +9,7 @@ import { TileProps } from "./tile";
 export const TileLeaf = (props: TileProps<Leaf>) => {
   const { fgColor, bgColor, shape, mode, setBgColor, setFgColor, setShape } =
     useContext(EditorContext);
-  const { node, setNode } = props;
+  const { node, setNode, setParentNode } = props;
   const handleClick = useCallback(
     (e: MouseEvent, button: "left" | "right") => {
       e.preventDefault();
@@ -37,7 +37,7 @@ export const TileLeaf = (props: TileProps<Leaf>) => {
             setNode({
               nodes: [{ ...node }, { ...node }, { ...node }, { ...node }],
             });
-          else alert(":(");
+          else if (setParentNode) setParentNode(node);
           break;
 
         case "color":

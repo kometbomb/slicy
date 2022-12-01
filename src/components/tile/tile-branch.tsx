@@ -24,6 +24,7 @@ export const TileBranch = (props: TileProps<Branch>) => {
           key={index}
           node={node}
           setNode={(node) => setChildNode(index, node)}
+          setParentNode={setNode}
         />
       ))}
     </div>
