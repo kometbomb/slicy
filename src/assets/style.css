@@ -17,13 +17,19 @@
 }
 
 .editor-root.enableGrid .node {
-	outline: 1px solid white;
+	outline: 1px solid black;
 }
+
+
 
 .editor-root .node .overlay {
 	position: absolute;
 	width: 100%;
 	height: 100%;
+}
+
+.editor-root.enableGrid .node {
+	outline: 1px dotted white;
 }
 
 .editor-root svg {
