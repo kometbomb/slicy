@@ -1,8 +1,10 @@
 export type Color = number;
 export type Shape = number;
 
+export type BranchNodes = [Node, Node, Node, Node];
+
 export interface Branch {
-  nodes: [Node, Node, Node, Node];
+  nodes: BranchNodes;
 }
 
 export interface Leaf {
