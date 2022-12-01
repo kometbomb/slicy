@@ -1,6 +1,6 @@
 import { h } from "preact";
 import { useCallback, useContext } from "preact/hooks";
-import { Shape } from "src/tree";
+import { Shape } from "../tree";
 import { colors } from "./colors";
 import { EditorContext } from "./editor";
 import { Grid } from "./grid";
