@@ -9,6 +9,7 @@
     "dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider preact watch",
     "lint": "eslint src",
     "test": "jest",
+    "build:dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider preact build",
     "deploy:dev": "serverless client deploy -s dev --no-confirm"
   },
   "eslintConfig": {
