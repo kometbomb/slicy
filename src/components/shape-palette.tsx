@@ -7,14 +7,17 @@ import { Grid } from "./grid";
 import { shapes } from "./shapes";
 
 export const ShapePalette = () => {
-  const { shape, setShape, fgColor, bgColor } = useContext(EditorContext);
+  const { shape, setShape, fgColor, bgColor, mode, setMode } =
+    useContext(EditorContext);
   const handleClick = useCallback(
     (e: MouseEvent, shape: Shape) => {
       e.preventDefault();
       e.stopPropagation();
       setShape(shape);
+
+      if (mode === "cut") setMode("draw");
     },
-    [setShape]
+    [setShape, mode, setMode]
   );
   return (
     <Grid

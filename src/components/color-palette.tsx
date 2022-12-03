@@ -6,7 +6,7 @@ import { EditorContext } from "./editor";
 import { Grid } from "./grid";
 
 export const ColorPalette = () => {
-  const { fgColor, bgColor, setFgColor, setBgColor } =
+  const { mode, setMode, fgColor, bgColor, setFgColor, setBgColor } =
     useContext(EditorContext);
   const handleClick = useCallback(
     (e: MouseEvent, color: Color, button: "left" | "right") => {
@@ -14,8 +14,10 @@ export const ColorPalette = () => {
       e.stopPropagation();
       if (button === "left") setFgColor(color);
       else setBgColor(color);
+
+      if (mode === "cut") setMode("draw");
     },
-    [setFgColor, setBgColor]
+    [setFgColor, setBgColor, mode, setMode]
   );
   return (
     <Grid
