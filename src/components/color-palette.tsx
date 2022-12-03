@@ -21,7 +21,7 @@ export const ColorPalette = () => {
   );
   return (
     <Grid
-      cols={5}
+      cols={6}
       style={{
         width: "244px",
         height: "102px",

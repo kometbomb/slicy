@@ -43,7 +43,7 @@ export const Editor = () => {
   });
   const [bgColor, setBgColor] = useState<Color>(0);
   const [fgColor, setFgColor] = useState<Color>(1);
-  const [shape, setShape] = useState<Shape>(0);
+  const [shape, setShape] = useState<Shape>(5);
   const [mode, setMode] = useState<Mode>("draw");
   const [enableGrid, setEnableGrid] = useState(true);
 
