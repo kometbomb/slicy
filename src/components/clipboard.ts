@@ -11,12 +11,11 @@ export const copyNode = async (node: Node) => {
   }
 };
 
-export const pasteode = async () => {
+export const pasteNode = async () => {
   try {
     const dataText = await window.navigator.clipboard.readText();
     if (dataText) {
       const data = JSON.parse(dataText);
-
       if (validatePackedNode(data)) {
         return unpackTree(data);
       }

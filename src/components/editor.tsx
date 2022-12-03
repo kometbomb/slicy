@@ -1,9 +1,8 @@
 import { createContext, h } from "preact";
 import { useState } from "preact/hooks";
 import { Color, Node, Shape } from "../tree";
-import { copyNode, pasteode } from "./clipboard";
 import { ColorPalette } from "./color-palette";
-import { Grid } from "./grid";
+import { ExportPalette } from "./export-palette";
 import { ShapePalette } from "./shape-palette";
 import { Tile } from "./tile";
 import { ToolPalette } from "./tool-palette";
@@ -69,31 +68,13 @@ export const Editor = () => {
         <Tile node={root} setNode={setRoot} />
       </div>
       <ToolPalette />
-      <Grid
-        cols={2}
-        style={{ justifyContent: "space-between", background: "transparent" }}
-      >
-        <ColorPalette />
-        <ShapePalette />
-      </Grid>
-      <button
-        onClick={async (e) => {
-          e.preventDefault();
-          await copyNode(root);
-        }}
-      >
-        Copy
-      </button>
-      <button
-        onClick={async (e) => {
-          e.preventDefault();
-          const node = await pasteode();
-          if (!node) return;
-          setRoot(node);
-        }}
-      >
-        Paste
-      </button>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+        <div className="palettes">
+          <ColorPalette />
+          <ShapePalette />
+        </div>
+        <ExportPalette setRoot={setRoot} root={root} />
+      </div>
     </EditorContext.Provider>
   );
 };

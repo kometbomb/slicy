@@ -14,7 +14,7 @@ const ToolButton = ({
 }) => {
   const { mode: editorMode, setMode } = useContext(EditorContext);
   return (
-    <div
+    <button
       onClick={() => setMode(mode)}
       className={["button", ...(editorMode === mode ? ["selected"] : [])].join(
         " "
@@ -23,21 +23,21 @@ const ToolButton = ({
       style={{ minWidth: "48px", minHeight: "24px", maxWidth: "48px" }}
     >
       {icon}
-    </div>
+    </button>
   );
 };
 
 const GridButton = () => {
   const { enableGrid, setEnableGrid } = useContext(EditorContext);
   return (
-    <div
+    <button
       onClick={() => setEnableGrid(!enableGrid)}
       className={["button", ...(enableGrid ? ["selected"] : [])].join(" ")}
       title="Toggle grid"
       style={{ minWidth: "48px", minHeight: "24px", maxWidth: "48px" }}
     >
       #
-    </div>
+    </button>
   );
 };
 
@@ -49,7 +49,7 @@ export const ToolPalette = () => {
         gap={4}
         style={{
           height: "48px",
-          width: "508px",
+          maxWidth: "508px",
           background: "transparent",
           justifyContent: "space-between",
         }}

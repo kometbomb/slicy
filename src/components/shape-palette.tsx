@@ -20,7 +20,7 @@ export const ShapePalette = () => {
     <Grid
       cols={5}
       style={{
-        width: "244px",
+        minWidth: "244px",
         height: "102px",
         borderRadius: "3px",
         borderWidth: "2px",
