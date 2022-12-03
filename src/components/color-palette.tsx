@@ -31,16 +31,19 @@ export const ColorPalette = () => {
       }}
     >
       {colors.map((color, index) => (
-        <div
+        <button
           key={color}
           style={{
+            border: "none",
             backgroundColor: color,
             outline: "1px solid white",
             minHeight: "24px",
             minWidth: "24px",
-            textShadow: "0 0 2px black",
+            textShadow: "0 0 3px black",
             fontWeight: "bold",
             color: "white",
+            fontSize: "16px",
+            padding: 0,
           }}
           onClick={(e) => handleClick(e, index, "left")}
           onContextMenu={(e) => handleClick(e, index, "right")}
@@ -48,7 +51,7 @@ export const ColorPalette = () => {
         >
           {index === fgColor && "F"}
           {index === bgColor && "B"}
-        </div>
+        </button>
       ))}
     </Grid>
   );

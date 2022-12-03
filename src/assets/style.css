@@ -147,6 +147,11 @@
 	border: 2px white solid;
 	border-radius: 2px;
 	background: white;
+	font-size: 24px;
+}
+
+.export .button {
+	font-size: 12px;
 }
 
 .palettes {

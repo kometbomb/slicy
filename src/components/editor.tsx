@@ -1,8 +1,8 @@
 import { createContext, h } from "preact";
-import { useState } from "preact/hooks";
+import { useEffect, useRef, useState } from "preact/hooks";
 import { Color, Node, Shape } from "../tree";
 import { ColorPalette } from "./color-palette";
-import { ExportPalette } from "./export-palette";
+import { ExportTools } from "./export-tools";
 import { ShapePalette } from "./shape-palette";
 import { Tile } from "./tile";
 import { ToolPalette } from "./tool-palette";
@@ -63,6 +63,7 @@ export const Editor = () => {
       }}
     >
       <div
+        id="root-node"
         className={["editor-root", enableGrid ? "enableGrid" : ""].join(" ")}
       >
         <Tile node={root} setNode={setRoot} />
@@ -73,7 +74,11 @@ export const Editor = () => {
           <ColorPalette />
           <ShapePalette />
         </div>
-        <ExportPalette setRoot={setRoot} root={root} />
+        <ExportTools
+          setRoot={setRoot}
+          root={root}
+          getDomNode={() => document.getElementById("root-node")}
+        />
       </div>
     </EditorContext.Provider>
   );

@@ -1,12 +1,14 @@
 import { h } from "preact";
 import { Node } from "../tree";
-import { copyNode, pasteNode } from "./clipboard";
+import { copyNode, copyPNG, pasteNode } from "./clipboard";
 
-export const ExportPalette = ({
+export const ExportTools = ({
   root,
+  getDomNode,
   setRoot,
 }: {
   root: Node;
+  getDomNode: () => HTMLElement | null;
   setRoot: (node: Node) => void;
 }) => (
   <div
@@ -39,6 +41,17 @@ export const ExportPalette = ({
       }}
     >
       Paste from clipboard
+    </button>
+    <button
+      style={{ flex: "1" }}
+      className="button"
+      onClick={async (e) => {
+        e.preventDefault();
+        const domNode = getDomNode();
+        if (domNode) await copyPNG(domNode);
+      }}
+    >
+      Copy .PNG
     </button>
   </div>
 );

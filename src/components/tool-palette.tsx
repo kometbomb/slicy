@@ -33,7 +33,7 @@ const GridButton = () => {
     <button
       onClick={() => setEnableGrid(!enableGrid)}
       className={["button", ...(enableGrid ? ["selected"] : [])].join(" ")}
-      title="Toggle grid"
+      title="Grid"
       style={{ minWidth: "48px", minHeight: "24px", maxWidth: "48px" }}
     >
       #
@@ -54,8 +54,8 @@ export const ToolPalette = () => {
           justifyContent: "space-between",
         }}
       >
-        <ToolButton label="Set" mode="cut" icon="✂️" />
-        <ToolButton label="Cut" mode="draw" icon="🖌️" />
+        <ToolButton label="Cut" mode="cut" icon="✂️" />
+        <ToolButton label="Draw" mode="draw" icon="🖌️" />
         <ToolButton label="Color" mode="color" icon="🎨" />
         <ToolButton label="Tile" mode="tile" icon="🔹" />
         <GridButton />
