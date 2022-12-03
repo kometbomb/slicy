@@ -1,4 +1,4 @@
-import { Shape, Color, isBranch, BranchNodes, Node } from ".";
+import { Shape, Color, isBranch, BranchNodes, Node, Leaf } from ".";
 
 /**
  * fg, shape, bg
@@ -8,19 +8,23 @@ type PackedBranch = [PackedNode, PackedNode, PackedNode, PackedNode];
 
 type PackedNode = PackedLeaf | PackedBranch;
 
-const trimZeros = (array: number[]) => {
+const trimZeros = (array: (number | undefined)[]) => {
   let index;
-  for (index = array.length - 1; index >= 0; --index)
-    if (array[index] > 0) break;
+  for (index = array.length - 1; index >= 0; --index) if (array[index]) break;
 
   return array.slice(0, index + 1);
 };
+
+const packLeaf = (node: Leaf): PackedLeaf =>
+  node.fg === node.bg || node.shape === 0
+    ? [node.fg]
+    : [node.fg, node.shape, node.bg];
 
 export const packTree = (root: Node): PackedNode =>
   isBranch(root)
     ? (root.nodes.map(packTree) as PackedBranch)
     : // Filter out zero values from the end of the array
-      (trimZeros([root.fg, root.shape, root.bg]) as PackedLeaf);
+      (trimZeros(packLeaf(root)) as PackedLeaf);
 
 const isPackedBranch = (node: PackedNode): node is PackedBranch =>
   Array.isArray(node[0]) && node.length === 4;
