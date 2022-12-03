@@ -69,7 +69,10 @@ export const Editor = () => {
         <Tile node={root} setNode={setRoot} />
       </div>
       <ToolPalette />
-      <Grid cols={2}>
+      <Grid
+        cols={2}
+        style={{ justifyContent: "space-between", background: "transparent" }}
+      >
         <ColorPalette />
         <ShapePalette />
       </Grid>

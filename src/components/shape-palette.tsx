@@ -20,11 +20,14 @@ export const ShapePalette = () => {
     <Grid
       cols={5}
       style={{
-        width: "240px",
-        height: "96px",
+        width: "244px",
+        height: "102px",
+        borderRadius: "3px",
         borderWidth: "2px",
         borderColor: "black",
         borderStyle: "solid",
+        padding: "2px",
+        gap: "1px",
       }}
     >
       {shapes.map((PaletteShape, index) => (
@@ -32,10 +35,11 @@ export const ShapePalette = () => {
           key={index}
           onClick={(e) => handleClick(e, index)}
           style={{
-            minWidth: "24px",
-            minHeight: "24px",
+            minWidth: "16px",
+            minHeight: "16px",
             backgroundColor: index === shape ? colors[bgColor] : "white",
           }}
+          className="button"
         >
           <PaletteShape fill={index === shape ? colors[fgColor] : "grey"} />
         </div>

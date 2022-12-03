@@ -2,9 +2,16 @@ import { h } from "preact";
 import { useCallback, useContext } from "preact/hooks";
 import { Leaf } from "../../tree";
 import { colors } from "../colors";
-import { EditorContext } from "../editor";
+import { EditorContext, Mode } from "../editor";
 import { shapes } from "../shapes";
 import { TileProps } from "./tile";
+
+const modeCursor: Record<Mode, string> = {
+  cut: "crosshair",
+  draw: "pointer",
+  color: "pointer",
+  tile: "pointer",
+};
 
 export const TileLeaf = (props: TileProps<Leaf>) => {
   const { fgColor, bgColor, shape, mode, setBgColor, setFgColor, setShape } =
@@ -73,6 +80,7 @@ export const TileLeaf = (props: TileProps<Leaf>) => {
       setBgColor,
       setFgColor,
       setShape,
+      setParentNode,
     ]
   );
 
@@ -81,12 +89,16 @@ export const TileLeaf = (props: TileProps<Leaf>) => {
   return (
     <div
       class="node"
-      style={{ backgroundColor: colors[props.node.bg] }}
+      style={{
+        backgroundColor: colors[props.node.bg],
+        cursor: modeCursor[mode],
+      }}
       onClick={(e) => handleClick(e, "left")}
       onContextMenu={(e) => handleClick(e, "right")}
     >
-      <Shape fill={colors[node.fg]} />
       <div className="overlay" />
+      <div className="overlay2" />
+      <Shape fill={colors[node.fg]} />
     </div>
   );
 };

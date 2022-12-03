@@ -3,6 +3,7 @@
 	position: relative;
 	width: 512px;
 	height: 512px;
+	outline: 1px solid black;
 }
 
 .editor-root .node {
@@ -16,11 +17,14 @@
 	overflow: hidden;
 }
 
-.editor-root.enableGrid .node {
-	outline: 1px solid black;
+.button {
+	cursor: pointer;
 }
 
+.editor-root.enableGrid .node {
+	outline: 1px solid #333;
 
+}
 
 .editor-root .node .overlay {
 	position: absolute;
@@ -28,8 +32,10 @@
 	height: 100%;
 }
 
-.editor-root.enableGrid .node {
-	outline: 1px dotted white;
+.editor-root .node .overlay2 {
+	position: absolute;
+	width: calc(100% - 2px);
+	height: calc(100% - 2px);
 }
 
 .editor-root svg {
@@ -37,8 +43,13 @@
 	height: 100%;
 }
 
-.editor-root .node:hover .overlay {
-	border: 2px solid white;
+.editor-root .node:hover .overlay, .editor-root .node:hover .overlay2 {
+	border: 2px solid black;
+}
+
+.editor-root .node:hover .overlay2 {
+	border-color: white;
+	border-width: 1px;
 }
 
 .editor-root .branch {
@@ -119,4 +130,21 @@
 
 .selected {
 	border: 2px black solid;
+}
+
+.toolbar {
+	padding: 2px;
+	margin: 10px 0;
+}
+
+.toolbar .button.selected {
+	border: 2px white solid;
+	background-color: lightblue;
+}
+
+.toolbar .button {
+	outline: 2px solid black;
+	border: 2px white solid;
+	border-radius: 2px;
+	background: white;
 }

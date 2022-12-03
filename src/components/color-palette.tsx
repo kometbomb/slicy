@@ -21,11 +21,13 @@ export const ColorPalette = () => {
     <Grid
       cols={5}
       style={{
-        width: "240px",
-        height: "96px",
+        width: "244px",
+        height: "102px",
         borderWidth: "2px",
         borderColor: "black",
         borderStyle: "solid",
+        borderRadius: "3px",
+        padding: "2px",
       }}
     >
       {colors.map((color, index) => (
@@ -33,11 +35,16 @@ export const ColorPalette = () => {
           key={color}
           style={{
             backgroundColor: color,
+            outline: "1px solid white",
             minHeight: "24px",
             minWidth: "24px",
+            textShadow: "0 0 2px black",
+            fontWeight: "bold",
+            color: "white",
           }}
           onClick={(e) => handleClick(e, index, "left")}
           onContextMenu={(e) => handleClick(e, index, "right")}
+          className="button"
         >
           {index === fgColor && "F"}
           {index === bgColor && "B"}

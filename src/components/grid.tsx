@@ -13,6 +13,7 @@ export const Grid = ({
   children: ComponentChildren;
 }) => (
   <div
+    className="grid"
     style={{
       background: "white",
       ...style,
