@@ -96,8 +96,9 @@ export const TileLeaf = (props: TileProps<Leaf>) => {
       onClick={(e) => handleClick(e, "left")}
       onContextMenu={(e) => handleClick(e, "right")}
     >
-      <div className="overlay" />
-      <div className="overlay2" />
+      <div className="overlay">
+        <div className="overlay2" />
+      </div>
       <Shape fill={colors[node.fg]} />
     </div>
   );

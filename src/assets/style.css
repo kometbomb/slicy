@@ -28,14 +28,15 @@
 
 .editor-root .node .overlay {
 	position: absolute;
-	width: 100%;
-	height: 100%;
+	width: calc(100% - 1px);
+	height: calc(100% - 1px);
+	top: 0;
 }
 
 .editor-root .node .overlay2 {
 	position: absolute;
-	width: calc(100% - 2px);
-	height: calc(100% - 2px);
+	width: 100%;
+	height: 100%;
 }
 
 .editor-root svg {
@@ -44,7 +45,8 @@
 }
 
 .editor-root .node:hover .overlay, .editor-root .node:hover .overlay2 {
-	border: 2px solid black;
+	border: 1px solid black;
+	z-index: 100;
 }
 
 .editor-root .node:hover .overlay2 {
