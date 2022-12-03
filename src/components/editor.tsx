@@ -68,7 +68,7 @@ export const Editor = () => {
       >
         <Tile node={root} setNode={setRoot} />
       </div>
-      <ToolPalette />
+      <ToolPalette root={root} />
       <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
         <div className="palettes">
           <ColorPalette />

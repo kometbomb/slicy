@@ -2,6 +2,7 @@ import { h } from "preact";
 import { useContext } from "preact/hooks";
 import { EditorContext, Mode } from "./editor";
 import { Grid } from "./grid";
+import { isBranch, Node } from "../tree";
 
 const ToolButton = ({
   mode,
@@ -41,11 +42,16 @@ const GridButton = () => {
   );
 };
 
-export const ToolPalette = () => {
+const calculateCuts = (node: Node): number =>
+  isBranch(node)
+    ? node.nodes.reduce((total, node) => calculateCuts(node) + total, 0)
+    : 1;
+
+export const ToolPalette = ({ root }: { root: Node }) => {
   return (
     <div className="toolbar">
       <Grid
-        cols={5}
+        cols={6}
         gap={4}
         style={{
           height: "48px",
@@ -59,6 +65,9 @@ export const ToolPalette = () => {
         <ToolButton label="Color" mode="color" icon="🎨" />
         <ToolButton label="Tile" mode="tile" icon="🔹" />
         <GridButton />
+        <div className="stats" title="Square count">
+          {calculateCuts(root)}
+        </div>
       </Grid>
     </div>
   );
