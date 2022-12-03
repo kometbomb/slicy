@@ -1,0 +1,21 @@
+name: Deploy to itch.io
+on:
+  release:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          curl -L -o butler.zip https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default
+          unzip butler.zip
+          chmod +x butler
+          ./butler -V
+      - uses: bahmutov/npm-install@v1
+      - run: |
+          npm run build
+          ./butler push build kometbomb/slicy:webapp
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
