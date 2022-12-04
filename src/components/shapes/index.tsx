@@ -1,6 +1,7 @@
+import { h } from "preact";
 import * as svg from "./svg";
 
-export const shapes: ((props: svg.SvgProps) => JSX.Element)[] = [
+export const shapes: ((props: svg.SvgProps) => h.JSX.Element)[] = [
   svg.Square,
   svg.Sharp1,
   svg.Sharp2,
