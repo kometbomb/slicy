@@ -51,6 +51,9 @@ export const Editor = () => {
   const keyHandler = useCallback(
     (e: KeyboardEvent) => {
       switch (e.key) {
+        /**
+         * Set modes
+         */
         case "s":
           setMode("cut");
           break;
@@ -67,22 +70,35 @@ export const Editor = () => {
           setMode("tile");
           break;
 
+        /**
+         * Toggle grid visibility
+         */
         case "g":
           setEnableGrid((value) => !value);
           break;
 
+        /**
+         * Horizontal mirror tile
+         */
         case "h":
           setShape((shape) => mirrorShapeH(shape));
           break;
 
+        /**
+         * Vertical mirror tile
+         */
         case "v":
           setShape((shape) => mirrorShapeV(shape));
           break;
 
+        /**
+         * Rotate tile CW
+         */
         case "r":
           setShape((shape) => rotateShape(shape));
           break;
 
+        /** Swap selected colors */
         case "x":
           setFgColor(bgColor);
           setBgColor(fgColor);

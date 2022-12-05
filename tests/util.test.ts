@@ -2,6 +2,8 @@ import { mirrorShapeH, mirrorShapeV, rotateShape } from "../src/util";
 
 describe("rotateShape()", () => {
   it("returns rotated shape index", () => {
+    expect(rotateShape(0)).toBe(0);
+
     expect(rotateShape(1)).toBe(2);
     expect(rotateShape(2)).toBe(7);
     expect(rotateShape(7)).toBe(6);
@@ -14,6 +16,8 @@ describe("rotateShape()", () => {
   });
 
   it("returns vertically mirrored shape index", () => {
+    expect(mirrorShapeV(0)).toBe(0);
+
     expect(mirrorShapeV(1)).toBe(6);
     expect(mirrorShapeV(6)).toBe(1);
 
@@ -28,6 +32,8 @@ describe("rotateShape()", () => {
   });
 
   it("returns horizontally mirrored shape index", () => {
+    expect(mirrorShapeH(0)).toBe(0);
+
     expect(mirrorShapeH(1)).toBe(2);
     expect(mirrorShapeH(2)).toBe(1);
 
