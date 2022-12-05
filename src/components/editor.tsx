@@ -82,9 +82,14 @@ export const Editor = () => {
         case "r":
           setShape((shape) => rotateShape(shape));
           break;
+
+        case "x":
+          setFgColor(bgColor);
+          setBgColor(fgColor);
+          break;
       }
     },
-    [setEnableGrid, setShape, setMode]
+    [bgColor, fgColor]
   );
 
   useEffect(() => {
