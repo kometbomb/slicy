@@ -34,7 +34,7 @@ const GridButton = () => {
     <button
       onClick={() => setEnableGrid(!enableGrid)}
       className={["button", ...(enableGrid ? ["selected"] : [])].join(" ")}
-      title="Grid"
+      title="Toggle grid (g)"
       style={{ minWidth: "48px", minHeight: "24px", maxWidth: "48px" }}
     >
       #
@@ -60,10 +60,10 @@ export const ToolPalette = ({ root }: { root: Node }) => {
           justifyContent: "space-between",
         }}
       >
-        <ToolButton label="Cut" mode="cut" icon="✂️" />
-        <ToolButton label="Draw" mode="draw" icon="🖌️" />
-        <ToolButton label="Color" mode="color" icon="🎨" />
-        <ToolButton label="Tile" mode="tile" icon="🔹" />
+        <ToolButton label="Split (s)" mode="cut" icon="✂️" />
+        <ToolButton label="Draw (d)" mode="draw" icon="🖌️" />
+        <ToolButton label="Color (c)" mode="color" icon="🎨" />
+        <ToolButton label="Tile (t)" mode="tile" icon="🔹" />
         <GridButton />
         <div className="stats" title="Square count">
           {calculateCuts(root)}
