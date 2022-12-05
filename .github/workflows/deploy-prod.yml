@@ -7,6 +7,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - run: echo "VERSION=$(npm pkg get version)" >> $GITHUB_ENV
       - uses: actions/checkout@v3
       - run: |
           curl -L -o butler.zip https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default
@@ -15,7 +16,11 @@ jobs:
           ./butler -V
       - uses: bahmutov/npm-install@v1
       - run: |
-          npm run build
-          ./butler push build kometbomb/slicy:webapp
+          PREACT_APP_VERSION=$VERSION npm run build
+          ./butler push build kometbomb/slicy:webapp --userversion ${{ env.VERSION }}
         env:
           BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+      - name: Bump version
+        run: |
+          npm version patch
+          git push
