@@ -6,9 +6,9 @@ import { render, screen } from "@testing-library/preact";
 describe("<Editor/>", () => {
   it("renders the tool buttons", () => {
     render(<Editor />);
-    expect(screen.getByTitle("Cut")).toBeDefined();
-    expect(screen.getByTitle("Draw")).toBeDefined();
-    expect(screen.getByTitle("Color")).toBeDefined();
-    expect(screen.getByTitle("Tile")).toBeDefined();
+    expect(screen.getByTitle("Split (s)")).toBeDefined();
+    expect(screen.getByTitle("Draw (d)")).toBeDefined();
+    expect(screen.getByTitle("Color (c)")).toBeDefined();
+    expect(screen.getByTitle("Tile (t)")).toBeDefined();
   });
 });

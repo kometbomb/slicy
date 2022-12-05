@@ -1,5 +1,6 @@
 import { createContext, h } from "preact";
-import { useCallback, useEffect, useRef, useState } from "preact/hooks";
+import { useCallback, useEffect, useState } from "preact/hooks";
+import { mirrorShapeH, mirrorShapeV, rotateShape } from "../util";
 import { Color, Node, Shape } from "../tree";
 import { ColorPalette } from "./color-palette";
 import { ExportTools } from "./export-tools";
@@ -68,6 +69,18 @@ export const Editor = () => {
 
         case "g":
           setEnableGrid((value) => !value);
+          break;
+
+        case "h":
+          setShape((shape) => mirrorShapeH(shape));
+          break;
+
+        case "v":
+          setShape((shape) => mirrorShapeV(shape));
+          break;
+
+        case "r":
+          setShape((shape) => rotateShape(shape));
           break;
       }
     },
