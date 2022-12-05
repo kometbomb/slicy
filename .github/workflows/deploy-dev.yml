@@ -9,6 +9,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - run: echo "VERSION=$(npm pkg get version)" >> $GITHUB_ENV
       - uses: actions/checkout@v3
       - uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -17,6 +18,6 @@ jobs:
           aws-region: eu-central-1
       - uses: bahmutov/npm-install@v1
       - run: |
-          npm run build
+          PREACT_APP_VERSION=$VERSION npm run build
           npm run deploy:dev
       - run: aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --path "/*"
