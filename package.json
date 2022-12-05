@@ -6,10 +6,10 @@
   "scripts": {
     "build": "preact build",
     "serve": "sirv build --cors --single",
-    "dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider preact watch",
+    "dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider PREACT_APP_VERSION=dev preact watch",
     "lint": "eslint src",
     "test": "jest",
-    "build:dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider preact build",
+    "build:dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider PREACT_APP_VERSION=dev preact build",
     "deploy:dev": "serverless client deploy -s dev --no-confirm"
   },
   "eslintConfig": {
