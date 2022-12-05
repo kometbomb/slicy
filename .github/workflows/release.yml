@@ -1,0 +1,36 @@
+name: Release
+on: workflow_dispatch
+jobs:
+  deploy-to-itch-io:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: echo "VERSION=$(npm pkg get version | sed 's/"//g')" >> $GITHUB_ENV
+      - run: |
+          curl -L -o butler.zip https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default
+          unzip butler.zip -d butler
+          chmod +x butler
+          ./butler/butler -V
+      - uses: bahmutov/npm-install@v1
+      - run: |
+          PREACT_APP_VERSION=$VERSION npm run build
+          git checkout size-plugin.json
+          ./butler/butler push build kometbomb/slicy:webapp --userversion ${{ env.VERSION }}
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+  version-bump:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    needs:
+      - deploy-to-itch-io
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          git config --global user.email "kometbomb@kometbomb.net"
+          git config --global user.name "CI"
+      - uses: 'phips28/gh-action-bump-version@master'
+        with:
+          tag-prefix: 'v'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
