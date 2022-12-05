@@ -84,7 +84,7 @@ export const Editor = () => {
           break;
       }
     },
-    [setEnableGrid]
+    [setEnableGrid, setShape, setMode]
   );
 
   useEffect(() => {
