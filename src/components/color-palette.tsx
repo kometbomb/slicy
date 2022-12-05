@@ -22,6 +22,7 @@ export const ColorPalette = () => {
   return (
     <Grid
       cols={6}
+      gap={1}
       style={{
         width: "244px",
         height: "102px",
@@ -38,7 +39,6 @@ export const ColorPalette = () => {
           style={{
             border: "none",
             backgroundColor: color,
-            outline: "1px solid white",
             minHeight: "24px",
             minWidth: "24px",
             textShadow: "0 0 3px black",
