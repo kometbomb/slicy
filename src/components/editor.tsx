@@ -1,5 +1,6 @@
 import { createContext, h } from "preact";
-import { useEffect, useRef, useState } from "preact/hooks";
+import { useCallback, useEffect, useState } from "preact/hooks";
+import { mirrorShapeH, mirrorShapeV, rotateShape } from "../util";
 import { Color, Node, Shape } from "../tree";
 import { ColorPalette } from "./color-palette";
 import { ExportTools } from "./export-tools";
@@ -46,6 +47,71 @@ export const Editor = () => {
   const [shape, setShape] = useState<Shape>(0);
   const [mode, setMode] = useState<Mode>("draw");
   const [enableGrid, setEnableGrid] = useState(true);
+
+  const keyHandler = useCallback(
+    (e: KeyboardEvent) => {
+      switch (e.key) {
+        /**
+         * Set modes
+         */
+        case "s":
+          setMode("cut");
+          break;
+
+        case "d":
+          setMode("draw");
+          break;
+
+        case "c":
+          setMode("color");
+          break;
+
+        case "t":
+          setMode("tile");
+          break;
+
+        /**
+         * Toggle grid visibility
+         */
+        case "g":
+          setEnableGrid((value) => !value);
+          break;
+
+        /**
+         * Horizontal mirror tile
+         */
+        case "h":
+          setShape((shape) => mirrorShapeH(shape));
+          break;
+
+        /**
+         * Vertical mirror tile
+         */
+        case "v":
+          setShape((shape) => mirrorShapeV(shape));
+          break;
+
+        /**
+         * Rotate tile CW
+         */
+        case "r":
+          setShape((shape) => rotateShape(shape));
+          break;
+
+        /** Swap selected colors */
+        case "x":
+          setFgColor(bgColor);
+          setBgColor(fgColor);
+          break;
+      }
+    },
+    [bgColor, fgColor]
+  );
+
+  useEffect(() => {
+    document.addEventListener("keypress", keyHandler);
+    return () => document.removeEventListener("keypress", keyHandler);
+  });
 
   return (
     <EditorContext.Provider
