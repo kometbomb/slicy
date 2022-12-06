@@ -37,6 +37,7 @@ export const ShapePalette = () => {
         <div
           key={index}
           onClick={(e) => handleClick(e, index)}
+          data-testid={`shape-${index}`}
           style={{
             minWidth: "16px",
             minHeight: "16px",

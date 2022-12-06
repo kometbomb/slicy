@@ -18,7 +18,7 @@ export const TileBranch = (props: TileProps<Branch>) => {
   );
 
   return (
-    <div class="branch" onContextMenu={(e) => e.preventDefault()}>
+    <div class="branch">
       {props.node.nodes.map((node, index) => (
         <Tile
           key={index}
