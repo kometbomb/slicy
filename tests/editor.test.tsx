@@ -187,6 +187,35 @@ describe("<Editor/>", () => {
         expect(within(root).getAllByTestId("node").length).toBe(4);
       });
 
+      it("splits nodes when childnodes clicked", async () => {
+        await waitFor(() => expect(context.data.mode).toBe("cut"));
+
+        expect(within(root).getAllByTestId("node").length).toBe(1);
+
+        // Click top-left tile
+        fireEvent.click(within(root).getAllByTestId("node")[0]);
+        expect(within(root).getAllByTestId("node").length).toBe(4);
+
+        // Click top-left tile again
+        fireEvent.click(within(root).getAllByTestId("node")[0]);
+
+        expect(context.data.root).toEqual({
+          nodes: [
+            {
+              nodes: [
+                { fg: 0, bg: 0, shape: 0 },
+                { fg: 0, bg: 0, shape: 0 },
+                { fg: 0, bg: 0, shape: 0 },
+                { fg: 0, bg: 0, shape: 0 },
+              ],
+            },
+            { fg: 0, bg: 0, shape: 0 },
+            { fg: 0, bg: 0, shape: 0 },
+            { fg: 0, bg: 0, shape: 0 },
+          ],
+        });
+      });
+
       it("joins nodes when right clicked", async () => {
         await waitFor(() => expect(context.data.mode).toBe("cut"));
 
@@ -195,6 +224,80 @@ describe("<Editor/>", () => {
 
         fireEvent.contextMenu(within(root).getAllByTestId("node")[0]);
         expect(within(root).getAllByTestId("node").length).toBe(1);
+      });
+
+      it("should handle joining of root node", async () => {
+        await waitFor(() => expect(context.data.mode).toBe("cut"));
+
+        fireEvent.contextMenu(within(root).getAllByTestId("node")[0]);
+        expect(within(root).getAllByTestId("node").length).toBe(1);
+      });
+    });
+  });
+
+  describe("key shortcuts", () => {
+    test("toggle grid", () => {
+      fireEvent.keyPress(document, { key: "g" });
+      expect(context.data.enableGrid).toBeFalsy();
+      fireEvent.keyPress(document, { key: "g" });
+      expect(context.data.enableGrid).toBeTruthy();
+    });
+
+    describe("modes", () => {
+      test("draw", () => {
+        fireEvent.keyPress(document, { key: "d" });
+        expect(context.data.mode).toBe("draw");
+      });
+
+      test("cut", () => {
+        fireEvent.keyPress(document, { key: "s" });
+        expect(context.data.mode).toBe("cut");
+      });
+
+      test("color", () => {
+        fireEvent.keyPress(document, { key: "c" });
+        expect(context.data.mode).toBe("color");
+      });
+
+      test("tile", () => {
+        fireEvent.keyPress(document, { key: "t" });
+        expect(context.data.mode).toBe("tile");
+      });
+    });
+
+    describe("selection", () => {
+      beforeEach(() => {
+        fireEvent.click(screen.getByTestId("shape-3"));
+      });
+
+      describe("tile", () => {
+        test("vertical mirror", () => {
+          expect(context.data.shape).toBe(3);
+          fireEvent.keyPress(document, { key: "v" });
+          expect(context.data.shape).toBe(8);
+        });
+
+        test("horizontal mirror", () => {
+          expect(context.data.shape).toBe(3);
+          fireEvent.keyPress(document, { key: "h" });
+          expect(context.data.shape).toBe(4);
+        });
+
+        test("rotate", () => {
+          expect(context.data.shape).toBe(3);
+          fireEvent.keyPress(document, { key: "r" });
+          fireEvent.keyPress(document, { key: "r" });
+          expect(context.data.shape).toBe(9);
+        });
+      });
+      describe("color", () => {
+        test("swap colors", () => {
+          expect(context.data.fgColor).toBe(1);
+          expect(context.data.bgColor).toBe(0);
+          fireEvent.keyPress(document, { key: "x" });
+          expect(context.data.fgColor).toBe(0);
+          expect(context.data.bgColor).toBe(1);
+        });
       });
     });
   });
