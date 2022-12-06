@@ -1,5 +1,9 @@
 # slicy
 
+## Latest build
+
+* https://slicy-dev.tic-tac-toad.com/
+
 ## CLI Commands
 *   `npm install`: Installs dependencies
 
