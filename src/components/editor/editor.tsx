@@ -93,6 +93,7 @@ export const Editor = () => {
     <div>
       <div
         id="root-node"
+        data-testid="root-node"
         className={["editor-root", enableGrid ? "enableGrid" : ""].join(" ")}
       >
         <Tile node={root} setNode={setRoot} />

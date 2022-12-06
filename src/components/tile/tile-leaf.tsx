@@ -62,10 +62,12 @@ export const TileLeaf = (props: TileProps<Leaf>) => {
           break;
 
         case "tile":
-          setNode({
-            ...node,
-            shape,
-          });
+          if (button === "left")
+            setNode({
+              ...node,
+              shape,
+            });
+          else setShape(node.shape);
           break;
       }
 
@@ -89,6 +91,7 @@ export const TileLeaf = (props: TileProps<Leaf>) => {
 
   return (
     <div
+      data-testid="node"
       class="node"
       style={{
         backgroundColor: colors[props.node.bg],
