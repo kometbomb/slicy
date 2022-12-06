@@ -14,6 +14,9 @@ import {
   EditorContextProvider,
   EditorContextType,
 } from "../src/components/editor/context";
+import { copyNode, copyPNG, pasteNode } from "../src/clipboard";
+
+jest.mock("../src/clipboard");
 
 describe("<Editor/>", () => {
   const Helper = ({
@@ -299,6 +302,24 @@ describe("<Editor/>", () => {
           expect(context.data.bgColor).toBe(1);
         });
       });
+    });
+  });
+
+  describe("export", () => {
+    it("copies tree to clipboard", () => {
+      fireEvent.click(screen.getByTestId("export-copy-code"));
+      expect(copyNode).toHaveBeenCalledTimes(1);
+      expect(copyNode).toHaveBeenCalledWith(context.data.root);
+    });
+
+    it("pastes tree from clipboard", () => {
+      fireEvent.click(screen.getByTestId("export-paste-code"));
+      expect(pasteNode).toHaveBeenCalledTimes(1);
+    });
+
+    it("copies PNG to clipboard", () => {
+      fireEvent.click(screen.getByTestId("export-copy-png"));
+      expect(copyPNG).toHaveBeenCalledTimes(1);
     });
   });
 });

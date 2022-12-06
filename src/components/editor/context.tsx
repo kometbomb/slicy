@@ -19,24 +19,7 @@ export interface EditorContextType {
   setRoot: (root: Node) => void;
 }
 
-export const EditorContext = createContext<EditorContextType>({
-  mode: "draw",
-  bgColor: 0,
-  fgColor: 1,
-  shape: 0,
-  enableGrid: true,
-  setMode: () => 0,
-  setFgColor: () => 0,
-  setBgColor: () => 0,
-  setShape: () => 0,
-  setEnableGrid: () => 0,
-  root: {
-    bg: 0,
-    fg: 0,
-    shape: 0,
-  },
-  setRoot: () => 0,
-});
+export const EditorContext = createContext<EditorContextType>({} as never);
 
 export const EditorContextProvider = ({
   children,

@@ -1,6 +1,6 @@
 import { h } from "preact";
 import { Node } from "../tree";
-import { copyNode, copyPNG, pasteNode } from "./clipboard";
+import { copyNode, copyPNG, pasteNode } from "../clipboard";
 
 export const ExportTools = ({
   root,
@@ -21,6 +21,7 @@ export const ExportTools = ({
     }}
   >
     <button
+      data-testid="export-copy-code"
       style={{ flex: "1" }}
       className="button"
       onClick={async (e) => {
@@ -31,6 +32,7 @@ export const ExportTools = ({
       Copy to clipboard
     </button>
     <button
+      data-testid="export-paste-code"
       style={{ flex: "1" }}
       className="button"
       onClick={async (e) => {
@@ -43,6 +45,7 @@ export const ExportTools = ({
       Paste from clipboard
     </button>
     <button
+      data-testid="export-copy-png"
       style={{ flex: "1" }}
       className="button"
       onClick={async (e) => {
