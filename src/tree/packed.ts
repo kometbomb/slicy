@@ -6,7 +6,7 @@ import { Shape, Color, isBranch, BranchNodes, Node, Leaf } from ".";
 type PackedLeaf = [Color?, Shape?, Color?];
 type PackedBranch = [PackedNode, PackedNode, PackedNode, PackedNode];
 
-type PackedNode = PackedLeaf | PackedBranch;
+export type PackedNode = PackedLeaf | PackedBranch;
 
 const trimZeros = (array: (number | undefined)[]) => {
   let index;
@@ -15,7 +15,7 @@ const trimZeros = (array: (number | undefined)[]) => {
   return array.slice(0, index + 1);
 };
 
-const packLeaf = (node: Leaf): PackedLeaf =>
+export const packLeaf = (node: Leaf): PackedLeaf =>
   node.fg === node.bg || node.shape === 0
     ? [node.fg]
     : [node.fg, node.shape, node.bg];
@@ -30,10 +30,16 @@ const isPackedBranch = (node: PackedNode): node is PackedBranch =>
   Array.isArray(node[0]) && node.length === 4;
 
 const isPackedLeaf = (node: PackedNode): node is PackedLeaf =>
-  Array.isArray(node) && !node.some((element) => typeof element !== "number");
+  Array.isArray(node) &&
+  node.length <= 3 &&
+  !node.some((element) => typeof element !== "number");
 
 export const validatePackedNode = (node: PackedNode): boolean =>
-  isPackedBranch(node) ? node.every(validatePackedNode) : isPackedLeaf(node);
+  node
+    ? isPackedBranch(node)
+      ? node.every(validatePackedNode)
+      : isPackedLeaf(node)
+    : false;
 
 export const unpackTree = (root: PackedNode): Node =>
   isPackedBranch(root)
