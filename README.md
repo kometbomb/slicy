@@ -1,4 +1,4 @@
-# slicy
+# slicy [![main](https://github.com/kometbomb/slicy/actions/workflows/push.yml/badge.svg?branch=main)](https://github.com/kometbomb/slicy/actions/workflows/push.yml)
 
 ## Latest build
 
