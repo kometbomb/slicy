@@ -4,7 +4,7 @@ import { toPng } from "html-to-image";
 
 export const copyNode = async (node: Node) => {
   try {
-    await window.navigator.clipboard.writeText(JSON.stringify(packTree(node)));
+    await navigator.clipboard.writeText(JSON.stringify(packTree(node)));
     return true;
   } catch (error) {
     console.error(error);
@@ -14,7 +14,7 @@ export const copyNode = async (node: Node) => {
 
 export const pasteNode = async () => {
   try {
-    const dataText = await window.navigator.clipboard.readText();
+    const dataText = await navigator.clipboard.readText();
     if (dataText) {
       const data = JSON.parse(dataText);
       if (validatePackedNode(data)) {
@@ -23,8 +23,8 @@ export const pasteNode = async () => {
     }
   } catch (error) {
     console.error(error);
-    return null;
   }
+  return null;
 };
 
 function dataURItoBlob(dataURI: string) {
@@ -58,7 +58,7 @@ export const copyPNG = async (node: HTMLElement) => {
       height: 512,
       style: { border: "none !important", outline: "none !important" },
     });
-    navigator.clipboard.write([
+    await navigator.clipboard.write([
       new ClipboardItem({
         "image/png": dataURItoBlob(dataUrl),
       }),

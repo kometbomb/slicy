@@ -1,6 +1,5 @@
 import { h } from "preact";
 import { Editor } from "../src/components/editor/editor";
-// See: https://github.com/preactjs/enzyme-adapter-preact-pure
 import {
   fireEvent,
   render,
@@ -14,9 +13,34 @@ import {
   EditorContextProvider,
   EditorContextType,
 } from "../src/components/editor/context";
-import { copyNode, copyPNG, pasteNode } from "../src/clipboard";
+import * as clipboard from "../src/clipboard";
+import { toPng } from "html-to-image";
+import { mocked } from "jest-mock";
 
-jest.mock("../src/clipboard");
+const copyPNG = jest.spyOn(clipboard, "copyPNG");
+const copyNode = jest.spyOn(clipboard, "copyNode");
+const pasteNode = jest.spyOn(clipboard, "pasteNode");
+
+jest.mock("html-to-image");
+
+beforeEach(() => {
+  jest.clearAllMocks();
+
+  Object.assign(navigator, {
+    clipboard: {
+      readText: jest.fn().mockResolvedValue("[[1],[2],[3],[4]]"),
+      writeText: jest.fn(),
+      write: jest.fn(),
+    },
+  });
+
+  mocked(toPng).mockResolvedValue("data:image/png;base64,dGVzdA==");
+  Object.assign(window, {
+    ClipboardItem: () => {},
+  });
+
+  console.error = jest.fn();
+});
 
 describe("<Editor/>", () => {
   const Helper = ({
@@ -308,18 +332,51 @@ describe("<Editor/>", () => {
   describe("export", () => {
     it("copies tree to clipboard", () => {
       fireEvent.click(screen.getByTestId("export-copy-code"));
+      expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 });
       expect(copyNode).toHaveBeenCalledTimes(1);
       expect(copyNode).toHaveBeenCalledWith(context.data.root);
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith("[]");
     });
 
-    it("pastes tree from clipboard", () => {
-      fireEvent.click(screen.getByTestId("export-paste-code"));
-      expect(pasteNode).toHaveBeenCalledTimes(1);
+    describe("paste", () => {
+      it("pastes tree from clipboard", async () => {
+        expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 });
+        fireEvent.click(screen.getByTestId("export-paste-code"));
+        expect(pasteNode).toHaveBeenCalledTimes(1);
+        await waitFor(() =>
+          expect(context.data.root).toEqual({
+            nodes: [
+              { fg: 1, bg: 0, shape: 0 },
+              { fg: 2, bg: 0, shape: 0 },
+              { fg: 3, bg: 0, shape: 0 },
+              { fg: 4, bg: 0, shape: 0 },
+            ],
+          })
+        );
+        expect(console.error).not.toHaveBeenCalled();
+      });
+
+      it("handles invalid input", async () => {
+        expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 });
+        mocked(navigator.clipboard.readText).mockResolvedValue("foo");
+        fireEvent.click(screen.getByTestId("export-paste-code"));
+        expect(pasteNode).toHaveBeenCalledTimes(1);
+        await waitFor(() =>
+          expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 })
+        );
+        expect(console.error).toHaveBeenCalled();
+      });
     });
 
-    it("copies PNG to clipboard", () => {
+    it("copies PNG to clipboard", async () => {
       fireEvent.click(screen.getByTestId("export-copy-png"));
       expect(copyPNG).toHaveBeenCalledTimes(1);
+      await waitFor(() =>
+        expect(navigator.clipboard.write).toHaveBeenCalledWith([
+          expect.any(ClipboardItem),
+        ])
+      );
+      expect(console.error).not.toHaveBeenCalled();
     });
   });
 });
