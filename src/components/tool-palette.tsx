@@ -1,6 +1,6 @@
 import { h } from "preact";
 import { useContext } from "preact/hooks";
-import { EditorContext, Mode } from "./editor";
+import { EditorContext, Mode } from "./editor/context";
 import { Grid } from "./grid";
 import { isBranch, Node } from "../tree";
 

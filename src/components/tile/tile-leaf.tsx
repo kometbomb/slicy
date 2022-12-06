@@ -2,7 +2,8 @@ import { h } from "preact";
 import { useCallback, useContext } from "preact/hooks";
 import { Leaf } from "../../tree";
 import { colors } from "../colors";
-import { EditorContext, Mode } from "../editor";
+import { Mode } from "../editor/editor";
+import { EditorContext } from "../editor/context";
 import { shapes } from "../shapes";
 import { TileProps } from "./tile";
 

@@ -1,5 +1,5 @@
 import { h } from "preact";
-import { Editor } from "../src/components/editor";
+import { Editor } from "../src/components/editor/editor";
 // See: https://github.com/preactjs/enzyme-adapter-preact-pure
 import { render, screen } from "@testing-library/preact";
 
