@@ -16,6 +16,7 @@ const ToolButton = ({
   const { mode: editorMode, setMode } = useContext(EditorContext);
   return (
     <button
+      data-testid={`mode-${mode}`}
       onClick={() => setMode(mode)}
       className={["button", ...(editorMode === mode ? ["selected"] : [])].join(
         " "
@@ -33,6 +34,7 @@ const GridButton = () => {
   return (
     <button
       onClick={() => setEnableGrid(!enableGrid)}
+      data-testid="toggle-grid"
       className={["button", ...(enableGrid ? ["selected"] : [])].join(" ")}
       title="Toggle grid (g)"
       style={{ minWidth: "48px", minHeight: "24px", maxWidth: "48px" }}
@@ -65,7 +67,7 @@ export const ToolPalette = ({ root }: { root: Node }) => {
         <ToolButton label="Color (c)" mode="color" icon="🎨" />
         <ToolButton label="Tile (t)" mode="tile" icon="🔹" />
         <GridButton />
-        <div className="stats" title="Square count">
+        <div className="stats" title="Square count" data-testid="cut-counter">
           {calculateCuts(root)}
         </div>
       </Grid>

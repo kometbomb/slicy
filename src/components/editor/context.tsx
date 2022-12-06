@@ -4,7 +4,7 @@ import { Color, Node, Shape } from "../../tree";
 
 export type Mode = "cut" | "draw" | "color" | "tile";
 
-interface EditorContextType {
+export interface EditorContextType {
   mode: Mode;
   fgColor: Color;
   bgColor: Color;

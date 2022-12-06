@@ -36,6 +36,7 @@ export const ColorPalette = () => {
       {colors.map((color, index) => (
         <button
           key={color}
+          data-testid={`color-${index}`}
           style={{
             border: "none",
             backgroundColor: color,
