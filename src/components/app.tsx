@@ -6,7 +6,9 @@ const App = () => (
     <EditorContextProvider>
       <Editor />
     </EditorContextProvider>
-    <div id="version">{process.env.PREACT_APP_VERSION}</div>
+    <div id="version" data-testid="version-info">
+      {process.env.PREACT_APP_VERSION}
+    </div>
   </div>
 );
 
