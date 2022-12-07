@@ -18,11 +18,8 @@ export const TileLeaf = (props: TileProps<Leaf>) => {
   const { fgColor, bgColor, shape, mode, setBgColor, setFgColor, setShape } =
     useContext(EditorContext);
   const { node, setNode, setParentNode } = props;
-  const handleClick = useCallback(
-    (e: MouseEvent, button: "left" | "right") => {
-      e.preventDefault();
-      e.stopPropagation();
-
+  const doDrawAction = useCallback(
+    (button: "left" | "right") => {
       switch (mode) {
         case "draw":
           if (button === "left")
@@ -38,14 +35,6 @@ export const TileLeaf = (props: TileProps<Leaf>) => {
             setBgColor(node.bg);
           }
 
-          break;
-
-        case "cut":
-          if (button === "left")
-            setNode({
-              nodes: [{ ...node }, { ...node }, { ...node }, { ...node }],
-            });
-          else if (setParentNode) setParentNode(node);
           break;
 
         case "color":
@@ -70,21 +59,57 @@ export const TileLeaf = (props: TileProps<Leaf>) => {
           else setShape(node.shape);
           break;
       }
+    },
+    [
+      bgColor,
+      fgColor,
+      mode,
+      node,
+      setBgColor,
+      setFgColor,
+      setNode,
+      setShape,
+      shape,
+    ]
+  );
+  const handleEnter = useCallback(
+    (e: MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (e.buttons & (1 | 2)) doDrawAction(e.buttons & 1 ? "left" : "right");
+    },
+    [doDrawAction]
+  );
+  const handleMouseDown = useCallback(
+    (e: MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      doDrawAction(e.buttons & 1 ? "left" : "right");
+    },
+    [doDrawAction]
+  );
+  const handleClick = useCallback(
+    (e: MouseEvent, button: "left" | "right") => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      doDrawAction(button);
+
+      switch (mode) {
+        case "cut":
+          if (button === "left")
+            setNode({
+              nodes: [{ ...node }, { ...node }, { ...node }, { ...node }],
+            });
+          else if (setParentNode) setParentNode(node);
+          break;
+      }
 
       return false;
     },
-    [
-      node,
-      setNode,
-      fgColor,
-      bgColor,
-      shape,
-      mode,
-      setBgColor,
-      setFgColor,
-      setShape,
-      setParentNode,
-    ]
+    [doDrawAction, mode, setNode, node, setParentNode]
   );
 
   const Shape = shapes[node.shape];
@@ -97,7 +122,9 @@ export const TileLeaf = (props: TileProps<Leaf>) => {
         backgroundColor: colors[props.node.bg],
         cursor: modeCursor[mode],
       }}
+      onMouseEnter={handleEnter}
       onClick={(e) => handleClick(e, "left")}
+      onMouseDown={handleMouseDown}
       onContextMenu={(e) => handleClick(e, "right")}
     >
       <div className="overlay">
