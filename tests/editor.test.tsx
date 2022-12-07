@@ -16,6 +16,7 @@ import {
 import * as clipboard from "../src/clipboard";
 import { toPng } from "html-to-image";
 import { mocked } from "jest-mock";
+import { Leaf } from "../src/tree";
 
 const copyPNG = jest.spyOn(clipboard, "copyPNG");
 const copyNode = jest.spyOn(clipboard, "copyNode");
@@ -115,149 +116,311 @@ describe("<Editor/>", () => {
       root = screen.getByTestId("root-node");
     });
 
-    describe("draw", () => {
+    describe("click", () => {
+      describe("draw", () => {
+        beforeEach(() => {
+          context.data.setMode("draw");
+          context.data.setFgColor(1);
+          context.data.setBgColor(2);
+          context.data.setShape(4);
+        });
+
+        it("sets node attributes when left clicking", async () => {
+          await waitFor(() => expect(context.data.mode).toBe("draw"));
+
+          fireEvent.click(within(root).getAllByTestId("node")[0]);
+
+          expect(context.data.root).toEqual({ fg: 1, bg: 2, shape: 4 });
+        });
+
+        it("picks node attributes when right clicking", async () => {
+          await waitFor(() => expect(context.data.mode).toBe("draw"));
+
+          expect(context.data.fgColor).toBe(1);
+          expect(context.data.bgColor).toBe(2);
+          expect(context.data.shape).toBe(4);
+
+          fireEvent.contextMenu(within(root).getAllByTestId("node")[0]);
+
+          expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 });
+          expect(context.data.fgColor).toBe(0);
+          expect(context.data.bgColor).toBe(0);
+          expect(context.data.shape).toBe(0);
+        });
+      });
+
+      describe("color", () => {
+        beforeEach(() => {
+          context.data.setMode("color");
+          context.data.setFgColor(1);
+          context.data.setBgColor(2);
+          context.data.setShape(4);
+        });
+
+        it("sets foreground color when left clicking", async () => {
+          await waitFor(() => expect(context.data.mode).toBe("color"));
+
+          fireEvent.click(within(root).getAllByTestId("node")[0]);
+
+          expect(context.data.root).toEqual({ fg: 1, bg: 0, shape: 0 });
+        });
+
+        it("sets background color when right clicking", async () => {
+          await waitFor(() => expect(context.data.mode).toBe("color"));
+
+          fireEvent.contextMenu(within(root).getAllByTestId("node")[0]);
+
+          expect(context.data.root).toEqual({ fg: 0, bg: 2, shape: 0 });
+        });
+      });
+
+      describe("tile", () => {
+        beforeEach(() => {
+          context.data.setMode("tile");
+          context.data.setFgColor(1);
+          context.data.setBgColor(2);
+          context.data.setShape(4);
+        });
+
+        it("sets shape when left clicking", async () => {
+          await waitFor(() => expect(context.data.mode).toBe("tile"));
+
+          fireEvent.click(within(root).getAllByTestId("node")[0]);
+
+          expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 4 });
+        });
+
+        it("picks shape when right clicking", async () => {
+          await waitFor(() => expect(context.data.mode).toBe("tile"));
+
+          expect(context.data.shape).toBe(4);
+
+          fireEvent.contextMenu(within(root).getAllByTestId("node")[0]);
+
+          expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 });
+          expect(context.data.shape).toBe(0);
+        });
+      });
+
+      describe("cut", () => {
+        beforeEach(() => {
+          context.data.setMode("cut");
+        });
+
+        it("splits nodes when clicked", async () => {
+          await waitFor(() => expect(context.data.mode).toBe("cut"));
+
+          expect(within(root).getAllByTestId("node").length).toBe(1);
+
+          fireEvent.click(within(root).getAllByTestId("node")[0]);
+          expect(within(root).getAllByTestId("node").length).toBe(4);
+        });
+
+        it("splits nodes when childnodes clicked", async () => {
+          await waitFor(() => expect(context.data.mode).toBe("cut"));
+
+          expect(within(root).getAllByTestId("node").length).toBe(1);
+
+          // Click top-left tile
+          fireEvent.click(within(root).getAllByTestId("node")[0]);
+          expect(within(root).getAllByTestId("node").length).toBe(4);
+
+          // Click top-left tile again
+          fireEvent.click(within(root).getAllByTestId("node")[0]);
+
+          expect(context.data.root).toEqual({
+            nodes: [
+              {
+                nodes: [
+                  { fg: 0, bg: 0, shape: 0 },
+                  { fg: 0, bg: 0, shape: 0 },
+                  { fg: 0, bg: 0, shape: 0 },
+                  { fg: 0, bg: 0, shape: 0 },
+                ],
+              },
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+            ],
+          });
+        });
+
+        it("joins nodes when right clicked", async () => {
+          await waitFor(() => expect(context.data.mode).toBe("cut"));
+
+          fireEvent.click(within(root).getAllByTestId("node")[0]);
+          expect(within(root).getAllByTestId("node").length).toBe(4);
+
+          fireEvent.contextMenu(within(root).getAllByTestId("node")[0]);
+          expect(within(root).getAllByTestId("node").length).toBe(1);
+        });
+
+        it("should handle joining of root node", async () => {
+          await waitFor(() => expect(context.data.mode).toBe("cut"));
+
+          fireEvent.contextMenu(within(root).getAllByTestId("node")[0]);
+          expect(within(root).getAllByTestId("node").length).toBe(1);
+        });
+      });
+    });
+
+    describe("drag", () => {
+      const doMoves = (buttons = 1) => {
+        fireEvent.mouseDown(within(root).getAllByTestId("node")[0], {
+          buttons,
+        });
+        fireEvent.mouseEnter(within(root).getAllByTestId("node")[1], {
+          buttons,
+        });
+        fireEvent.mouseEnter(within(root).getAllByTestId("node")[3], {
+          buttons,
+        });
+        fireEvent.mouseUp(within(root).getAllByTestId("node")[3], {
+          buttons,
+        });
+      };
       beforeEach(() => {
         context.data.setMode("draw");
         context.data.setFgColor(1);
         context.data.setBgColor(2);
         context.data.setShape(4);
-      });
-
-      it("sets node attributes when left clicking", async () => {
-        await waitFor(() => expect(context.data.mode).toBe("draw"));
-
         fireEvent.click(within(root).getAllByTestId("node")[0]);
-
-        expect(context.data.root).toEqual({ fg: 1, bg: 2, shape: 4 });
       });
 
-      it("picks node attributes when right clicking", async () => {
-        await waitFor(() => expect(context.data.mode).toBe("draw"));
-
-        expect(context.data.fgColor).toBe(1);
-        expect(context.data.bgColor).toBe(2);
-        expect(context.data.shape).toBe(4);
-
-        fireEvent.contextMenu(within(root).getAllByTestId("node")[0]);
-
-        expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 });
-        expect(context.data.fgColor).toBe(0);
-        expect(context.data.bgColor).toBe(0);
-        expect(context.data.shape).toBe(0);
-      });
-    });
-
-    describe("color", () => {
-      beforeEach(() => {
-        context.data.setMode("color");
-        context.data.setFgColor(1);
-        context.data.setBgColor(2);
-        context.data.setShape(4);
-      });
-
-      it("sets foreground color when left clicking", async () => {
-        await waitFor(() => expect(context.data.mode).toBe("color"));
-
-        fireEvent.click(within(root).getAllByTestId("node")[0]);
-
-        expect(context.data.root).toEqual({ fg: 1, bg: 0, shape: 0 });
-      });
-
-      it("sets background color when right clicking", async () => {
-        await waitFor(() => expect(context.data.mode).toBe("color"));
-
-        fireEvent.contextMenu(within(root).getAllByTestId("node")[0]);
-
-        expect(context.data.root).toEqual({ fg: 0, bg: 2, shape: 0 });
-      });
-    });
-
-    describe("tile", () => {
-      beforeEach(() => {
-        context.data.setMode("tile");
-        context.data.setFgColor(1);
-        context.data.setBgColor(2);
-        context.data.setShape(4);
-      });
-
-      it("sets shape when left clicking", async () => {
-        await waitFor(() => expect(context.data.mode).toBe("tile"));
-
-        fireEvent.click(within(root).getAllByTestId("node")[0]);
-
-        expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 4 });
-      });
-
-      it("picks shape when right clicking", async () => {
-        await waitFor(() => expect(context.data.mode).toBe("tile"));
-
-        expect(context.data.shape).toBe(4);
-
-        fireEvent.contextMenu(within(root).getAllByTestId("node")[0]);
-
-        expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 });
-        expect(context.data.shape).toBe(0);
-      });
-    });
-
-    describe("cut", () => {
-      beforeEach(() => {
-        context.data.setMode("cut");
-      });
-
-      it("splits nodes when clicked", async () => {
-        await waitFor(() => expect(context.data.mode).toBe("cut"));
-
-        expect(within(root).getAllByTestId("node").length).toBe(1);
-
-        fireEvent.click(within(root).getAllByTestId("node")[0]);
-        expect(within(root).getAllByTestId("node").length).toBe(4);
-      });
-
-      it("splits nodes when childnodes clicked", async () => {
-        await waitFor(() => expect(context.data.mode).toBe("cut"));
-
-        expect(within(root).getAllByTestId("node").length).toBe(1);
-
-        // Click top-left tile
-        fireEvent.click(within(root).getAllByTestId("node")[0]);
-        expect(within(root).getAllByTestId("node").length).toBe(4);
-
-        // Click top-left tile again
-        fireEvent.click(within(root).getAllByTestId("node")[0]);
-
-        expect(context.data.root).toEqual({
-          nodes: [
-            {
+      describe("cut", () => {
+        it("should not split tiles when dragging", async () => {
+          context.data.setMode("cut");
+          await waitFor(() => expect(context.data.mode).toBe("cut"));
+          await waitFor(() =>
+            expect(context.data.root).toEqual({
               nodes: [
                 { fg: 0, bg: 0, shape: 0 },
                 { fg: 0, bg: 0, shape: 0 },
                 { fg: 0, bg: 0, shape: 0 },
                 { fg: 0, bg: 0, shape: 0 },
               ],
-            },
-            { fg: 0, bg: 0, shape: 0 },
-            { fg: 0, bg: 0, shape: 0 },
-            { fg: 0, bg: 0, shape: 0 },
-          ],
+            })
+          );
+
+          doMoves(1);
+
+          expect(context.data.root).toEqual({
+            nodes: [
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+            ],
+          });
+        });
+
+        it("should not join tiles when dragging", async () => {
+          context.data.setMode("cut");
+          await waitFor(() => expect(context.data.mode).toBe("cut"));
+          await waitFor(() =>
+            expect(context.data.root).toEqual({
+              nodes: [
+                { fg: 0, bg: 0, shape: 0 },
+                { fg: 0, bg: 0, shape: 0 },
+                { fg: 0, bg: 0, shape: 0 },
+                { fg: 0, bg: 0, shape: 0 },
+              ],
+            })
+          );
+
+          doMoves(2);
+
+          expect(context.data.root).toEqual({
+            nodes: [
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+            ],
+          });
         });
       });
 
-      it("joins nodes when right clicked", async () => {
-        await waitFor(() => expect(context.data.mode).toBe("cut"));
+      describe("draw", () => {
+        it("should modify tiles if left button dragging", async () => {
+          context.data.setMode("draw");
+          await waitFor(() => expect(context.data.mode).toBe("draw"));
+          await waitFor(() => expect(context.data.fgColor).toBe(1));
 
-        fireEvent.click(within(root).getAllByTestId("node")[0]);
-        expect(within(root).getAllByTestId("node").length).toBe(4);
+          doMoves(1);
 
-        fireEvent.contextMenu(within(root).getAllByTestId("node")[0]);
-        expect(within(root).getAllByTestId("node").length).toBe(1);
+          await waitFor(() =>
+            expect(context.data.root).toEqual({
+              nodes: [
+                { fg: 1, bg: 2, shape: 4 },
+                { fg: 1, bg: 2, shape: 4 },
+                { fg: 0, bg: 0, shape: 0 },
+                { fg: 1, bg: 2, shape: 4 },
+              ],
+            })
+          );
+        });
+
+        it("should not modify tiles if right button dragging", async () => {
+          context.data.setMode("draw");
+          await waitFor(() => expect(context.data.mode).toBe("draw"));
+          await waitFor(() => expect(context.data.fgColor).toBe(1));
+
+          doMoves(2);
+
+          await waitFor(() =>
+            expect(context.data.root).toEqual({
+              nodes: [
+                { fg: 0, bg: 0, shape: 0 },
+                { fg: 0, bg: 0, shape: 0 },
+                { fg: 0, bg: 0, shape: 0 },
+                { fg: 0, bg: 0, shape: 0 },
+              ],
+            })
+          );
+        });
       });
 
-      it("should handle joining of root node", async () => {
-        await waitFor(() => expect(context.data.mode).toBe("cut"));
+      describe("color", () => {
+        it("should modify foreground color if left button dragging", async () => {
+          context.data.setMode("color");
+          await waitFor(() => expect(context.data.mode).toBe("color"));
+          await waitFor(() => expect(context.data.fgColor).toBe(1));
+          await waitFor(() => expect(context.data.bgColor).toBe(2));
 
-        fireEvent.contextMenu(within(root).getAllByTestId("node")[0]);
-        expect(within(root).getAllByTestId("node").length).toBe(1);
+          doMoves(1);
+
+          await waitFor(() =>
+            expect(context.data.root).toEqual({
+              nodes: [
+                { fg: 1, bg: 0, shape: 0 },
+                { fg: 1, bg: 0, shape: 0 },
+                { fg: 0, bg: 0, shape: 0 },
+                { fg: 1, bg: 0, shape: 0 },
+              ],
+            })
+          );
+        });
+
+        it("should modify background color if right button dragging", async () => {
+          context.data.setMode("color");
+          await waitFor(() => expect(context.data.mode).toBe("color"));
+          await waitFor(() => expect(context.data.fgColor).toBe(1));
+          await waitFor(() => expect(context.data.bgColor).toBe(2));
+
+          doMoves(2);
+
+          await waitFor(() =>
+            expect(context.data.root).toEqual({
+              nodes: [
+                { fg: 0, bg: 2, shape: 0 },
+                { fg: 0, bg: 2, shape: 0 },
+                { fg: 0, bg: 0, shape: 0 },
+                { fg: 0, bg: 2, shape: 0 },
+              ],
+            })
+          );
+        });
       });
     });
   });
