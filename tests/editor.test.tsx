@@ -541,5 +541,15 @@ describe("<Editor/>", () => {
       );
       expect(console.error).not.toHaveBeenCalled();
     });
+
+    it("creates link to SVG", async () => {
+      fireEvent.click(screen.getByTestId("export-copy-svg"));
+      expect(screen.queryByText("Link to file...")).not.toBeNull();
+      expect(
+        screen.getByText("Link to file...").getAttribute("href")
+      ).toContain("data:image/svg+xml;base64,");
+      fireEvent.click(screen.getByTestId("close-file-link"));
+      expect(screen.queryByText("Link to file...")).toBeNull();
+    });
   });
 });

@@ -1,7 +1,19 @@
+/* eslint-disable react/display-name */
 import { h } from "preact";
 import * as svg from "./svg";
 
-export const shapes: ((props: svg.SvgProps) => h.JSX.Element)[] = [
+const svgWrapper =
+  (Shape: (props: svg.SvgProps) => h.JSX.Element) => (props: svg.SvgProps) =>
+    (
+      <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
+        <Shape {...props} />
+      </svg>
+    );
+
+/**
+ * Shapes without the xml root tag
+ */
+export const baseShapes = [
   svg.Square,
   svg.Sharp1,
   svg.Sharp2,
@@ -13,3 +25,9 @@ export const shapes: ((props: svg.SvgProps) => h.JSX.Element)[] = [
   svg.Round4,
   svg.Round3,
 ];
+
+/**
+ * Shapes with the xml root tag
+ */
+export const shapes: ((props: svg.SvgProps) => h.JSX.Element)[] =
+  baseShapes.map(svgWrapper);
