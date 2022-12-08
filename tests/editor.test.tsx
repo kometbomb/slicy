@@ -1,5 +1,3 @@
-import { h } from "preact";
-import { Editor } from "../src/components/editor/editor";
 import {
   fireEvent,
   render,
@@ -7,16 +5,17 @@ import {
   waitFor,
   within,
 } from "@testing-library/preact";
+import { toPng } from "html-to-image";
+import { h } from "preact";
+import { mocked } from "jest-mock";
 import { useContext } from "preact/hooks";
+import * as clipboard from "../src/clipboard";
 import { EditorContext } from "../src/components/editor";
 import {
   EditorContextProvider,
   EditorContextType,
 } from "../src/components/editor/context";
-import * as clipboard from "../src/clipboard";
-import { toPng } from "html-to-image";
-import { mocked } from "jest-mock";
-import { Leaf } from "../src/tree";
+import { Editor } from "../src/components/editor/editor";
 
 const copyPNG = jest.spyOn(clipboard, "copyPNG");
 const copyNode = jest.spyOn(clipboard, "copyNode");
@@ -89,11 +88,11 @@ describe("<Editor/>", () => {
     it("selects colors with buttons", () => {
       fireEvent.click(screen.getByTestId("color-3"));
       expect(context.data.fgColor).toEqual(3);
-      expect(context.data.bgColor).toEqual(0);
+      expect(context.data.bgColor).toEqual(1);
 
       fireEvent.click(screen.getByTestId("color-9"));
       expect(context.data.fgColor).toEqual(9);
-      expect(context.data.bgColor).toEqual(0);
+      expect(context.data.bgColor).toEqual(1);
 
       fireEvent.contextMenu(screen.getByTestId("color-5"));
       expect(context.data.bgColor).toEqual(5);
@@ -482,11 +481,11 @@ describe("<Editor/>", () => {
       });
       describe("color", () => {
         test("swap colors", () => {
-          expect(context.data.fgColor).toBe(1);
-          expect(context.data.bgColor).toBe(0);
-          fireEvent.keyPress(document, { key: "x" });
           expect(context.data.fgColor).toBe(0);
           expect(context.data.bgColor).toBe(1);
+          fireEvent.keyPress(document, { key: "x" });
+          expect(context.data.fgColor).toBe(1);
+          expect(context.data.bgColor).toBe(0);
         });
       });
     });

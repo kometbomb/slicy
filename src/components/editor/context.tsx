@@ -31,8 +31,8 @@ export const EditorContextProvider = ({
     fg: 0,
     shape: 0,
   });
-  const [bgColor, setBgColor] = useState<Color>(0);
-  const [fgColor, setFgColor] = useState<Color>(1);
+  const [bgColor, setBgColor] = useState<Color>(1);
+  const [fgColor, setFgColor] = useState<Color>(0);
   const [shape, setShape] = useState<Shape>(0);
   const [mode, setMode] = useState<Mode>("cut");
   const [enableGrid, setEnableGrid] = useState(true);
