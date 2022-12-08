@@ -3,5 +3,7 @@ import { Node } from "./tree";
 
 export const getSVGDataUrl = (node: Node) => {
   const svg = buildSVG(node);
-  return `data:image/svg+xml;base64,${btoa(svg)}`;
+  return `data:image/svg+xml;base64,${btoa(
+    `<?xml version="1.0" encoding="UTF-8" ?>${svg}`
+  )}`;
 };
