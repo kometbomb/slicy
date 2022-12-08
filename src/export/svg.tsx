@@ -1,0 +1,38 @@
+import { h } from "preact";
+import render from "preact-render-to-string";
+import { colors } from "../components/colors";
+import { baseShapes } from "../components/shapes";
+import { isBranch, Node } from "../tree";
+
+const coords = [
+  [0, 0],
+  [5, 0],
+  [0, 5],
+  [5, 5],
+];
+
+const getSVGNode = (node: Node): h.JSX.Element =>
+  isBranch(node) ? (
+    <g transform={`scale(.5)`}>
+      {node.nodes.map((n, index) => (
+        <g
+          key={index}
+          transform={`translate(${coords[index][0]},${coords[index][1]})`}
+        >
+          {getSVGNode(n)}
+        </g>
+      ))}
+    </g>
+  ) : (
+    <g transform={`scale(.5)`}>
+      <rect width="10" height="10" fill={colors[node.bg]} />
+      {baseShapes[node.shape]({ fill: colors[node.fg] })}
+    </g>
+  );
+
+export const buildSVG = (root: Node) =>
+  render(
+    <svg viewBox="0 0 5 5" xmlns="http://www.w3.org/2000/svg">
+      {getSVGNode(root)}
+    </svg>
+  );

@@ -9,7 +9,7 @@ import { toPng } from "html-to-image";
 import { h } from "preact";
 import { mocked } from "jest-mock";
 import { useContext } from "preact/hooks";
-import * as clipboard from "../src/clipboard";
+import * as clipboard from "../src/export/clipboard";
 import { EditorContext } from "../src/components/editor";
 import {
   EditorContextProvider,
@@ -539,6 +539,16 @@ describe("<Editor/>", () => {
         ])
       );
       expect(console.error).not.toHaveBeenCalled();
+    });
+
+    it("creates link to SVG", async () => {
+      fireEvent.click(screen.getByTestId("export-copy-svg"));
+      expect(screen.queryByText("Link to file...")).not.toBeNull();
+      expect(
+        screen.getByText("Link to file...").getAttribute("href")
+      ).toContain("data:image/svg+xml;base64,");
+      fireEvent.click(screen.getByTestId("close-file-link"));
+      expect(screen.queryByText("Link to file...")).toBeNull();
     });
   });
 });
