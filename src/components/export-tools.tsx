@@ -1,7 +1,7 @@
 import { h, Fragment } from "preact";
 import { Node } from "../tree";
-import { copyNode, copyPNG, pasteNode } from "../clipboard";
-import { getSVGDataUrl } from "../export";
+import { copyNode, copyPNG, pasteNode } from "../export/clipboard";
+import { getSVGDataUrl } from "../export/export";
 import { useState } from "preact/hooks";
 
 const SavePrompt = ({

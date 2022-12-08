@@ -1,5 +1,5 @@
-import { Node } from "./tree";
-import { packTree, unpackTree, validatePackedNode } from "./tree/packed";
+import { Node } from "../tree";
+import { packTree, unpackTree, validatePackedNode } from "../tree/packed";
 import { toPng } from "html-to-image";
 
 export const copyNode = async (node: Node) => {

@@ -9,7 +9,7 @@ import { toPng } from "html-to-image";
 import { h } from "preact";
 import { mocked } from "jest-mock";
 import { useContext } from "preact/hooks";
-import * as clipboard from "../src/clipboard";
+import * as clipboard from "../src/export/clipboard";
 import { EditorContext } from "../src/components/editor";
 import {
   EditorContextProvider,

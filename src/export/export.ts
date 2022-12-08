@@ -1,5 +1,5 @@
 import { buildSVG } from "./svg";
-import { Node } from "./tree";
+import { Node } from "../tree";
 
 export const getSVGDataUrl = (node: Node) => {
   const svg = buildSVG(node);

@@ -1,4 +1,4 @@
-import { buildSVG } from "../src/svg";
+import { buildSVG } from "../src/export/svg";
 import { unpackTree } from "../src/tree/packed";
 
 describe("buildSVG()", () => {

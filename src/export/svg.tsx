@@ -1,8 +1,8 @@
-import { isBranch, Leaf, Node } from "./tree";
 import { h } from "preact";
-import { baseShapes } from "./components/shapes";
-import { colors } from "./components/colors";
 import render from "preact-render-to-string";
+import { colors } from "../components/colors";
+import { baseShapes } from "../components/shapes";
+import { isBranch, Node } from "../tree";
 
 const coords = [
   [0, 0],
