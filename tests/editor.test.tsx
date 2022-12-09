@@ -21,6 +21,12 @@ const copyPNG = jest.spyOn(clipboard, "copyPNG");
 const copyNode = jest.spyOn(clipboard, "copyNode");
 const pasteNode = jest.spyOn(clipboard, "pasteNode");
 
+const complexClick = (element: HTMLElement) => {
+  fireEvent.mouseDown(element, { button: 0, buttons: 1 });
+  fireEvent.mouseUp(element, { button: 0, buttons: 1 });
+  fireEvent.click(element);
+};
+
 jest.mock("html-to-image");
 
 beforeEach(() => {
@@ -65,32 +71,47 @@ describe("<Editor/>", () => {
 
   describe("layout", () => {
     it("selects modes with buttons", () => {
-      fireEvent.click(screen.getByTestId("mode-color"));
+      complexClick(screen.getByTestId("mode-color"));
       expect(context.data.mode).toEqual("color");
 
-      fireEvent.click(screen.getByTestId("mode-tile"));
+      complexClick(screen.getByTestId("mode-tile"));
       expect(context.data.mode).toEqual("tile");
 
-      fireEvent.click(screen.getByTestId("mode-cut"));
+      complexClick(screen.getByTestId("mode-cut"));
       expect(context.data.mode).toEqual("cut");
 
-      fireEvent.click(screen.getByTestId("mode-draw"));
+      complexClick(screen.getByTestId("mode-draw"));
       expect(context.data.mode).toEqual("draw");
     });
 
+    it("triggers undo", async () => {
+      const root = screen.getByTestId("root-node");
+      context.data.setMode("draw");
+      context.data.setFgColor(1);
+      context.data.setBgColor(2);
+      context.data.setShape(4);
+      await waitFor(() => expect(context.data.mode).toBe("draw"));
+      complexClick(within(root).getAllByTestId("node")[0]);
+
+      expect(context.data.root).toEqual({ fg: 1, bg: 2, shape: 4 });
+
+      complexClick(screen.getByTestId("tool-undo"));
+      expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 });
+    });
+
     it("toggles grid", () => {
-      fireEvent.click(screen.getByTestId("toggle-grid"));
+      complexClick(screen.getByTestId("toggle-grid"));
       expect(context.data.enableGrid).toBeFalsy();
-      fireEvent.click(screen.getByTestId("toggle-grid"));
+      complexClick(screen.getByTestId("toggle-grid"));
       expect(context.data.enableGrid).toBeTruthy();
     });
 
     it("selects colors with buttons", () => {
-      fireEvent.click(screen.getByTestId("color-3"));
+      complexClick(screen.getByTestId("color-3"));
       expect(context.data.fgColor).toEqual(3);
       expect(context.data.bgColor).toEqual(1);
 
-      fireEvent.click(screen.getByTestId("color-9"));
+      complexClick(screen.getByTestId("color-9"));
       expect(context.data.fgColor).toEqual(9);
       expect(context.data.bgColor).toEqual(1);
 
@@ -100,10 +121,10 @@ describe("<Editor/>", () => {
     });
 
     it("selects shapes with buttons", () => {
-      fireEvent.click(screen.getByTestId("shape-3"));
+      complexClick(screen.getByTestId("shape-3"));
       expect(context.data.shape).toEqual(3);
 
-      fireEvent.click(screen.getByTestId("shape-9"));
+      complexClick(screen.getByTestId("shape-9"));
       expect(context.data.shape).toEqual(9);
     });
   });
@@ -127,7 +148,7 @@ describe("<Editor/>", () => {
         it("sets node attributes when left clicking", async () => {
           await waitFor(() => expect(context.data.mode).toBe("draw"));
 
-          fireEvent.click(within(root).getAllByTestId("node")[0]);
+          complexClick(within(root).getAllByTestId("node")[0]);
 
           expect(context.data.root).toEqual({ fg: 1, bg: 2, shape: 4 });
         });
@@ -159,7 +180,7 @@ describe("<Editor/>", () => {
         it("sets foreground color when left clicking", async () => {
           await waitFor(() => expect(context.data.mode).toBe("color"));
 
-          fireEvent.click(within(root).getAllByTestId("node")[0]);
+          complexClick(within(root).getAllByTestId("node")[0]);
 
           expect(context.data.root).toEqual({ fg: 1, bg: 0, shape: 0 });
         });
@@ -184,7 +205,7 @@ describe("<Editor/>", () => {
         it("sets shape when left clicking", async () => {
           await waitFor(() => expect(context.data.mode).toBe("tile"));
 
-          fireEvent.click(within(root).getAllByTestId("node")[0]);
+          complexClick(within(root).getAllByTestId("node")[0]);
 
           expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 4 });
         });
@@ -211,7 +232,7 @@ describe("<Editor/>", () => {
 
           expect(within(root).getAllByTestId("node").length).toBe(1);
 
-          fireEvent.click(within(root).getAllByTestId("node")[0]);
+          complexClick(within(root).getAllByTestId("node")[0]);
           expect(within(root).getAllByTestId("node").length).toBe(4);
         });
 
@@ -221,11 +242,11 @@ describe("<Editor/>", () => {
           expect(within(root).getAllByTestId("node").length).toBe(1);
 
           // Click top-left tile
-          fireEvent.click(within(root).getAllByTestId("node")[0]);
+          complexClick(within(root).getAllByTestId("node")[0]);
           expect(within(root).getAllByTestId("node").length).toBe(4);
 
           // Click top-left tile again
-          fireEvent.click(within(root).getAllByTestId("node")[0]);
+          complexClick(within(root).getAllByTestId("node")[0]);
 
           expect(context.data.root).toEqual({
             nodes: [
@@ -247,7 +268,7 @@ describe("<Editor/>", () => {
         it("joins nodes when right clicked", async () => {
           await waitFor(() => expect(context.data.mode).toBe("cut"));
 
-          fireEvent.click(within(root).getAllByTestId("node")[0]);
+          complexClick(within(root).getAllByTestId("node")[0]);
           expect(within(root).getAllByTestId("node").length).toBe(4);
 
           fireEvent.contextMenu(within(root).getAllByTestId("node")[0]);
@@ -283,7 +304,7 @@ describe("<Editor/>", () => {
         context.data.setFgColor(1);
         context.data.setBgColor(2);
         context.data.setShape(4);
-        fireEvent.click(within(root).getAllByTestId("node")[0]);
+        complexClick(within(root).getAllByTestId("node")[0]);
       });
 
       describe("cut", () => {
@@ -422,6 +443,73 @@ describe("<Editor/>", () => {
         });
       });
     });
+
+    describe("undo", () => {
+      it("handles empty history", () => {
+        context.data.undo();
+        expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 });
+      });
+
+      it("restores earlier state", async () => {
+        await waitFor(() =>
+          expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 })
+        );
+
+        complexClick(within(root).getAllByTestId("node")[0]);
+
+        await waitFor(() =>
+          expect(context.data.root).toEqual({
+            nodes: [
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+            ],
+          })
+        );
+
+        context.data.setMode("draw");
+        context.data.setFgColor(1);
+        context.data.setBgColor(2);
+        context.data.setShape(3);
+        await waitFor(() => expect(context.data.mode).toBe("draw"));
+        await waitFor(() => expect(context.data.fgColor).toBe(1));
+        await waitFor(() => expect(context.data.bgColor).toBe(2));
+        await waitFor(() => expect(context.data.shape).toBe(3));
+
+        complexClick(within(root).getAllByTestId("node")[0]);
+
+        await waitFor(() =>
+          expect(context.data.root).toEqual({
+            nodes: [
+              { fg: 1, bg: 2, shape: 3 },
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+            ],
+          })
+        );
+
+        context.data.undo();
+
+        await waitFor(() =>
+          expect(context.data.root).toEqual({
+            nodes: [
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+            ],
+          })
+        );
+
+        context.data.undo();
+
+        await waitFor(() =>
+          expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 })
+        );
+      });
+    });
   });
 
   describe("key shortcuts", () => {
@@ -456,7 +544,7 @@ describe("<Editor/>", () => {
 
     describe("selection", () => {
       beforeEach(() => {
-        fireEvent.click(screen.getByTestId("shape-3"));
+        complexClick(screen.getByTestId("shape-3"));
       });
 
       describe("tile", () => {
@@ -479,6 +567,7 @@ describe("<Editor/>", () => {
           expect(context.data.shape).toBe(9);
         });
       });
+
       describe("color", () => {
         test("swap colors", () => {
           expect(context.data.fgColor).toBe(0);
@@ -489,11 +578,58 @@ describe("<Editor/>", () => {
         });
       });
     });
+
+    describe("misc", () => {
+      describe("undo", () => {
+        beforeEach(async () => {
+          context.data.setRoot({ fg: 6, bg: 1, shape: 0 });
+          await waitFor(() =>
+            // eslint-disable-next-line jest/no-standalone-expect
+            expect(context.data.root).toEqual({ fg: 6, bg: 1, shape: 0 })
+          );
+          context.data.setRoot({ fg: 7, bg: 1, shape: 0 });
+          await waitFor(() =>
+            // eslint-disable-next-line jest/no-standalone-expect
+            expect(context.data.root).toEqual({ fg: 7, bg: 1, shape: 0 })
+          );
+        });
+
+        it("requires a modifier", async () => {
+          await waitFor(() =>
+            expect(context.data.root).toEqual({ fg: 7, bg: 1, shape: 0 })
+          );
+          fireEvent.keyDown(document, { key: "z" });
+          await waitFor(() =>
+            expect(context.data.root).toEqual({ fg: 7, bg: 1, shape: 0 })
+          );
+        });
+
+        it("uses alt/meta as the modifier", async () => {
+          await waitFor(() =>
+            expect(context.data.root).toEqual({ fg: 7, bg: 1, shape: 0 })
+          );
+          fireEvent.keyDown(document, { key: "z", altKey: true });
+          await waitFor(() =>
+            expect(context.data.root).toEqual({ fg: 6, bg: 1, shape: 0 })
+          );
+        });
+
+        it("uses ctrl as the modifier", async () => {
+          await waitFor(() =>
+            expect(context.data.root).toEqual({ fg: 7, bg: 1, shape: 0 })
+          );
+          fireEvent.keyDown(document, { key: "z", ctrlKey: true });
+          await waitFor(() =>
+            expect(context.data.root).toEqual({ fg: 6, bg: 1, shape: 0 })
+          );
+        });
+      });
+    });
   });
 
   describe("export", () => {
     it("copies tree to clipboard", () => {
-      fireEvent.click(screen.getByTestId("export-copy-code"));
+      complexClick(screen.getByTestId("export-copy-code"));
       expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 });
       expect(copyNode).toHaveBeenCalledTimes(1);
       expect(copyNode).toHaveBeenCalledWith(context.data.root);
@@ -503,7 +639,7 @@ describe("<Editor/>", () => {
     describe("paste", () => {
       it("pastes tree from clipboard", async () => {
         expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 });
-        fireEvent.click(screen.getByTestId("export-paste-code"));
+        complexClick(screen.getByTestId("export-paste-code"));
         expect(pasteNode).toHaveBeenCalledTimes(1);
         await waitFor(() =>
           expect(context.data.root).toEqual({
@@ -521,7 +657,7 @@ describe("<Editor/>", () => {
       it("handles invalid input", async () => {
         expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 });
         mocked(navigator.clipboard.readText).mockResolvedValue("foo");
-        fireEvent.click(screen.getByTestId("export-paste-code"));
+        complexClick(screen.getByTestId("export-paste-code"));
         expect(pasteNode).toHaveBeenCalledTimes(1);
         await waitFor(() =>
           expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 })
@@ -531,7 +667,7 @@ describe("<Editor/>", () => {
     });
 
     it("copies PNG to clipboard", async () => {
-      fireEvent.click(screen.getByTestId("export-copy-png"));
+      complexClick(screen.getByTestId("export-copy-png"));
       expect(copyPNG).toHaveBeenCalledTimes(1);
       await waitFor(() =>
         expect(navigator.clipboard.write).toHaveBeenCalledWith([
@@ -542,12 +678,12 @@ describe("<Editor/>", () => {
     });
 
     it("creates link to SVG", async () => {
-      fireEvent.click(screen.getByTestId("export-copy-svg"));
+      complexClick(screen.getByTestId("export-copy-svg"));
       expect(screen.queryByText("Link to file...")).not.toBeNull();
       expect(
         screen.getByText("Link to file...").getAttribute("href")
       ).toContain("data:image/svg+xml;base64,");
-      fireEvent.click(screen.getByTestId("close-file-link"));
+      complexClick(screen.getByTestId("close-file-link"));
       expect(screen.queryByText("Link to file...")).toBeNull();
     });
   });

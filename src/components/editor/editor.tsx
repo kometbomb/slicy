@@ -22,71 +22,93 @@ export const Editor = () => {
     setShape,
     root,
     setRoot,
+    undo,
   } = useContext(EditorContext);
 
-  const keyHandler = useCallback(
+  const handleKeypress = useCallback(
     (e: KeyboardEvent) => {
-      switch (e.key) {
-        /**
-         * Set modes
-         */
-        case "s":
-          setMode("cut");
-          break;
+      if (!(e.altKey || e.ctrlKey))
+        switch (e.key) {
+          /**
+           * Set modes
+           */
+          case "s":
+            setMode("cut");
+            break;
 
-        case "d":
-          setMode("draw");
-          break;
+          case "d":
+            setMode("draw");
+            break;
 
-        case "c":
-          setMode("color");
-          break;
+          case "c":
+            setMode("color");
+            break;
 
-        case "t":
-          setMode("tile");
-          break;
+          case "t":
+            setMode("tile");
+            break;
 
-        /**
-         * Toggle grid visibility
-         */
-        case "g":
-          setEnableGrid((value) => !value);
-          break;
+          /**
+           * Toggle grid visibility
+           */
+          case "g":
+            setEnableGrid((value) => !value);
+            break;
 
-        /**
-         * Horizontal mirror tile
-         */
-        case "h":
-          setShape((shape) => mirrorShapeH(shape));
-          break;
+          /**
+           * Horizontal mirror tile
+           */
+          case "h":
+            setShape((shape) => mirrorShapeH(shape));
+            break;
 
-        /**
-         * Vertical mirror tile
-         */
-        case "v":
-          setShape((shape) => mirrorShapeV(shape));
-          break;
+          /**
+           * Vertical mirror tile
+           */
+          case "v":
+            setShape((shape) => mirrorShapeV(shape));
+            break;
 
-        /**
-         * Rotate tile CW
-         */
-        case "r":
-          setShape((shape) => rotateShape(shape));
-          break;
+          /**
+           * Rotate tile CW
+           */
+          case "r":
+            setShape((shape) => rotateShape(shape));
+            break;
 
-        /** Swap selected colors */
-        case "x":
-          setFgColor(bgColor);
-          setBgColor(fgColor);
-          break;
-      }
+          /** Swap selected colors */
+          case "x":
+            setFgColor(bgColor);
+            setBgColor(fgColor);
+            break;
+        }
     },
     [bgColor, fgColor, setBgColor, setEnableGrid, setFgColor, setMode, setShape]
   );
 
+  /**
+   * Handle keydown event for modified + key events
+   */
+  const handleKeydown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.altKey || e.ctrlKey) {
+        switch (e.key) {
+          case "z":
+            undo();
+            break;
+        }
+      }
+    },
+    [undo]
+  );
+
   useEffect(() => {
-    document.addEventListener("keypress", keyHandler);
-    return () => document.removeEventListener("keypress", keyHandler);
+    document.addEventListener("keypress", handleKeypress);
+    document.addEventListener("keydown", handleKeydown);
+    return () => {
+      document.removeEventListener("keypress", handleKeypress);
+      document.removeEventListener("keydown", handleKeydown);
+    };
   });
 
   return (

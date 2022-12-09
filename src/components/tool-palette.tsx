@@ -44,6 +44,21 @@ const GridButton = () => {
   );
 };
 
+const UndoButton = () => {
+  const { undo } = useContext(EditorContext);
+  return (
+    <button
+      onClick={undo}
+      data-testid="tool-undo"
+      className="button"
+      title="Undo (CTRL/CMD-Z)"
+      style={{ minWidth: "48px", minHeight: "24px", maxWidth: "48px" }}
+    >
+      ⏪
+    </button>
+  );
+};
+
 const calculateCuts = (node: Node): number =>
   isBranch(node)
     ? node.nodes.reduce((total, node) => calculateCuts(node) + total, 0)
@@ -53,7 +68,7 @@ export const ToolPalette = ({ root }: { root: Node }) => {
   return (
     <div className="toolbar">
       <Grid
-        cols={6}
+        cols={7}
         gap={4}
         style={{
           height: "48px",
@@ -67,6 +82,7 @@ export const ToolPalette = ({ root }: { root: Node }) => {
         <ToolButton label="Color (c)" mode="color" icon="🎨" />
         <ToolButton label="Tile (t)" mode="tile" icon="🔹" />
         <GridButton />
+        <UndoButton />
         <div className="stats" title="Square count" data-testid="cut-counter">
           {calculateCuts(root)}
         </div>
