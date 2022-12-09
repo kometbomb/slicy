@@ -95,7 +95,7 @@ export const TileLeaf = (props: TileProps<Leaf>) => {
       e.preventDefault();
       e.stopPropagation();
 
-      doDrawAction(button);
+      if (button === "right") doDrawAction(button);
 
       switch (mode) {
         case "cut":

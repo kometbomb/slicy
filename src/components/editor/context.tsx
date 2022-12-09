@@ -1,5 +1,5 @@
 import { ComponentChildren, createContext, h } from "preact";
-import { StateUpdater, useState } from "preact/hooks";
+import { StateUpdater, useCallback, useRef, useState } from "preact/hooks";
 import { Color, Node, Shape } from "../../tree";
 
 export type Mode = "cut" | "draw" | "color" | "tile";
@@ -17,6 +17,7 @@ export interface EditorContextType {
   setEnableGrid: StateUpdater<boolean>;
   root: Node;
   setRoot: (root: Node) => void;
+  undo: () => void;
 }
 
 export const EditorContext = createContext<EditorContextType>({} as never);
@@ -36,12 +37,26 @@ export const EditorContextProvider = ({
   const [shape, setShape] = useState<Shape>(0);
   const [mode, setMode] = useState<Mode>("cut");
   const [enableGrid, setEnableGrid] = useState(true);
+  const history = useRef<Node[]>([]);
+  const undo = useCallback(() => {
+    const prev = history.current.pop();
+    if (!prev) return;
+    setRoot(prev);
+  }, [history]);
+  const setRootWithHistory = useCallback(
+    (newRoot: Node) => {
+      history.current.push(root);
+      setRoot(newRoot);
+    },
+    [root, history]
+  );
 
   return (
     <EditorContext.Provider
       value={{
+        undo,
         root,
-        setRoot,
+        setRoot: setRootWithHistory,
         bgColor,
         fgColor,
         setBgColor,
