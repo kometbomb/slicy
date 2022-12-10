@@ -2,7 +2,7 @@ import { h } from "preact";
 import { EditorContextProvider, Editor } from "./editor";
 
 const App = () => (
-  <div id="app">
+  <div id="app" data-testid="app">
     <EditorContextProvider>
       <Editor />
     </EditorContextProvider>
