@@ -126,11 +126,7 @@ export const Editor = () => {
           <ColorPalette />
           <ShapePalette />
         </div>
-        <ExportTools
-          setRoot={setRoot}
-          root={root}
-          getDomNode={() => document.getElementById("root-node")}
-        />
+        <ExportTools setRoot={setRoot} root={root} />
       </div>
     </div>
   );

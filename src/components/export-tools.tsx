@@ -27,11 +27,9 @@ const SavePrompt = ({
 
 export const ExportTools = ({
   root,
-  getDomNode,
   setRoot,
 }: {
   root: Node;
-  getDomNode: () => HTMLElement | null;
   setRoot: (node: Node) => void;
 }) => {
   const [dataUrl, setDataUrl] = useState<string>();
@@ -76,8 +74,7 @@ export const ExportTools = ({
         className="button"
         onClick={async (e) => {
           e.preventDefault();
-          const domNode = getDomNode();
-          if (domNode) await copyPNG(domNode);
+          await copyPNG(root);
         }}
       >
         Copy .PNG
