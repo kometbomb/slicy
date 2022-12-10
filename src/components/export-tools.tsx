@@ -1,9 +1,10 @@
 import { h } from "preact";
-import { Node } from "../tree";
+import { useState } from "preact/hooks";
 import { copyDataURL, copyNode, pasteNode } from "../export/clipboard";
 import { getDataURL } from "../export/export";
-import { useState } from "preact/hooks";
+import { Node } from "../tree";
 import { Grid } from "./grid";
+import { Modal, ModalContent, ModalHeader } from "./modal";
 
 const SavePrompt = ({
   url,
@@ -15,9 +16,9 @@ const SavePrompt = ({
   if (!url) return null;
 
   return (
-    <div className="modal">
-      <div className="content">
-        <h5 className="heading">Export</h5>
+    <Modal onClose={onClose}>
+      <ModalContent>
+        <ModalHeader>Export</ModalHeader>
         <Grid gap={8}>
           <button
             class="button"
@@ -43,8 +44,8 @@ const SavePrompt = ({
             OK
           </button>
         </Grid>
-      </div>
-    </div>
+      </ModalContent>
+    </Modal>
   );
 };
 
