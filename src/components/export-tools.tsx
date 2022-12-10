@@ -82,7 +82,9 @@ export const ExportTools = ({
         Copy to clipboard
       </button>
       <button
-        disabled={!navigator.clipboard?.readText}
+        disabled={
+          typeof window !== "undefined" && !navigator.clipboard?.readText
+        }
         data-testid="export-paste-code"
         style={{ flex: "1" }}
         className="button"
