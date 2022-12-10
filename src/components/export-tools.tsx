@@ -12,13 +12,11 @@ const SavePrompt = ({
   onClose,
 }: {
   format: "svg" | "png";
-  url?: string;
+  url: string;
   onClose: () => void;
 }) => {
-  if (!url) return null;
-
   return (
-    <Modal onClose={onClose}>
+    <Modal onClose={onClose} open={!!url}>
       <ModalContent>
         <ModalHeader>{`Export .${format.toLocaleUpperCase()}`}</ModalHeader>
         <Grid gap={8}>
@@ -58,7 +56,7 @@ export const ExportTools = ({
   root: Node;
   setRoot: (node: Node) => void;
 }) => {
-  const [dataUrl, setDataUrl] = useState<string>();
+  const [dataUrl, setDataUrl] = useState<string>("");
   const [format, setFormat] = useState<"svg" | "png">("svg");
 
   return (
@@ -121,7 +119,7 @@ export const ExportTools = ({
       </button>
       <SavePrompt
         url={dataUrl}
-        onClose={() => setDataUrl(undefined)}
+        onClose={() => setDataUrl("")}
         format={format}
       />
     </div>
