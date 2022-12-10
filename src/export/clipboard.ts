@@ -1,6 +1,6 @@
 import { Node } from "../tree";
 import { packTree, unpackTree, validatePackedNode } from "../tree/packed";
-import { toPng } from "html-to-image";
+import { renderPNG } from "./render";
 
 export const copyNode = async (node: Node) => {
   try {
@@ -51,13 +51,9 @@ function dataURItoBlob(dataURI: string) {
   return blob;
 }
 
-export const copyPNG = async (node: HTMLElement) => {
+export const copyPNG = async (root: Node) => {
   try {
-    const dataUrl = await toPng(node, {
-      width: 512,
-      height: 512,
-      style: { border: "none !important", outline: "none !important" },
-    });
+    const dataUrl = await renderPNG(root);
     await navigator.clipboard.write([
       new ClipboardItem({
         "image/png": dataURItoBlob(dataUrl),

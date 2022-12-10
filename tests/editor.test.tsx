@@ -5,7 +5,6 @@ import {
   waitFor,
   within,
 } from "@testing-library/preact";
-import { toPng } from "html-to-image";
 import { h } from "preact";
 import { mocked } from "jest-mock";
 import { useContext } from "preact/hooks";
@@ -16,6 +15,7 @@ import {
   EditorContextType,
 } from "../src/components/editor/context";
 import { Editor } from "../src/components/editor/editor";
+import { renderPNG } from "../src/export/render";
 
 const copyPNG = jest.spyOn(clipboard, "copyPNG");
 const copyNode = jest.spyOn(clipboard, "copyNode");
@@ -27,7 +27,7 @@ const complexClick = (element: HTMLElement) => {
   fireEvent.click(element);
 };
 
-jest.mock("html-to-image");
+jest.mock("../src/export/render");
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -40,10 +40,11 @@ beforeEach(() => {
     },
   });
 
-  mocked(toPng).mockResolvedValue("data:image/png;base64,dGVzdA==");
   Object.assign(window, {
     ClipboardItem: () => {},
   });
+
+  mocked(renderPNG).mockResolvedValue("data:image/png;base64,");
 
   console.error = jest.fn();
 });

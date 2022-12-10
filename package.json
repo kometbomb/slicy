@@ -23,7 +23,6 @@
     ]
   },
   "dependencies": {
-    "html-to-image": "^1.10.10",
     "preact": "^10.10.0",
     "preact-render-to-string": "^5.2.1"
   },
