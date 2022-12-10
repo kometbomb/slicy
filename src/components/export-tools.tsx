@@ -7,18 +7,18 @@ import { Grid } from "./grid";
 import { Modal, ModalContent, ModalHeader } from "./modal";
 
 const SavePrompt = ({
+  format,
   url,
   onClose,
 }: {
-  url?: string;
+  format: "svg" | "png";
+  url: string;
   onClose: () => void;
 }) => {
-  if (!url) return null;
-
   return (
-    <Modal onClose={onClose}>
+    <Modal onClose={onClose} open={!!url}>
       <ModalContent>
-        <ModalHeader>Export</ModalHeader>
+        <ModalHeader>{`Export .${format.toLocaleUpperCase()}`}</ModalHeader>
         <Grid gap={8}>
           <button
             class="button"
@@ -56,7 +56,8 @@ export const ExportTools = ({
   root: Node;
   setRoot: (node: Node) => void;
 }) => {
-  const [dataUrl, setDataUrl] = useState<string>();
+  const [dataUrl, setDataUrl] = useState<string>("");
+  const [format, setFormat] = useState<"svg" | "png">("svg");
 
   return (
     <div
@@ -99,6 +100,7 @@ export const ExportTools = ({
         onClick={async (e) => {
           e.preventDefault();
           setDataUrl(await getDataURL(root, "png"));
+          setFormat("png");
         }}
       >
         Export .PNG
@@ -110,11 +112,16 @@ export const ExportTools = ({
         onClick={async (e) => {
           e.preventDefault();
           setDataUrl(await getDataURL(root, "svg"));
+          setFormat("svg");
         }}
       >
         Export .SVG
       </button>
-      <SavePrompt url={dataUrl} onClose={() => setDataUrl(undefined)} />
+      <SavePrompt
+        url={dataUrl}
+        onClose={() => setDataUrl("")}
+        format={format}
+      />
     </div>
   );
 };
