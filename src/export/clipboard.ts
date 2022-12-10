@@ -1,6 +1,7 @@
 import { Node } from "../tree";
 import { packTree, unpackTree, validatePackedNode } from "../tree/packed";
-import { renderPNG } from "./render";
+import { getDataURL } from "./export";
+import { renderPNG } from "./png";
 
 export const copyNode = async (node: Node) => {
   try {
@@ -51,12 +52,16 @@ function dataURItoBlob(dataURI: string) {
   return blob;
 }
 
-export const copyPNG = async (root: Node) => {
+export const copyDataURL = async (root: Node, type: "svg" | "png") => {
+  const mimetypes: Record<typeof type, string> = {
+    svg: "image/svg+xml",
+    png: "image/png",
+  };
   try {
-    const dataUrl = await renderPNG(root);
+    const dataUrl = await getDataURL(root, type);
     await navigator.clipboard.write([
       new ClipboardItem({
-        "image/png": dataURItoBlob(dataUrl),
+        [mimetypes[type]]: dataURItoBlob(dataUrl),
       }),
     ]);
   } catch (error) {

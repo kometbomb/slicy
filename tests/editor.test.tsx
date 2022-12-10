@@ -15,9 +15,9 @@ import {
   EditorContextType,
 } from "../src/components/editor/context";
 import { Editor } from "../src/components/editor/editor";
-import { renderPNG } from "../src/export/render";
+import { renderPNG } from "../src/export/png";
 
-const copyPNG = jest.spyOn(clipboard, "copyPNG");
+const copyDataURL = jest.spyOn(clipboard, "copyDataURL");
 const copyNode = jest.spyOn(clipboard, "copyNode");
 const pasteNode = jest.spyOn(clipboard, "pasteNode");
 
@@ -27,7 +27,7 @@ const complexClick = (element: HTMLElement) => {
   fireEvent.click(element);
 };
 
-jest.mock("../src/export/render");
+jest.mock("../src/export/png");
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -669,7 +669,7 @@ describe("<Editor/>", () => {
 
     it("copies PNG to clipboard", async () => {
       complexClick(screen.getByTestId("export-copy-png"));
-      expect(copyPNG).toHaveBeenCalledTimes(1);
+      expect(copyDataURL).toHaveBeenCalledTimes(1);
       await waitFor(() =>
         expect(navigator.clipboard.write).toHaveBeenCalledWith([
           expect.any(ClipboardItem),
@@ -680,7 +680,9 @@ describe("<Editor/>", () => {
 
     it("creates link to SVG", async () => {
       complexClick(screen.getByTestId("export-copy-svg"));
-      expect(screen.queryByText("Link to file...")).not.toBeNull();
+      await waitFor(() =>
+        expect(screen.queryByText("Link to file...")).not.toBeNull()
+      );
       expect(
         screen.getByText("Link to file...").getAttribute("href")
       ).toContain("data:image/svg+xml;base64,");

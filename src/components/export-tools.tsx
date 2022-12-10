@@ -1,7 +1,7 @@
 import { h, Fragment } from "preact";
 import { Node } from "../tree";
-import { copyNode, copyPNG, pasteNode } from "../export/clipboard";
-import { getSVGDataUrl } from "../export/export";
+import { copyDataURL, copyNode, pasteNode } from "../export/clipboard";
+import { getDataURL } from "../export/export";
 import { useState } from "preact/hooks";
 
 const SavePrompt = ({
@@ -74,7 +74,7 @@ export const ExportTools = ({
         className="button"
         onClick={async (e) => {
           e.preventDefault();
-          await copyPNG(root);
+          await copyDataURL(root, "png");
         }}
       >
         Copy .PNG
@@ -85,7 +85,7 @@ export const ExportTools = ({
         className="button"
         onClick={async (e) => {
           e.preventDefault();
-          const url = getSVGDataUrl(root);
+          const url = await getDataURL(root, "svg");
           setDataUrl(url);
         }}
       >
