@@ -18,34 +18,41 @@ export const Modal = ({
   onClose,
   children,
 }: {
+  /** Requested modal visibility */
   open: boolean;
   onClose: () => void;
   children: ComponentChildren;
 }) => {
-  const [isVisible, setIsVisible] = useState(false);
+  // Actual modal mount status
+  const [isMounted, setIsMounted] = useState(false);
+  // Modal requested state
   const [isOpen, setIsOpen] = useState(false);
   const escHandler = useCallback(
     (e: KeyboardEvent) => {
-      if (!isVisible) return;
+      if (!isMounted) return;
       e.preventDefault();
       if (e.key == "Escape") onClose();
     },
-    [onClose, isVisible]
+    [onClose, isMounted]
   );
   useEvent("keydown", escHandler);
   useEffect(() => {
-    setIsOpen(isVisible);
-  }, [isVisible]);
+    // Will follow one render cycle after the mount status changes
+    setIsOpen(isMounted);
+  }, [isMounted]);
   useEffect(() => {
     if (open) {
-      setIsVisible(true);
-    } else
+      // Set mounted status after open request
+      setIsMounted(true);
+    } else {
+      // Unmount after 220 ms (animation is ~200 ms)
       setTimeout(() => {
-        setIsVisible(false);
+        setIsMounted(false);
       }, 220);
+    }
   }, [open]);
 
-  if (!isVisible) return null;
+  if (!isMounted) return null;
 
   const classes = ["modal", ...(isOpen && open ? ["open"] : [])];
 
