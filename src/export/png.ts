@@ -15,11 +15,11 @@ export const renderPNG = async (root: Node): Promise<string> => {
   const svgImage = createImage();
   svgImage.width = imageWidth;
   svgImage.height = imageHeight;
-  svgImage.src = await getSVGDataUrl(root);
+  svgImage.src = await getSVGDataUrl(root, imageWidth, imageHeight);
 
   return new Promise<string>((resolve, reject) => {
     svgImage.onload = () => {
-      context.drawImage(svgImage, 0, 0);
+      context.drawImage(svgImage, 0, 0, imageWidth, imageHeight);
       resolve(canvas.toDataURL("image/png"));
     };
     svgImage.onerror = (e) => reject(e);

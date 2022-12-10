@@ -9,6 +9,7 @@ import { MockCanvas } from "./fixtures/mockCanvas";
 import { MockContext } from "./fixtures/mockContext";
 import { MockImage } from "./fixtures/mockImage";
 import { mockTree } from "./fixtures/mockTree";
+import * as svg from "../src/export/svg";
 
 jest.mock("../src/export/createElement");
 
@@ -28,6 +29,7 @@ beforeEach(() => {
 describe("render", () => {
   describe("renderPNG()", () => {
     it("renders node tree to PNG", async () => {
+      const getSVGDataUrlSpy = jest.spyOn(svg, "getSVGDataUrl");
       const result = await renderPNG(mockTree);
       expect(result).toEqual("data:image/png;base64,hello-from-mock");
       expect(createContext).toHaveBeenCalledWith(
@@ -36,7 +38,16 @@ describe("render", () => {
       expect(mockContext.drawImage).toHaveBeenCalledWith(
         expect.objectContaining({ width: 1024, height: 1024 }),
         0,
-        0
+        0,
+        1024,
+        1024
+      );
+      // Ensure this is called with dimensions so that Firefox can handle
+      // the SVG in a canvas
+      expect(getSVGDataUrlSpy).toHaveBeenCalledWith(
+        expect.any(Object),
+        1024,
+        1024
       );
     });
   });
