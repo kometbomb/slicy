@@ -26,10 +26,11 @@ export const Modal = ({
   const [isOpen, setIsOpen] = useState(false);
   const escHandler = useCallback(
     (e: KeyboardEvent) => {
+      if (!isVisible) return;
       e.preventDefault();
       if (e.key == "Escape") onClose();
     },
-    [onClose]
+    [onClose, isVisible]
   );
   useEvent("keydown", escHandler);
   useEffect(() => {
