@@ -4,7 +4,7 @@ import {
   createImage,
   createContext,
 } from "../src/export/createElement";
-import { renderPNG } from "../src/export/render";
+import { renderPNG } from "../src/export/png";
 import { MockCanvas } from "./fixtures/mockCanvas";
 import { MockContext } from "./fixtures/mockContext";
 import { MockImage } from "./fixtures/mockImage";

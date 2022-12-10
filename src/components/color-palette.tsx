@@ -24,6 +24,7 @@ export const ColorPalette = () => {
       cols={6}
       gap={1}
       style={{
+        background: "white",
         width: "244px",
         height: "102px",
         borderWidth: "2px",

@@ -15,7 +15,6 @@ export const Grid = ({
   <div
     className="grid"
     style={{
-      background: "white",
       ...style,
       display: "grid",
       gap,

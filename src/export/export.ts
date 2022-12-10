@@ -1,9 +1,12 @@
-import { buildSVG } from "./svg";
+import { getSVGDataUrl } from "./svg";
 import { Node } from "../tree";
+import { renderPNG } from "./png";
 
-export const getSVGDataUrl = (node: Node) => {
-  const svg = buildSVG(node);
-  return `data:image/svg+xml;base64,${btoa(
-    `<?xml version="1.0" encoding="UTF-8" ?>${svg}`
-  )}`;
+const exporters = {
+  png: renderPNG,
+  svg: getSVGDataUrl,
+};
+
+export const getDataURL = (root: Node, type: "png" | "svg") => {
+  return exporters[type](root);
 };

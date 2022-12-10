@@ -1,8 +1,9 @@
-import { h, Fragment } from "preact";
+import { h } from "preact";
 import { Node } from "../tree";
-import { copyNode, copyPNG, pasteNode } from "../export/clipboard";
-import { getSVGDataUrl } from "../export/export";
+import { copyDataURL, copyNode, pasteNode } from "../export/clipboard";
+import { getDataURL } from "../export/export";
 import { useState } from "preact/hooks";
+import { Grid } from "./grid";
 
 const SavePrompt = ({
   url,
@@ -14,14 +15,36 @@ const SavePrompt = ({
   if (!url) return null;
 
   return (
-    <>
-      <a className="button" href={url}>
-        Link to file...
-      </a>
-      <button class="button" onClick={onClose} data-testid="close-file-link">
-        OK
-      </button>
-    </>
+    <div className="modal">
+      <div className="content">
+        <h5 className="heading">Export</h5>
+        <Grid gap={8}>
+          <button
+            class="button"
+            data-testid="export-copy"
+            onClick={async () => {
+              await copyDataURL(url);
+              onClose();
+            }}
+          >
+            Copy to clipboard
+          </button>
+          <a
+            className="button"
+            href={url}
+            rel="noreferrer"
+            target="_blank"
+            data-testid="export-link"
+          >
+            Link to file...
+          </a>
+          <hr />
+          <button class="button" onClick={onClose} data-testid="export-close">
+            OK
+          </button>
+        </Grid>
+      </div>
+    </div>
   );
 };
 
@@ -69,27 +92,26 @@ export const ExportTools = ({
         Paste from clipboard
       </button>
       <button
-        data-testid="export-copy-png"
+        data-testid="export-png"
         style={{ flex: "1" }}
         className="button"
         onClick={async (e) => {
           e.preventDefault();
-          await copyPNG(root);
+          setDataUrl(await getDataURL(root, "png"));
         }}
       >
-        Copy .PNG
+        Export .PNG
       </button>
       <button
-        data-testid="export-copy-svg"
+        data-testid="export-svg"
         style={{ flex: "1" }}
         className="button"
         onClick={async (e) => {
           e.preventDefault();
-          const url = getSVGDataUrl(root);
-          setDataUrl(url);
+          setDataUrl(await getDataURL(root, "svg"));
         }}
       >
-        Save .SVG
+        Export .SVG
       </button>
       <SavePrompt url={dataUrl} onClose={() => setDataUrl(undefined)} />
     </div>

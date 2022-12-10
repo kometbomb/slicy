@@ -1,6 +1,5 @@
 import { Node } from "../tree";
 import { packTree, unpackTree, validatePackedNode } from "../tree/packed";
-import { renderPNG } from "./render";
 
 export const copyNode = async (node: Node) => {
   try {
@@ -27,7 +26,7 @@ export const pasteNode = async () => {
   return null;
 };
 
-function dataURItoBlob(dataURI: string) {
+function dataURItoBlob(dataURI: string): [Blob, string] {
   // convert base64 to raw binary data held in a string
   // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
   const byteString = atob(dataURI.split(",")[1]);
@@ -48,15 +47,15 @@ function dataURItoBlob(dataURI: string) {
 
   // write the ArrayBuffer to a blob, and you're done
   const blob = new Blob([ab], { type: mimeString });
-  return blob;
+  return [blob, mimeString];
 }
 
-export const copyPNG = async (root: Node) => {
+export const copyDataURL = async (dataUrl: string) => {
   try {
-    const dataUrl = await renderPNG(root);
+    const [blob, mimetype] = dataURItoBlob(dataUrl);
     await navigator.clipboard.write([
       new ClipboardItem({
-        "image/png": dataURItoBlob(dataUrl),
+        [mimetype]: blob,
       }),
     ]);
   } catch (error) {

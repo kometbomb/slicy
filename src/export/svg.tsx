@@ -36,3 +36,12 @@ export const buildSVG = (root: Node) =>
       {getSVGNode(root)}
     </svg>
   );
+
+export const getSVGDataUrl = (node: Node) => {
+  const svg = buildSVG(node);
+  return Promise.resolve(
+    `data:image/svg+xml;base64,${btoa(
+      `<?xml version="1.0" encoding="UTF-8" ?>${svg}`
+    )}`
+  );
+};

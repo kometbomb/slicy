@@ -6,45 +6,20 @@ import {
   within,
 } from "@testing-library/preact";
 import { h } from "preact";
-import { mocked } from "jest-mock";
 import { useContext } from "preact/hooks";
-import * as clipboard from "../src/export/clipboard";
 import { EditorContext } from "../src/components/editor";
 import {
   EditorContextProvider,
   EditorContextType,
 } from "../src/components/editor/context";
 import { Editor } from "../src/components/editor/editor";
-import { renderPNG } from "../src/export/render";
-
-const copyPNG = jest.spyOn(clipboard, "copyPNG");
-const copyNode = jest.spyOn(clipboard, "copyNode");
-const pasteNode = jest.spyOn(clipboard, "pasteNode");
-
-const complexClick = (element: HTMLElement) => {
-  fireEvent.mouseDown(element, { button: 0, buttons: 1 });
-  fireEvent.mouseUp(element, { button: 0, buttons: 1 });
-  fireEvent.click(element);
-};
-
-jest.mock("../src/export/render");
+import { mockClipboard } from "./mockClipboard";
+import { complexClick } from "./complexClick";
 
 beforeEach(() => {
   jest.clearAllMocks();
 
-  Object.assign(navigator, {
-    clipboard: {
-      readText: jest.fn().mockResolvedValue("[[1],[2],[3],[4]]"),
-      writeText: jest.fn(),
-      write: jest.fn(),
-    },
-  });
-
-  Object.assign(window, {
-    ClipboardItem: () => {},
-  });
-
-  mocked(renderPNG).mockResolvedValue("data:image/png;base64,");
+  mockClipboard();
 
   console.error = jest.fn();
 });
@@ -625,67 +600,6 @@ describe("<Editor/>", () => {
           );
         });
       });
-    });
-  });
-
-  describe("export", () => {
-    it("copies tree to clipboard", () => {
-      complexClick(screen.getByTestId("export-copy-code"));
-      expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 });
-      expect(copyNode).toHaveBeenCalledTimes(1);
-      expect(copyNode).toHaveBeenCalledWith(context.data.root);
-      expect(navigator.clipboard.writeText).toHaveBeenCalledWith("[]");
-    });
-
-    describe("paste", () => {
-      it("pastes tree from clipboard", async () => {
-        expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 });
-        complexClick(screen.getByTestId("export-paste-code"));
-        expect(pasteNode).toHaveBeenCalledTimes(1);
-        await waitFor(() =>
-          expect(context.data.root).toEqual({
-            nodes: [
-              { fg: 1, bg: 0, shape: 0 },
-              { fg: 2, bg: 0, shape: 0 },
-              { fg: 3, bg: 0, shape: 0 },
-              { fg: 4, bg: 0, shape: 0 },
-            ],
-          })
-        );
-        expect(console.error).not.toHaveBeenCalled();
-      });
-
-      it("handles invalid input", async () => {
-        expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 });
-        mocked(navigator.clipboard.readText).mockResolvedValue("foo");
-        complexClick(screen.getByTestId("export-paste-code"));
-        expect(pasteNode).toHaveBeenCalledTimes(1);
-        await waitFor(() =>
-          expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 })
-        );
-        expect(console.error).toHaveBeenCalled();
-      });
-    });
-
-    it("copies PNG to clipboard", async () => {
-      complexClick(screen.getByTestId("export-copy-png"));
-      expect(copyPNG).toHaveBeenCalledTimes(1);
-      await waitFor(() =>
-        expect(navigator.clipboard.write).toHaveBeenCalledWith([
-          expect.any(ClipboardItem),
-        ])
-      );
-      expect(console.error).not.toHaveBeenCalled();
-    });
-
-    it("creates link to SVG", async () => {
-      complexClick(screen.getByTestId("export-copy-svg"));
-      expect(screen.queryByText("Link to file...")).not.toBeNull();
-      expect(
-        screen.getByText("Link to file...").getAttribute("href")
-      ).toContain("data:image/svg+xml;base64,");
-      complexClick(screen.getByTestId("close-file-link"));
-      expect(screen.queryByText("Link to file...")).toBeNull();
     });
   });
 });
