@@ -7,7 +7,7 @@ export const ModalContent = ({ children }: { children: ComponentChildren }) => (
 );
 
 export const ModalHeader = ({ children }: { children: ComponentChildren }) => (
-  <h5>{children}</h5>
+  <h5 data-testid="modal-heading">{children}</h5>
 );
 
 export const Modal = ({

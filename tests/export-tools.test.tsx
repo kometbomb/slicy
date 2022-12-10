@@ -68,6 +68,10 @@ describe("<ExportTools/>", () => {
       )
     );
 
+    expect(screen.getByTestId(`modal-heading`).textContent).toBe(
+      `Export .${type.toLocaleUpperCase()}`
+    );
+
     fireEvent.click(screen.getByTestId("export-copy"));
 
     expect(copyDataURL).toHaveBeenCalledTimes(1);
