@@ -1,5 +1,6 @@
 import { h } from "preact";
-import { useCallback, useContext, useEffect } from "preact/hooks";
+import { useCallback, useContext } from "preact/hooks";
+import { useEvent } from "../../hooks/event";
 import { mirrorShapeH, mirrorShapeV, rotateShape } from "../../util";
 import { ColorPalette } from "../color-palette";
 import { ExportTools } from "../export-tools";
@@ -102,14 +103,8 @@ export const Editor = () => {
     [undo]
   );
 
-  useEffect(() => {
-    document.addEventListener("keypress", handleKeypress);
-    document.addEventListener("keydown", handleKeydown);
-    return () => {
-      document.removeEventListener("keypress", handleKeypress);
-      document.removeEventListener("keydown", handleKeydown);
-    };
-  });
+  useEvent("keypress", handleKeypress);
+  useEvent("keydown", handleKeydown);
 
   return (
     <div>
