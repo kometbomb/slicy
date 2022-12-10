@@ -18,6 +18,18 @@ describe("<Modal/>", () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
+  it("should not handle key events if closed", () => {
+    const onClose = jest.fn();
+    render(
+      <Modal onClose={onClose} open={false}>
+        Content
+      </Modal>
+    );
+
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(onClose).toHaveBeenCalledTimes(0);
+  });
+
   it("unmounts when animation is finished", async () => {
     const onClose = jest.fn();
     const { rerender } = render(
