@@ -27,6 +27,7 @@ const SavePrompt = ({
               await copyDataURL(url);
               onClose();
             }}
+            disabled={!global.ClipboardItem}
           >
             Copy to clipboard
           </button>
@@ -81,6 +82,7 @@ export const ExportTools = ({
         Copy to clipboard
       </button>
       <button
+        disabled={!navigator.clipboard?.readText}
         data-testid="export-paste-code"
         style={{ flex: "1" }}
         className="button"

@@ -26,6 +26,11 @@
 	text-decoration: none;
 }
 
+.button[disabled] {
+	color: #888;
+}
+
+
 .editor-root.enableGrid .node {
 	outline: 1px solid #333;
 

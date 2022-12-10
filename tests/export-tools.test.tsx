@@ -15,18 +15,18 @@ jest.mock("../src/export/png");
 
 beforeEach(() => {
   jest.clearAllMocks();
-  mocked(renderPNG).mockResolvedValue("data:image/png;base64,");
-  mockClipboard();
-  console.error = jest.fn();
 });
 
-describe("<ExportTools/>", () => {
-  const setRoot = jest.fn();
-  const root = unpackTree([7, 4, 8]);
+const setRoot = jest.fn();
+const root = unpackTree([7, 4, 8]);
 
+describe("<ExportTools/>", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     render(<ExportTools setRoot={setRoot} root={root} />);
+    mocked(renderPNG).mockResolvedValue("data:image/png;base64,");
+    mockClipboard();
+    console.error = jest.fn();
   });
 
   it("copies tree to clipboard", () => {
@@ -95,5 +95,63 @@ describe("<ExportTools/>", () => {
     it("SVG", async () => {
       expect(await checkExport("svg", "image/svg+xml")).toBeTruthy();
     });
+  });
+});
+
+describe("clipboard availability", () => {
+  it("enables paste button if paste is available", () => {
+    Object.assign(navigator, {
+      clipboard: {
+        readText: jest.fn().mockResolvedValue("[[1],[2],[3],[4]]"),
+      },
+    });
+
+    render(<ExportTools setRoot={setRoot} root={root} />);
+    expect(
+      screen.getByTestId("export-paste-code").getAttribute("disabled")
+    ).toBeFalsy();
+  });
+
+  it("disables paste button if paste is unavailable", () => {
+    Object.assign(navigator, {
+      clipboard: {
+        readText: undefined,
+      },
+    });
+
+    render(<ExportTools setRoot={setRoot} root={root} />);
+    expect(
+      screen.getByTestId("export-paste-code").getAttribute("disabled")
+    ).toBeDefined();
+  });
+
+  it("enables copy button if copy is available", async () => {
+    Object.assign(global, {
+      ClipboardItem: () => {
+        //
+      },
+    });
+
+    render(<ExportTools setRoot={setRoot} root={root} />);
+    fireEvent.click(screen.getByTestId("export-png"));
+    await waitFor(() =>
+      expect(
+        screen.getByTestId("export-copy").getAttribute("disabled")
+      ).toBeFalsy()
+    );
+  });
+
+  it("disables copy button if copy is unavailable", async () => {
+    Object.assign(global, {
+      ClipboardItem: undefined,
+    });
+
+    render(<ExportTools setRoot={setRoot} root={root} />);
+    fireEvent.click(screen.getByTestId("export-png"));
+    await waitFor(() =>
+      expect(
+        screen.getByTestId("export-copy").getAttribute("disabled")
+      ).toBeDefined()
+    );
   });
 });
