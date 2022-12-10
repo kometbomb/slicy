@@ -4,6 +4,10 @@ import { EditorContext, Mode } from "./editor/context";
 import { Grid } from "./grid";
 import { isBranch, Node } from "../tree";
 
+const Separator = () => (
+  <div style={{ border: "1px solid #999", width: "1px" }} />
+);
+
 const ToolButton = ({
   mode,
   icon,
@@ -68,7 +72,7 @@ export const ToolPalette = ({ root }: { root: Node }) => {
   return (
     <div className="toolbar">
       <Grid
-        cols={7}
+        cols={8}
         gap={4}
         style={{
           height: "48px",
@@ -81,6 +85,7 @@ export const ToolPalette = ({ root }: { root: Node }) => {
         <ToolButton label="Draw (d)" mode="draw" icon="🖌️" />
         <ToolButton label="Color (c)" mode="color" icon="🎨" />
         <ToolButton label="Tile (t)" mode="tile" icon="🔹" />
+        <Separator />
         <GridButton />
         <UndoButton />
         <div className="stats" title="Square count" data-testid="cut-counter">
