@@ -1,7 +1,8 @@
 import { ComponentChildren, h } from "preact";
-import { useCallback, useEffect, useState } from "preact/hooks";
-import { useEvent } from "../hooks/event";
+import { useCallback } from "preact/hooks";
 import "../assets/modal.css";
+import { useEvent } from "../hooks/event";
+import { useMountable } from "../hooks/mountable";
 
 export const ModalContent = ({ children }: { children: ComponentChildren }) => (
   <div className="content">{children}</div>
@@ -23,10 +24,7 @@ export const Modal = ({
   onClose: () => void;
   children: ComponentChildren;
 }) => {
-  // Actual modal mount status
-  const [isMounted, setIsMounted] = useState(false);
-  // Modal requested state
-  const [isOpen, setIsOpen] = useState(false);
+  const { isMounted, isOpen } = useMountable(open);
   const escHandler = useCallback(
     (e: KeyboardEvent) => {
       if (!isMounted) return;
@@ -36,21 +34,6 @@ export const Modal = ({
     [onClose, isMounted]
   );
   useEvent("keydown", escHandler);
-  useEffect(() => {
-    // Will follow one render cycle after the mount status changes
-    setIsOpen(isMounted);
-  }, [isMounted]);
-  useEffect(() => {
-    if (open) {
-      // Set mounted status after open request
-      setIsMounted(true);
-    } else {
-      // Unmount after 220 ms (animation is ~200 ms)
-      setTimeout(() => {
-        setIsMounted(false);
-      }, 220);
-    }
-  }, [open]);
 
   if (!isMounted) return null;
 

@@ -1,10 +1,11 @@
 import { h } from "preact";
-import { useState } from "preact/hooks";
+import { useCallback, useState } from "preact/hooks";
 import { copyDataURL, copyNode, pasteNode } from "../export/clipboard";
 import { getDataURL } from "../export/export";
 import { Node } from "../tree";
 import { Grid } from "./grid";
 import { Modal, ModalContent, ModalHeader } from "./modal";
+import { useToast } from "../hooks/toast";
 
 const SavePrompt = ({
   format,
@@ -15,6 +16,7 @@ const SavePrompt = ({
   url: string;
   onClose: () => void;
 }) => {
+  const { showToast } = useToast();
   return (
     <Modal onClose={onClose} open={!!url}>
       <ModalContent>
@@ -24,8 +26,13 @@ const SavePrompt = ({
             class="button"
             data-testid="export-copy"
             onClick={async () => {
-              await copyDataURL(url);
-              onClose();
+              try {
+                await copyDataURL(url);
+                onClose();
+                showToast("File copied to clipboard", "success");
+              } catch (error) {
+                showToast("Copy to clipboard failed", "failure");
+              }
             }}
             disabled={!global.ClipboardItem}
           >
@@ -57,8 +64,56 @@ export const ExportTools = ({
   root: Node;
   setRoot: (node: Node) => void;
 }) => {
+  const { showToast } = useToast();
   const [dataUrl, setDataUrl] = useState<string>("");
   const [format, setFormat] = useState<"svg" | "png">("svg");
+  const exportImage = useCallback(
+    async (type: "svg" | "png") => {
+      setDataUrl(await getDataURL(root, type));
+      setFormat(type);
+    },
+    [root]
+  );
+  const exportPNG = useCallback(
+    async (e: MouseEvent) => {
+      e.preventDefault();
+      await exportImage("png");
+    },
+    [exportImage]
+  );
+  const exportSVG = useCallback(
+    async (e: MouseEvent) => {
+      e.preventDefault();
+      await exportImage("svg");
+    },
+    [exportImage]
+  );
+  const handleCopyToClipboard = useCallback(
+    async (e: MouseEvent) => {
+      e.preventDefault();
+      try {
+        await copyNode(root);
+        showToast("Pic copied to clipboard", "success");
+      } catch (error) {
+        showToast("Copy failed", "failure");
+      }
+    },
+    [root, showToast]
+  );
+  const handlePasteFromClipboard = useCallback(
+    async (e: MouseEvent) => {
+      e.preventDefault();
+      const node = await pasteNode();
+      if (!node) {
+        showToast("Paste failed", "failure");
+        return;
+      }
+      setRoot(node);
+      showToast("Pic pasted from clipboard", "success");
+    },
+    [setRoot, showToast]
+  );
+  const handlePromptClose = useCallback(() => setDataUrl(""), []);
 
   return (
     <div
@@ -74,10 +129,7 @@ export const ExportTools = ({
         data-testid="export-copy-code"
         style={{ flex: "1" }}
         className="button"
-        onClick={async (e) => {
-          e.preventDefault();
-          await copyNode(root);
-        }}
+        onClick={handleCopyToClipboard}
       >
         Copy to clipboard
       </button>
@@ -88,12 +140,7 @@ export const ExportTools = ({
         data-testid="export-paste-code"
         style={{ flex: "1" }}
         className="button"
-        onClick={async (e) => {
-          e.preventDefault();
-          const node = await pasteNode();
-          if (!node) return;
-          setRoot(node);
-        }}
+        onClick={handlePasteFromClipboard}
       >
         Paste from clipboard
       </button>
@@ -101,11 +148,7 @@ export const ExportTools = ({
         data-testid="export-png"
         style={{ flex: "1" }}
         className="button"
-        onClick={async (e) => {
-          e.preventDefault();
-          setDataUrl(await getDataURL(root, "png"));
-          setFormat("png");
-        }}
+        onClick={exportPNG}
       >
         Export .PNG
       </button>
@@ -113,19 +156,11 @@ export const ExportTools = ({
         data-testid="export-svg"
         style={{ flex: "1" }}
         className="button"
-        onClick={async (e) => {
-          e.preventDefault();
-          setDataUrl(await getDataURL(root, "svg"));
-          setFormat("svg");
-        }}
+        onClick={exportSVG}
       >
         Export .SVG
       </button>
-      <SavePrompt
-        url={dataUrl}
-        onClose={() => setDataUrl("")}
-        format={format}
-      />
+      <SavePrompt url={dataUrl} onClose={handlePromptClose} format={format} />
     </div>
   );
 };
