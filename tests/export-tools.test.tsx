@@ -1,10 +1,11 @@
-import { render, waitFor, screen, fireEvent } from "@testing-library/preact";
-import { h } from "preact";
+import { fireEvent, render, screen, waitFor } from "@testing-library/preact";
 import { mocked } from "jest-mock";
-import * as clipboard from "../src/export/clipboard";
+import { h } from "preact";
 import { ExportTools } from "../src/components/export-tools";
-import { unpackTree } from "../src/tree/packed";
+import * as clipboard from "../src/export/clipboard";
 import { renderPNG } from "../src/export/png";
+import { useToast } from "../src/hooks/toast";
+import { unpackTree } from "../src/tree/packed";
 import { mockClipboard } from "./mockClipboard";
 
 const copyDataURL = jest.spyOn(clipboard, "copyDataURL");
@@ -12,6 +13,7 @@ const copyNode = jest.spyOn(clipboard, "copyNode");
 const pasteNode = jest.spyOn(clipboard, "pasteNode");
 
 jest.mock("../src/export/png");
+jest.mock("../src/hooks/toast");
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -21,19 +23,41 @@ const setRoot = jest.fn();
 const root = unpackTree([7, 4, 8]);
 
 describe("<ExportTools/>", () => {
+  const { showToast } = useToast();
   beforeEach(() => {
     jest.clearAllMocks();
+
     render(<ExportTools setRoot={setRoot} root={root} />);
     mocked(renderPNG).mockResolvedValue("data:image/png;base64,");
     mockClipboard();
     console.error = jest.fn();
   });
 
-  it("copies tree to clipboard", () => {
-    fireEvent.click(screen.getByTestId("export-copy-code"));
-    expect(copyNode).toHaveBeenCalledTimes(1);
-    expect(copyNode).toHaveBeenCalledWith(root);
-    expect(navigator.clipboard.writeText).toHaveBeenCalledWith("[7,4,8]");
+  describe("copy", () => {
+    it("copies tree to clipboard", async () => {
+      fireEvent.click(screen.getByTestId("export-copy-code"));
+      expect(copyNode).toHaveBeenCalledTimes(1);
+      expect(copyNode).toHaveBeenCalledWith(root);
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith("[7,4,8]");
+      await waitFor(() =>
+        expect(showToast).toHaveBeenCalledWith(
+          expect.stringMatching(new RegExp("copied", "i")),
+          "success"
+        )
+      );
+    });
+
+    it("handles copy failure", async () => {
+      copyNode.mockRejectedValue(new Error("Failed"));
+
+      fireEvent.click(screen.getByTestId("export-copy-code"));
+      await waitFor(() =>
+        expect(showToast).toHaveBeenCalledWith(
+          expect.stringMatching(new RegExp("failed", "i")),
+          "failure"
+        )
+      );
+    });
   });
 
   describe("paste", () => {
@@ -44,6 +68,10 @@ describe("<ExportTools/>", () => {
         expect(setRoot).toHaveBeenCalledWith(unpackTree([[1], [2], [3], [4]]))
       );
       expect(console.error).not.toHaveBeenCalled();
+      expect(showToast).toHaveBeenCalledWith(
+        expect.stringMatching(new RegExp("pasted", "i")),
+        "success"
+      );
     });
 
     it("handles invalid input", async () => {
@@ -52,10 +80,16 @@ describe("<ExportTools/>", () => {
       expect(pasteNode).toHaveBeenCalledTimes(1);
       await waitFor(() => expect(console.error).toHaveBeenCalled());
       await waitFor(() => expect(setRoot).not.toHaveBeenCalled());
+      expect(showToast).toHaveBeenCalledWith(
+        expect.stringMatching(new RegExp("failed", "i")),
+        "failure"
+      );
     });
   });
 
   const checkExport = async (type: string, mimetype: string) => {
+    mocked(navigator.clipboard.write).mockClear();
+    mocked(navigator.clipboard.write).mockResolvedValue();
     fireEvent.click(screen.getByTestId(`export-${type}`));
 
     await waitFor(() =>
@@ -74,26 +108,73 @@ describe("<ExportTools/>", () => {
 
     fireEvent.click(screen.getByTestId("export-copy"));
 
-    expect(copyDataURL).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(copyDataURL).toHaveBeenCalledTimes(1));
     await waitFor(() =>
       expect(navigator.clipboard.write).toHaveBeenCalledWith([
         expect.any(ClipboardItem),
       ])
     );
-    expect(console.error).not.toHaveBeenCalled();
 
     await waitFor(() => expect(screen.queryByTestId("export-copy")).toBeNull());
+
+    expect(showToast).toHaveBeenCalledWith(
+      expect.stringMatching(new RegExp("copied", "i")),
+      "success"
+    );
+
+    return true;
+  };
+
+  const checkExportFail = async (type: string, mimetype: string) => {
+    mocked(navigator.clipboard.write).mockClear();
+    mocked(navigator.clipboard.write).mockRejectedValue(new Error("Fail"));
+    fireEvent.click(screen.getByTestId(`export-${type}`));
+
+    await waitFor(() =>
+      expect(screen.getByTestId("export-copy")).not.toBeNull()
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId("export-link").getAttribute("href")).toContain(
+        `data:${mimetype};base64,`
+      )
+    );
+
+    expect(screen.getByTestId(`modal-heading`).textContent).toBe(
+      `Export .${type.toLocaleUpperCase()}`
+    );
+
+    fireEvent.click(screen.getByTestId("export-copy"));
+
+    await waitFor(() => expect(copyDataURL).toHaveBeenCalledTimes(1));
+
+    await waitFor(() => expect(screen.queryByTestId("export-copy")).toBeNull());
+
+    expect(showToast).toHaveBeenCalledWith(
+      expect.stringMatching(new RegExp("failed", "i")),
+      "failure"
+    );
 
     return true;
   };
 
   describe("export modal", () => {
-    it("PNG", async () => {
-      expect(await checkExport("png", "image/png")).toBeTruthy();
+    describe("PNG", () => {
+      test("success", async () => {
+        expect(await checkExport("png", "image/png")).toBeTruthy();
+      });
+      test("fail", async () => {
+        expect(await checkExportFail("png", "image/png")).toBeTruthy();
+      });
     });
 
-    it("SVG", async () => {
-      expect(await checkExport("svg", "image/svg+xml")).toBeTruthy();
+    describe("SVG", () => {
+      test("success", async () => {
+        expect(await checkExport("svg", "image/svg+xml")).toBeTruthy();
+      });
+      test("fail", async () => {
+        expect(await checkExportFail("svg", "image/svg+xml")).toBeTruthy();
+      });
     });
   });
 });

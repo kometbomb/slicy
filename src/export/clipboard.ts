@@ -2,13 +2,7 @@ import { Node } from "../tree";
 import { packTree, unpackTree, validatePackedNode } from "../tree/packed";
 
 export const copyNode = async (node: Node) => {
-  try {
-    await navigator.clipboard.writeText(JSON.stringify(packTree(node)));
-    return true;
-  } catch (error) {
-    console.error(error);
-    return false;
-  }
+  await navigator.clipboard.writeText(JSON.stringify(packTree(node)));
 };
 
 export const pasteNode = async () => {
@@ -51,14 +45,10 @@ function dataURItoBlob(dataURI: string): [Blob, string] {
 }
 
 export const copyDataURL = async (dataUrl: string) => {
-  try {
-    const [blob, mimetype] = dataURItoBlob(dataUrl);
-    await navigator.clipboard.write([
-      new ClipboardItem({
-        [mimetype]: blob,
-      }),
-    ]);
-  } catch (error) {
-    console.error(error);
-  }
+  const [blob, mimetype] = dataURItoBlob(dataUrl);
+  await navigator.clipboard.write([
+    new ClipboardItem({
+      [mimetype]: blob,
+    }),
+  ]);
 };
