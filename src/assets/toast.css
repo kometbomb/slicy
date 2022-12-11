@@ -14,7 +14,7 @@
   opacity: 0;
   transition: all;
 	transition-duration: 0.2s;
-  overflow: auto;
+  overflow: hidden;
   background-color: white;
   margin: 8px auto;
   padding: 4px 8px;
