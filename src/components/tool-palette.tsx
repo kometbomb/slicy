@@ -1,5 +1,5 @@
 import { h } from "preact";
-import { useContext } from "preact/hooks";
+import { useCallback, useContext } from "preact/hooks";
 import { EditorContext, Mode } from "./editor/context";
 import { Grid } from "./grid";
 import { isBranch, Node } from "../tree";
@@ -49,13 +49,29 @@ const GridButton = () => {
 };
 
 const UndoButton = () => {
-  const { undo } = useContext(EditorContext);
+  const { undo, redo } = useContext(EditorContext);
+  const handleUndo = useCallback(
+    (e: MouseEvent) => {
+      e.preventDefault();
+      undo();
+    },
+    [undo]
+  );
+  const handleRedo = useCallback(
+    (e: MouseEvent) => {
+      e.preventDefault();
+      redo();
+    },
+    [redo]
+  );
+
   return (
     <button
-      onClick={undo}
+      onClick={handleUndo}
+      onContextMenu={handleRedo}
       data-testid="tool-undo"
       className="button"
-      title="Undo (CTRL/CMD-Z)"
+      title="Undo/redo (CTRL/CMD-Z, CTRL/CMD/-SHIFT-Y, CTRL/CMD/-Y)"
       style={{ minWidth: "48px", minHeight: "24px", maxWidth: "48px" }}
     >
       ⏪

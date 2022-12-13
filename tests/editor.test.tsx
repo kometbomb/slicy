@@ -75,6 +75,21 @@ describe("<Editor/>", () => {
       expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 });
     });
 
+    it("triggers redo", async () => {
+      const root = screen.getByTestId("root-node");
+      context.data.setMode("draw");
+      context.data.setFgColor(1);
+      context.data.setBgColor(2);
+      context.data.setShape(4);
+      await waitFor(() => expect(context.data.mode).toBe("draw"));
+      complexClick(within(root).getAllByTestId("node")[0]);
+
+      expect(context.data.root).toEqual({ fg: 1, bg: 2, shape: 4 });
+
+      complexClick(screen.getByTestId("tool-undo"));
+      expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 });
+    });
+
     it("toggles grid", () => {
       complexClick(screen.getByTestId("toggle-grid"));
       expect(context.data.enableGrid).toBeFalsy();
