@@ -24,6 +24,7 @@ export const Editor = () => {
     root,
     setRoot,
     undo,
+    redo,
   } = useContext(EditorContext);
 
   const handleKeypress = useCallback(
@@ -97,10 +98,18 @@ export const Editor = () => {
           case "z":
             undo();
             break;
+
+          case "Z":
+            redo();
+            break;
+
+          case "y":
+            redo();
+            break;
         }
       }
     },
-    [undo]
+    [redo, undo]
   );
 
   useEvent("keypress", handleKeypress);
