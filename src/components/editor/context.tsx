@@ -1,5 +1,6 @@
 import { ComponentChildren, createContext, h } from "preact";
 import { StateUpdater, useCallback, useRef, useState } from "preact/hooks";
+import { useUndo } from "../../hooks/undo";
 import { Color, Node, Shape } from "../../tree";
 
 export type Mode = "cut" | "draw" | "color" | "tile";
@@ -18,6 +19,7 @@ export interface EditorContextType {
   root: Node;
   setRoot: (root: Node) => void;
   undo: () => void;
+  redo: () => void;
 }
 
 export const EditorContext = createContext<EditorContextType>({} as never);
@@ -27,7 +29,12 @@ export const EditorContextProvider = ({
 }: {
   children: ComponentChildren;
 }) => {
-  const [root, setRoot] = useState<Node>({
+  const {
+    current: root,
+    set: setRoot,
+    undo,
+    redo,
+  } = useUndo<Node>({
     bg: 0,
     fg: 0,
     shape: 0,
@@ -37,26 +44,14 @@ export const EditorContextProvider = ({
   const [shape, setShape] = useState<Shape>(0);
   const [mode, setMode] = useState<Mode>("cut");
   const [enableGrid, setEnableGrid] = useState(true);
-  const history = useRef<Node[]>([]);
-  const undo = useCallback(() => {
-    const prev = history.current.pop();
-    if (!prev) return;
-    setRoot(prev);
-  }, [history]);
-  const setRootWithHistory = useCallback(
-    (newRoot: Node) => {
-      history.current.push(root);
-      setRoot(newRoot);
-    },
-    [root, history]
-  );
 
   return (
     <EditorContext.Provider
       value={{
         undo,
+        redo,
         root,
-        setRoot: setRootWithHistory,
+        setRoot,
         bgColor,
         fgColor,
         setBgColor,

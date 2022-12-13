@@ -420,6 +420,88 @@ describe("<Editor/>", () => {
       });
     });
 
+    describe("redo", () => {
+      it("handles empty future", () => {
+        context.data.redo();
+        expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 });
+      });
+
+      it("restores future state", async () => {
+        await waitFor(() =>
+          expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 })
+        );
+
+        complexClick(within(root).getAllByTestId("node")[0]);
+
+        await waitFor(() =>
+          expect(context.data.root).toEqual({
+            nodes: [
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+            ],
+          })
+        );
+
+        context.data.undo();
+
+        await waitFor(() =>
+          expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 })
+        );
+
+        context.data.redo();
+
+        await waitFor(() =>
+          expect(context.data.root).toEqual({
+            nodes: [
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+            ],
+          })
+        );
+      });
+
+      it("empties future if new edit is done", async () => {
+        await waitFor(() =>
+          expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 })
+        );
+
+        complexClick(within(root).getAllByTestId("node")[0]);
+
+        await waitFor(() =>
+          expect(context.data.root).toEqual({
+            nodes: [
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+              { fg: 0, bg: 0, shape: 0 },
+            ],
+          })
+        );
+
+        context.data.undo();
+
+        await waitFor(() =>
+          expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 })
+        );
+
+        context.data.setRoot({ fg: 9, bg: 9, shape: 9 });
+
+        await waitFor(() =>
+          expect(context.data.root).toEqual({ fg: 9, bg: 9, shape: 9 })
+        );
+
+        context.data.redo();
+
+        await waitFor(() =>
+          expect(context.data.root).toEqual({ fg: 9, bg: 9, shape: 9 })
+        );
+      });
+    });
+
     describe("undo", () => {
       it("handles empty history", () => {
         context.data.undo();
@@ -597,6 +679,44 @@ describe("<Editor/>", () => {
           fireEvent.keyDown(document, { key: "z", ctrlKey: true });
           await waitFor(() =>
             expect(context.data.root).toEqual({ fg: 6, bg: 1, shape: 0 })
+          );
+        });
+
+        it("does redo with shift", async () => {
+          await waitFor(() =>
+            expect(context.data.root).toEqual({ fg: 7, bg: 1, shape: 0 })
+          );
+
+          fireEvent.keyDown(document, {
+            key: "z",
+            ctrlKey: true,
+            shiftKey: false,
+          });
+          await waitFor(() =>
+            expect(context.data.root).toEqual({ fg: 6, bg: 1, shape: 0 })
+          );
+
+          fireEvent.keyDown(document, {
+            key: "Z",
+            ctrlKey: true,
+            shiftKey: true,
+          });
+          await waitFor(() =>
+            expect(context.data.root).toEqual({ fg: 7, bg: 1, shape: 0 })
+          );
+        });
+
+        it("does redo with y", async () => {
+          await waitFor(() =>
+            expect(context.data.root).toEqual({ fg: 7, bg: 1, shape: 0 })
+          );
+
+          fireEvent.keyDown(document, {
+            key: "y",
+            ctrlKey: true,
+          });
+          await waitFor(() =>
+            expect(context.data.root).toEqual({ fg: 7, bg: 1, shape: 0 })
           );
         });
       });
