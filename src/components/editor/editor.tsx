@@ -8,18 +8,19 @@ import { ShapePalette } from "../shape-palette";
 import { Tile } from "../tile";
 import { ToolPalette } from "../tool-palette";
 import { EditorContext } from "./context";
+import { Root } from "./root";
 
 export type Mode = "cut" | "draw" | "color" | "tile";
 
 export const Editor = () => {
   const {
+    setZoom,
     setMode,
     setBgColor,
     setFgColor,
     bgColor,
     fgColor,
     setEnableGrid,
-    enableGrid,
     setShape,
     root,
     setRoot,
@@ -112,18 +113,14 @@ export const Editor = () => {
     [redo, undo]
   );
 
-  useEvent("keypress", handleKeypress);
-  useEvent("keydown", handleKeydown);
+  useEvent(document, "keypress", handleKeypress);
+  useEvent(document, "keydown", handleKeydown);
 
   return (
     <div>
-      <div
-        id="root-node"
-        data-testid="root-node"
-        className={["editor-root", enableGrid ? "enableGrid" : ""].join(" ")}
-      >
+      <Root>
         <Tile node={root} setNode={setRoot} />
-      </div>
+      </Root>
       <ToolPalette root={root} />
       <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
         <div className="palettes">

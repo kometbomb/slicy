@@ -86,7 +86,7 @@ export const TileLeaf = (props: TileProps<Leaf>) => {
       e.preventDefault();
       e.stopPropagation();
 
-      doDrawAction(e.buttons & 1 ? "left" : "right");
+      if (e.buttons & (1 | 2)) doDrawAction(e.buttons & 1 ? "left" : "right");
     },
     [doDrawAction]
   );

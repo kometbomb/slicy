@@ -1,8 +1,10 @@
 
 .editor-root {
 	position: relative;
-	width: 100%;
+	width: 512px;
+	height: 512px;
 	outline: 1px solid black;
+	overflow: hidden;
 }
 
 .editor-root .node {

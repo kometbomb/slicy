@@ -33,7 +33,7 @@ export const Modal = ({
     },
     [onClose, isMounted]
   );
-  useEvent("keydown", escHandler);
+  useEvent(document, "keydown", escHandler);
 
   if (!isMounted) return null;
 
