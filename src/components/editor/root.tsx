@@ -12,16 +12,11 @@ export const Root = ({ children }: { children: ComponentChildren }) => {
     (e: WheelEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      if (!e.ctrlKey && !e.altKey) return;
       if (e.deltaY < 0) {
         setZoom((zoom) => zoom * 1.1);
-        setX((x) => x / 1.1);
-        setY((y) => y / 1.1);
       }
       if (e.deltaY > 0) {
-        setZoom((zoom) => zoom * (1 / 1.1));
-        setX((x) => x / (1 / 1.1));
-        setY((y) => y / (1 / 1.1));
+        setZoom((zoom) => zoom / 1.1);
       }
     },
     [setZoom]
@@ -29,8 +24,8 @@ export const Root = ({ children }: { children: ComponentChildren }) => {
   const handleMove = (e: MouseEvent) => {
     if (e.buttons & 4) {
       e.preventDefault();
-      setX((x) => x + e.movementX);
-      setY((y) => y + e.movementY);
+      setX((x) => x + e.movementX / zoom);
+      setY((y) => y + e.movementY / zoom);
     }
   };
 
@@ -47,17 +42,25 @@ export const Root = ({ children }: { children: ComponentChildren }) => {
       ref={rootRef}
     >
       <div
-        className="root-node-inner"
         style={{
-          position: "relative",
+          left: "256px",
+          top: "256px",
           width: `${512 * zoom}px`,
           height: `${512 * zoom}px`,
-          top: `${y - 256 * zoom}px`,
-          left: `${x - 256 * zoom}px`,
-          transfor: "translate(-50%,-50%)",
+          position: "relative",
         }}
       >
-        {children}
+        <div
+          className="root-node-inner"
+          style={{
+            left: `${x * zoom}px`,
+            top: `${y * zoom}px`,
+            transform: `translate(-100%,-100%)`,
+            position: "relative",
+          }}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );
