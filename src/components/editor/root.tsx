@@ -1,11 +1,18 @@
 import { ComponentChildren, h } from "preact";
-import { useCallback, useContext, useRef, useState } from "preact/hooks";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "preact/hooks";
 import { useEvent } from "../../hooks/event";
 import { EditorContext } from "./context";
+import "../../assets/canvas.css";
 
 export const Root = ({ children }: { children: ComponentChildren }) => {
-  const [x, setX] = useState(256);
-  const [y, setY] = useState(256);
+  const [x, setX] = useState(0);
+  const [y, setY] = useState(0);
   const { enableGrid, zoom, setZoom } = useContext(EditorContext);
   const rootRef = useRef<HTMLDivElement>(null);
   const handleWheel = useCallback(
@@ -14,9 +21,13 @@ export const Root = ({ children }: { children: ComponentChildren }) => {
       e.stopPropagation();
       if (e.deltaY < 0) {
         setZoom((zoom) => zoom * 1.1);
+        setX((x) => (x - 256) * 1.1 + 256);
+        setY((y) => (y - 256) * 1.1 + 256);
       }
       if (e.deltaY > 0) {
         setZoom((zoom) => zoom / 1.1);
+        setX((x) => (x - 256) / 1.1 + 256);
+        setY((y) => (y - 256) / 1.1 + 256);
       }
     },
     [setZoom]
@@ -24,8 +35,8 @@ export const Root = ({ children }: { children: ComponentChildren }) => {
   const handleMove = (e: MouseEvent) => {
     if (e.buttons & 4) {
       e.preventDefault();
-      setX((x) => x + e.movementX / zoom);
-      setY((y) => y + e.movementY / zoom);
+      setX((x) => x + e.movementX);
+      setY((y) => y + e.movementY);
     }
   };
 
@@ -43,19 +54,20 @@ export const Root = ({ children }: { children: ComponentChildren }) => {
     >
       <div
         style={{
-          left: "256px",
-          top: "256px",
-          width: `${512 * zoom}px`,
-          height: `${512 * zoom}px`,
           position: "relative",
+          width: `${zoom * 512}px`,
+          height: `${zoom * 512}px`,
+          transform: `translate(-50%,-50%)`,
         }}
       >
         <div
           className="root-node-inner"
           style={{
-            left: `${x * zoom}px`,
-            top: `${y * zoom}px`,
-            transform: `translate(-100%,-100%)`,
+            left: `${x}px`,
+            top: `${y}px`,
+            width: `100%`,
+            height: `100%`,
+            transform: `translate(50%,50%)`,
             position: "relative",
           }}
         >

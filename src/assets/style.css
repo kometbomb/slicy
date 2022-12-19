@@ -1,22 +1,4 @@
 
-.editor-root {
-	position: relative;
-	width: 512px;
-	height: 512px;
-	outline: 1px solid black;
-	overflow: hidden;
-}
-
-.editor-root .node {
-	box-sizing: border-box;
-	position: relative;
-	width: 100%;
-	height: 100%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	overflow: hidden;
-}
 
 .button {
 	cursor: pointer;
@@ -30,49 +12,6 @@
 
 .button[disabled] {
 	color: #888;
-}
-
-
-.editor-root.enableGrid .node {
-	outline: 1px solid #333;
-
-}
-
-.editor-root .node .overlay {
-	position: absolute;
-	width: calc(100% - 1px);
-	height: calc(100% - 1px);
-	top: 0;
-}
-
-.editor-root .node .overlay2 {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-}
-
-.editor-root svg {
-	width: 100%;
-	height: 100%;
-}
-
-.editor-root .node:hover .overlay, .editor-root .node:hover .overlay2 {
-	border: 1px solid black;
-	z-index: 100;
-}
-
-.editor-root .node:hover .overlay2 {
-	border-color: white;
-	border-width: 1px;
-}
-
-.editor-root .branch {
-	position: relative;
-	display: grid;
-	width: 100%;
-	height: 100%;
-	grid-template-columns: 50% 50%;
-	grid-template-rows: 50% 50%;
 }
 
 .palette {
