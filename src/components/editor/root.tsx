@@ -13,6 +13,7 @@ import "../../assets/canvas.css";
 export const Root = ({ children }: { children: ComponentChildren }) => {
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
+  const [foo, setFoo] = useState(0);
   const { enableGrid, zoom, setZoom } = useContext(EditorContext);
   const rootRef = useRef<HTMLDivElement>(null);
   const handleWheel = useCallback(
@@ -44,6 +45,13 @@ export const Root = ({ children }: { children: ComponentChildren }) => {
     passive: false,
   });
   useEvent(rootRef.current, "mousemove", handleMove);
+
+  /**
+   * Trigger extra render on mount to make sure rootRef is updated (preact bug?)
+   */
+  useEffect(() => {
+    setFoo(1);
+  }, []);
 
   return (
     <div
