@@ -1,5 +1,6 @@
 import { h } from "preact";
 import { useCallback, useContext } from "preact/hooks";
+import { safeDocument } from "../../ssr";
 import { useEvent } from "../../hooks/event";
 import { mirrorShapeH, mirrorShapeV, rotateShape } from "../../util";
 import { ColorPalette } from "../color-palette";
@@ -113,8 +114,8 @@ export const Editor = () => {
     [redo, undo]
   );
 
-  useEvent(document, "keypress", handleKeypress);
-  useEvent(document, "keydown", handleKeydown);
+  useEvent(safeDocument, "keypress", handleKeypress);
+  useEvent(safeDocument, "keydown", handleKeydown);
 
   return (
     <div>
