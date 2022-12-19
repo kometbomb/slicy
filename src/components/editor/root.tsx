@@ -13,8 +13,8 @@ import "../../assets/canvas.css";
 export const Root = ({ children }: { children: ComponentChildren }) => {
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
-  const [width, setW] = useState(0);
-  const [height, setH] = useState(0);
+  const [width, setW] = useState(512);
+  const [height, setH] = useState(512);
   const [foo, setFoo] = useState(0);
   const { enableGrid, zoom, setZoom } = useContext(EditorContext);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -57,7 +57,7 @@ export const Root = ({ children }: { children: ComponentChildren }) => {
 
   useEffect(() => {
     const ref = rootRef.current;
-    if (!ref) return;
+    if (!ref || !global?.ResizeObserver) return;
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
         setW(entry.contentRect.width);
