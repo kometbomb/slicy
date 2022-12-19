@@ -5,6 +5,13 @@
 	height: 0;
 	padding-bottom: 100%;
 	outline: 1px solid black;
+  background:
+    repeating-conic-gradient(#808080 0% 25%, transparent 0% 50%)
+      50% / 32px 32px;
+}
+
+.editor-root .root-node-inner {
+  box-shadow: 0 0 20px 20px rgba(0, 0, 0, 0.2);
 }
 
 .editor-root .node {
