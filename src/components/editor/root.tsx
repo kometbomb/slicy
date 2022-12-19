@@ -13,6 +13,8 @@ import "../../assets/canvas.css";
 export const Root = ({ children }: { children: ComponentChildren }) => {
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
+  const [width, setW] = useState(0);
+  const [height, setH] = useState(0);
   const [foo, setFoo] = useState(0);
   const { enableGrid, zoom, setZoom } = useContext(EditorContext);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -22,16 +24,16 @@ export const Root = ({ children }: { children: ComponentChildren }) => {
       e.stopPropagation();
       if (e.deltaY < 0) {
         setZoom((zoom) => zoom * 1.1);
-        setX((x) => (x - 256) * 1.1 + 256);
-        setY((y) => (y - 256) * 1.1 + 256);
+        setX((x) => (x - width / 2) * 1.1 + width / 2);
+        setY((y) => (y - height / 2) * 1.1 + height / 2);
       }
       if (e.deltaY > 0) {
         setZoom((zoom) => zoom / 1.1);
-        setX((x) => (x - 256) / 1.1 + 256);
-        setY((y) => (y - 256) / 1.1 + 256);
+        setX((x) => (x - width / 2) / 1.1 + width / 2);
+        setY((y) => (y - height / 2) / 1.1 + height / 2);
       }
     },
-    [setZoom]
+    [setZoom, width, height]
   );
   const handleMove = (e: MouseEvent) => {
     if (e.buttons & 4) {
@@ -53,6 +55,19 @@ export const Root = ({ children }: { children: ComponentChildren }) => {
     setFoo(1);
   }, []);
 
+  useEffect(() => {
+    const ref = rootRef.current;
+    if (!ref) return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setW(entry.contentRect.width);
+        setH(entry.contentRect.width);
+      }
+    });
+    observer.observe(ref);
+    return () => observer.unobserve(ref);
+  }, [rootRef]);
+
   return (
     <div
       id="root-node"
@@ -63,8 +78,8 @@ export const Root = ({ children }: { children: ComponentChildren }) => {
       <div
         style={{
           position: "relative",
-          width: `${zoom * 512}px`,
-          height: `${zoom * 512}px`,
+          width: `${zoom * width}px`,
+          height: `${zoom * height}px`,
           transform: `translate(-50%,-50%)`,
         }}
       >
