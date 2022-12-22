@@ -7,6 +7,7 @@
     "build": "preact build",
     "serve": "sirv build --cors --single",
     "dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider PREACT_APP_VERSION=dev preact watch",
+    "dev:linux": "PREACT_APP_VERSION=dev preact watch",
     "lint": "eslint src",
     "test": "jest",
     "build:dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider PREACT_APP_VERSION=dev preact build",
