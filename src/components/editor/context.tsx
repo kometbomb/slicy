@@ -1,7 +1,11 @@
 import { ComponentChildren, createContext, h } from "preact";
-import { StateUpdater, useCallback, useRef, useState } from "preact/hooks";
+import { StateUpdater, useCallback, useEffect, useRef, useState } from "preact/hooks";
+import { packTree, unpackTree, validatePackedNode } from "../../tree/packed";
+import { useLocalStorage } from "../../hooks/localStorage";
 import { useUndo } from "../../hooks/undo";
 import { Color, Node, Shape } from "../../tree";
+import { useToast } from "../../hooks/toast";
+import { useDebounce } from "../../hooks/debounce";
 
 export type Mode = "cut" | "draw" | "color" | "tile";
 
@@ -31,16 +35,30 @@ export const EditorContextProvider = ({
 }: {
   children: ComponentChildren;
 }) => {
+  const localStorage = useLocalStorage()
   const {
     current: root,
-    set: setRoot,
+    set,
     undo,
     redo,
-  } = useUndo<Node>({
-    bg: 0,
-    fg: 0,
-    shape: 0,
-  });
+  } = useUndo<Node>({ bg: 0, fg: 0, shape: 0 });
+  const { showToast } = useToast()
+  useEffect(() => {
+    try {
+      const data = JSON.parse(localStorage.getItem("root") || "")
+      if (validatePackedNode(data)) {
+        set(unpackTree(data))
+        showToast("Picture restored")
+      }
+    } catch (error) {
+      // 
+    }
+  }, [])
+  const storeBackup = useDebounce((node: Node) => localStorage.setItem("root", JSON.stringify(packTree(node))), 1000)
+  const setRoot = useCallback((node: Node) => {
+    storeBackup(node)
+    set(node)
+  }, [localStorage, storeBackup])
   const [bgColor, setBgColor] = useState<Color>(1);
   const [fgColor, setFgColor] = useState<Color>(0);
   const [shape, setShape] = useState<Shape>(0);
@@ -55,7 +73,7 @@ export const EditorContextProvider = ({
         setZoom,
         undo,
         redo,
-        root,
+        root: root || { bg: 0, fg: 0, shape: 0 },
         setRoot,
         bgColor,
         fgColor,
