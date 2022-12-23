@@ -36,6 +36,7 @@ export const EditorContextProvider = ({
   children: ComponentChildren;
 }) => {
   const localStorage = useLocalStorage()
+  const wasInit = useRef(false)
   const {
     current: root,
     set,
@@ -44,6 +45,8 @@ export const EditorContextProvider = ({
   } = useUndo<Node>({ bg: 0, fg: 0, shape: 0 });
   const { showToast } = useToast()
   useEffect(() => {
+    if (wasInit.current) return
+    wasInit.current = true
     try {
       const data = JSON.parse(localStorage.getItem("root") || "")
       if (validatePackedNode(data)) {
@@ -53,12 +56,12 @@ export const EditorContextProvider = ({
     } catch (error) {
       // 
     }
-  }, [])
+  }, [localStorage, wasInit, set, showToast])
   const storeBackup = useDebounce((node: Node) => localStorage.setItem("root", JSON.stringify(packTree(node))), 1000)
   const setRoot = useCallback((node: Node) => {
     storeBackup(node)
     set(node)
-  }, [localStorage, storeBackup])
+  }, [storeBackup, set])
   const [bgColor, setBgColor] = useState<Color>(1);
   const [fgColor, setFgColor] = useState<Color>(0);
   const [shape, setShape] = useState<Shape>(0);

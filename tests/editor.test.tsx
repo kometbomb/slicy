@@ -3,22 +3,19 @@ import {
   render,
   screen,
   waitFor,
-  within,
+  within
 } from "@testing-library/preact";
 import { h } from "preact";
 import { useContext } from "preact/hooks";
 import { EditorContext } from "../src/components/editor";
 import {
   EditorContextProvider,
-  EditorContextType,
+  EditorContextType
 } from "../src/components/editor/context";
 import { Editor } from "../src/components/editor/editor";
-import { mockClipboard } from "./mockClipboard";
+import { ToastProvider } from "../src/components/toast";
 import { complexClick } from "./complexClick";
-import { useLocalStorage } from "../src/hooks/localStorage";
-import { mocked } from "jest-mock"
-import { useToast } from "../src/hooks/toast";
-import { ToastContext, ToastProvider } from "../src/components/toast";
+import { mockClipboard } from "./mockClipboard";
 
 jest.mock("../src/hooks/localStorage")
 jest.mock("../src/hooks/toast")
@@ -746,30 +743,4 @@ describe("<Editor/>", () => {
       });
     });
   });
-
-  describe("localStorage", () => {
-    let localStorage: Storage
-    beforeEach(() => {
-      localStorage = useLocalStorage()
-    })
-
-    it("loads root node from localstorage on init", async () => {
-      const { showToast } = useToast()
-
-      expect(localStorage.getItem).toHaveBeenCalledTimes(1)
-      expect(showToast).toHaveBeenCalledWith(expect.stringMatching("loaded"), "info")
-    })
-
-    it("handles invalid root node", async () => {
-      const { showToast } = useToast()
-      mocked(localStorage.getItem).mockReturnValue("invalid")
-      expect(localStorage.getItem).toHaveBeenCalledTimes(1)
-      expect(showToast).toHaveBeenCalledWith(expect.stringMatching("loaded"), "info")
-    })
-
-    it("saves root node to localstorage after edit", async () => {
-      expect(localStorage.setItem).toHaveBeenCalledTimes(1)
-      expect(localStorage.setItem).toHaveBeenCalledWith("[[],[],[],[]]")
-    })
-  })
 });
