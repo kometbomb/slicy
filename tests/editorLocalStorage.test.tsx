@@ -41,51 +41,51 @@ describe("localStorage", () => {
     );
 
 
-  let localStorage: Storage
+  let localStorage: Storage;
   beforeEach(() => {
-    localStorage = useLocalStorage()
+    localStorage = useLocalStorage();
   })
 
   it("loads root node from localstorage on init", async () => {
-    const { showToast } = useToast()
-    mocked(localStorage.getItem).mockReturnValue("[5,1,2]")
+    const { showToast } = useToast();
+    mocked(localStorage.getItem).mockReturnValue("[5,1,2]");
 
-    renderEditor()
+    renderEditor();
 
-    jest.advanceTimersByTime(1000)
+    jest.advanceTimersByTime(1000);
 
-    expect(localStorage.getItem).toHaveBeenCalledTimes(1)
-    expect(localStorage.getItem).toHaveBeenCalledWith("root")
-    await waitFor(() => expect(context.data.root).toEqual({ fg: 5, bg: 2, shape: 1 }))
-    expect(showToast).toHaveBeenCalledWith(expect.stringMatching("restored"))
+    expect(localStorage.getItem).toHaveBeenCalledTimes(1);
+    expect(localStorage.getItem).toHaveBeenCalledWith("root");
+    await waitFor(() => expect(context.data.root).toEqual({ fg: 5, bg: 2, shape: 1 }));
+    expect(showToast).toHaveBeenCalledWith(expect.stringMatching("restored"));
   })
 
   it("handles invalid root node", async () => {
-    const { showToast } = useToast()
-    mocked(localStorage.getItem).mockReturnValue("invalid")
+    const { showToast } = useToast();
+    mocked(localStorage.getItem).mockReturnValue("invalid");
 
-    renderEditor()
+    renderEditor();
 
-    jest.advanceTimersByTime(1000)
+    jest.advanceTimersByTime(1000);
 
-    expect(localStorage.getItem).toHaveBeenCalledTimes(1)
-    expect(localStorage.getItem).toHaveBeenCalledWith("root")
-    expect(showToast).not.toHaveBeenCalledWith(expect.stringMatching("restored"), "info")
+    expect(localStorage.getItem).toHaveBeenCalledTimes(1);
+    expect(localStorage.getItem).toHaveBeenCalledWith("root");
+    expect(showToast).not.toHaveBeenCalledWith(expect.stringMatching("restored"), "info");
   })
 
   it("saves root node to localstorage 1000 ms after last edit", async () => {
-    renderEditor()
+    renderEditor();
 
-    context.data.setRoot({ fg: 4, bg: 5, shape: 5 })
-    await waitFor(() => expect(context.data.root).toEqual({ fg: 4, bg: 5, shape: 5 }))
-    context.data.setRoot({ fg: 4, bg: 5, shape: 6 })
-    await waitFor(() => expect(context.data.root).toEqual({ fg: 4, bg: 5, shape: 6 }))
-    context.data.setRoot({ fg: 4, bg: 5, shape: 1 })
-    await waitFor(() => expect(context.data.root).toEqual({ fg: 4, bg: 5, shape: 1 }))
+    context.data.setRoot({ fg: 4, bg: 5, shape: 5 });
+    await waitFor(() => expect(context.data.root).toEqual({ fg: 4, bg: 5, shape: 5 }));
+    context.data.setRoot({ fg: 4, bg: 5, shape: 6 });
+    await waitFor(() => expect(context.data.root).toEqual({ fg: 4, bg: 5, shape: 6 }));
+    context.data.setRoot({ fg: 4, bg: 5, shape: 1 });
+    await waitFor(() => expect(context.data.root).toEqual({ fg: 4, bg: 5, shape: 1 }));
 
-    jest.advanceTimersByTime(10000)
+    jest.advanceTimersByTime(10000);
 
-    expect(localStorage.setItem).toHaveBeenCalledTimes(1)
-    expect(localStorage.setItem).toHaveBeenCalledWith("root", "[4,1,5]")
+    expect(localStorage.setItem).toHaveBeenCalledTimes(1);
+    expect(localStorage.setItem).toHaveBeenCalledWith("root", "[4,1,5]");
   })
 })

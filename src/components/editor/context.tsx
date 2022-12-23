@@ -41,23 +41,23 @@ export const EditorContextProvider = ({
     undo,
     redo,
   } = useUndo<Node>({ bg: 0, fg: 0, shape: 0 });
-  const { showToast } = useToast()
+  const { showToast } = useToast();
 
   /**
    * Restore backup if found in localStorage
   */
-  const localStorage = useLocalStorage()
-  const wasInit = useRef(false)
+  const localStorage = useLocalStorage();
+  const wasInit = useRef(false);
   useEffect(() => {
     // Avoid reinit if deps change as this should happen once only on mount
-    if (wasInit.current) return
-    wasInit.current = true
+    if (wasInit.current) return;
+    wasInit.current = true;
 
     try {
-      const data = JSON.parse(localStorage.getItem("root") || "")
+      const data = JSON.parse(localStorage.getItem("root") || "");
       if (validatePackedNode(data)) {
-        set(unpackTree(data))
-        showToast("Picture restored")
+        set(unpackTree(data));
+        showToast("Picture restored");
       }
     } catch (error) {
       // Use the default state instead
@@ -65,11 +65,11 @@ export const EditorContextProvider = ({
   }, [localStorage, wasInit, set, showToast]);
 
   /** Debounced root node write to localStorage */
-  const storeBackup = useDebounce((node: Node) => localStorage.setItem("root", JSON.stringify(packTree(node))), 1000)
+  const storeBackup = useDebounce((node: Node) => localStorage.setItem("root", JSON.stringify(packTree(node))), 1000);
   const setRoot = useCallback((node: Node) => {
-    storeBackup(node)
-    set(node)
-  }, [storeBackup, set])
+    storeBackup(node);
+    set(node);
+  }, [storeBackup, set]);
 
   const [bgColor, setBgColor] = useState<Color>(1);
   const [fgColor, setFgColor] = useState<Color>(0);
