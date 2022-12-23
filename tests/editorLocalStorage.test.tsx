@@ -48,7 +48,7 @@ describe("localStorage", () => {
 
   it("loads root node from localstorage on init", async () => {
     const { showToast } = useToast()
-    mocked(localStorage.getItem).mockReturnValue("[1]")
+    mocked(localStorage.getItem).mockReturnValue("[5,1,2]")
 
     renderEditor()
 
@@ -56,7 +56,7 @@ describe("localStorage", () => {
 
     expect(localStorage.getItem).toHaveBeenCalledTimes(1)
     expect(localStorage.getItem).toHaveBeenCalledWith("root")
-    await waitFor(() => expect(context.data.root).toEqual({ fg: 1, bg: 0, shape: 0 }))
+    await waitFor(() => expect(context.data.root).toEqual({ fg: 5, bg: 2, shape: 1 }))
     expect(showToast).toHaveBeenCalledWith(expect.stringMatching("restored"))
   })
 

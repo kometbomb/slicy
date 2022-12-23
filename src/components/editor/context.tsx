@@ -35,8 +35,6 @@ export const EditorContextProvider = ({
 }: {
   children: ComponentChildren;
 }) => {
-  const localStorage = useLocalStorage()
-  const wasInit = useRef(false)
   const {
     current: root,
     set,
@@ -44,9 +42,17 @@ export const EditorContextProvider = ({
     redo,
   } = useUndo<Node>({ bg: 0, fg: 0, shape: 0 });
   const { showToast } = useToast()
+
+  /**
+   * Restore backup if found in localStorage
+  */
+  const localStorage = useLocalStorage()
+  const wasInit = useRef(false)
   useEffect(() => {
+    // Avoid reinit if deps change as this should happen once only on mount
     if (wasInit.current) return
     wasInit.current = true
+
     try {
       const data = JSON.parse(localStorage.getItem("root") || "")
       if (validatePackedNode(data)) {
@@ -54,14 +60,17 @@ export const EditorContextProvider = ({
         showToast("Picture restored")
       }
     } catch (error) {
-      // 
+      // Use the default state instead
     }
-  }, [localStorage, wasInit, set, showToast])
+  }, [localStorage, wasInit, set, showToast]);
+
+  /** Debounced root node write to localStorage */
   const storeBackup = useDebounce((node: Node) => localStorage.setItem("root", JSON.stringify(packTree(node))), 1000)
   const setRoot = useCallback((node: Node) => {
     storeBackup(node)
     set(node)
   }, [storeBackup, set])
+
   const [bgColor, setBgColor] = useState<Color>(1);
   const [fgColor, setFgColor] = useState<Color>(0);
   const [shape, setShape] = useState<Shape>(0);
@@ -76,7 +85,7 @@ export const EditorContextProvider = ({
         setZoom,
         undo,
         redo,
-        root: root || { bg: 0, fg: 0, shape: 0 },
+        root,
         setRoot,
         bgColor,
         fgColor,
