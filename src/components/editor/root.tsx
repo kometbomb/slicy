@@ -9,44 +9,125 @@ import {
 import { useEvent } from "../../hooks/event";
 import { EditorContext } from "./context";
 import "../../assets/canvas.css";
+import { safeDocument } from "../../ssr";
 
 export const Root = ({ children }: { children: ComponentChildren }) => {
-  const [x, setX] = useState(0);
-  const [y, setY] = useState(0);
   const [width, setW] = useState(512);
   const [height, setH] = useState(512);
-  const [foo, setFoo] = useState(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_foo, setFoo] = useState(0);
   const { enableGrid, zoom, setZoom } = useContext(EditorContext);
   const rootRef = useRef<HTMLDivElement>(null);
+  const zoomRef = useRef(zoom);
   const handleWheel = useCallback(
     (e: WheelEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      if (e.deltaY < 0) {
-        setZoom((zoom) => zoom * 1.1);
-        setX((x) => (x - width / 2) * 1.1 + width / 2);
-        setY((y) => (y - height / 2) * 1.1 + height / 2);
-      }
-      if (e.deltaY > 0) {
-        setZoom((zoom) => zoom / 1.1);
-        setX((x) => (x - width / 2) / 1.1 + width / 2);
-        setY((y) => (y - height / 2) / 1.1 + height / 2);
-      }
+
+      setZoom((oldZoom) => Math.max(1, oldZoom - e.deltaY / 500));
     },
-    [setZoom, width, height]
+    [setZoom]
   );
-  const handleMove = (e: MouseEvent) => {
+  useEffect(() => {
+    const ref = rootRef.current;
+    if (!ref) return;
+
+    const oldZoom = zoomRef.current;
+    const newZoom = zoom;
+    const x = ((ref.scrollLeft + width / 2) / oldZoom) * newZoom - width / 2;
+    const y = ((ref.scrollTop + height / 2) / oldZoom) * newZoom - height / 2;
+
+    ref.scrollTo(x, y);
+    zoomRef.current = zoom;
+  }, [height, width, zoom, zoomRef]);
+  const scroll = (dx: number, dy: number, set = false) => {
+    const ref = rootRef.current;
+    if (!ref) return;
+
+    if (set) {
+      ref.scrollTo(dx, dy);
+      return;
+    }
+
+    let x = ref.scrollLeft;
+    let y = ref.scrollTop;
+    x = x - dx;
+    y = y - dy;
+    ref.scrollTo(x, y);
+  };
+  const handleMove = useCallback((e: MouseEvent) => {
     if (e.buttons & 4) {
       e.preventDefault();
-      setX((x) => x + e.movementX);
-      setY((y) => y + e.movementY);
+      scroll(e.movementX, e.movementY);
     }
-  };
+  }, []);
+  const lengthRef = useRef<number>(0);
 
-  useEvent(rootRef.current, "wheel", handleWheel, {
+  /**
+   * Initial state when starting zooming
+   */
+  const startRef = useRef<{
+    screenX: number;
+    screenY: number;
+    scrollLeft: number;
+    scrollRight: number;
+    zoom: number;
+  }>({
+    screenX: 0,
+    screenY: 0,
+    scrollLeft: 0,
+    scrollRight: 0,
+    zoom: 0,
+  });
+  const handleTouchStart = useCallback(
+    (e: TouchEvent) => {
+      const ref = rootRef.current;
+      if (!ref) return;
+      startRef.current = {
+        screenX: e.touches[0].screenX,
+        screenY: e.touches[0].screenY,
+        scrollLeft: ref.scrollLeft,
+        scrollRight: ref.scrollTop,
+        zoom,
+      };
+      if (e.touches.length === 2) {
+        e.preventDefault();
+        const a = e.touches[0];
+        const b = e.touches[1];
+        lengthRef.current = Math.hypot(
+          a.clientX - b.clientX,
+          a.clientY - b.clientY
+        );
+      }
+    },
+    [zoom]
+  );
+  const handleTouchMove = useCallback(
+    (e: TouchEvent) => {
+      if (e.touches.length === 2) {
+        e.preventDefault();
+        const a = e.touches[0];
+        const b = e.touches[1];
+        const len = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+        setZoom(Math.max(1, (len / lengthRef.current) * startRef.current.zoom));
+      } else {
+        const { screenX, screenY } = startRef.current;
+        scroll(
+          screenX - e.touches[0].screenX + startRef.current.scrollLeft,
+          screenY - e.touches[0].screenY + startRef.current.scrollRight,
+          true
+        );
+      }
+    },
+    [setZoom]
+  );
+
+  useEvent(safeDocument, "wheel", handleWheel, {
     passive: false,
   });
   useEvent(rootRef.current, "mousemove", handleMove);
+  useEvent(rootRef.current, "touchmove", handleTouchMove);
+  useEvent(rootRef.current, "touchstart", handleTouchStart);
 
   /**
    * Trigger extra render on mount to make sure rootRef is updated (preact bug?)
@@ -76,26 +157,14 @@ export const Root = ({ children }: { children: ComponentChildren }) => {
       ref={rootRef}
     >
       <div
+        className="zoomable"
         style={{
-          position: "relative",
+          position: "absolute",
           width: `${zoom * width}px`,
           height: `${zoom * height}px`,
-          transform: `translate(-50%,-50%)`,
         }}
       >
-        <div
-          className="root-node-inner"
-          style={{
-            left: `${x}px`,
-            top: `${y}px`,
-            width: `100%`,
-            height: `100%`,
-            transform: `translate(50%,50%)`,
-            position: "relative",
-          }}
-        >
-          {children}
-        </div>
+        {children}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 .editor-root {
 	position: relative;
 	width: 100%;
-	overflow: hidden;
+	overflow: auto;
 	height: 0;
 	padding-bottom: 100%;
 	outline: 1px solid black;
@@ -27,7 +27,6 @@
 
 .editor-root.enableGrid .node {
 	outline: 1px solid #333;
-
 }
 
 .editor-root .node .overlay {
