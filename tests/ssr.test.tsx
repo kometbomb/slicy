@@ -7,16 +7,14 @@ describe("SSR missing features", () => {
     process.env.PREACT_APP_VERSION = "version-number";
   });
 
-  const { window, navigator, document } = global;
+  const { window, navigator } = global;
   beforeAll(() => {
     delete (global as any).window;
     delete (global as any).navigator;
-    delete (global as any).document;
   });
   afterAll(() => {
     global.window = window;
     global.navigator = navigator;
-    global.document = document;
   });
 
   it("renders when window is not defined", () => {

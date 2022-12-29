@@ -15,7 +15,6 @@ export type Mode = "cut" | "draw" | "color" | "tile";
 
 export const Editor = () => {
   const {
-    setZoom,
     setMode,
     setBgColor,
     setFgColor,

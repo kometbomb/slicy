@@ -28,6 +28,20 @@ export const Root = ({ children }: { children: ComponentChildren }) => {
     },
     [setZoom]
   );
+
+  const scroll = useCallback((dx: number, dy: number, set = false) => {
+    const ref = rootRef.current;
+    if (!ref) return;
+
+    if (set && (ref.scrollLeft !== dx || ref.scrollTop !== dy)) {
+      ref.scrollTo(dx, dy);
+      return;
+    }
+
+    if (dx === 0 && dy === 0) return;
+    ref.scrollTo(ref.scrollLeft - dx, ref.scrollTop - dy);
+  }, []);
+
   useEffect(() => {
     const ref = rootRef.current;
     if (!ref) return;
@@ -37,30 +51,19 @@ export const Root = ({ children }: { children: ComponentChildren }) => {
     const x = ((ref.scrollLeft + width / 2) / oldZoom) * newZoom - width / 2;
     const y = ((ref.scrollTop + height / 2) / oldZoom) * newZoom - height / 2;
 
-    ref.scrollTo(x, y);
+    scroll(x, y, true);
     zoomRef.current = zoom;
-  }, [height, width, zoom, zoomRef]);
-  const scroll = (dx: number, dy: number, set = false) => {
-    const ref = rootRef.current;
-    if (!ref) return;
+  }, [height, width, zoom, zoomRef, scroll]);
 
-    if (set) {
-      ref.scrollTo(dx, dy);
-      return;
-    }
-
-    let x = ref.scrollLeft;
-    let y = ref.scrollTop;
-    x = x - dx;
-    y = y - dy;
-    ref.scrollTo(x, y);
-  };
-  const handleMove = useCallback((e: MouseEvent) => {
-    if (e.buttons & 4) {
-      e.preventDefault();
-      scroll(e.movementX, e.movementY);
-    }
-  }, []);
+  const handleMove = useCallback(
+    (e: MouseEvent) => {
+      if (e.buttons & 4) {
+        e.preventDefault();
+        scroll(e.movementX, e.movementY);
+      }
+    },
+    [scroll]
+  );
   const lengthRef = useRef<number>(0);
 
   /**
@@ -119,7 +122,7 @@ export const Root = ({ children }: { children: ComponentChildren }) => {
         );
       }
     },
-    [setZoom]
+    [scroll, setZoom]
   );
 
   useEvent(safeDocument, "wheel", handleWheel, {
