@@ -82,36 +82,33 @@ export const Root = ({ children }: { children: ComponentChildren }) => {
     scrollRight: 0,
     zoom: 0,
   });
-  const handleTouchStart = useCallback(
-    (e: TouchEvent) => {
-      const ref = rootRef.current;
-      if (!ref) return;
-      startRef.current = {
-        screenX: e.touches[0].screenX,
-        screenY: e.touches[0].screenY,
-        scrollLeft: ref.scrollLeft,
-        scrollRight: ref.scrollTop,
-        zoom,
-      };
-      if (e.touches.length === 2) {
-        e.preventDefault();
-        const a = e.touches[0];
-        const b = e.touches[1];
-        lengthRef.current = Math.hypot(
-          a.clientX - b.clientX,
-          a.clientY - b.clientY
-        );
-      }
-    },
-    [zoom]
-  );
+  const handleTouchStart = useCallback((e: TouchEvent) => {
+    const ref = rootRef.current;
+    if (!ref) return;
+    startRef.current = {
+      screenX: e.touches[0].screenX,
+      screenY: e.touches[0].screenY,
+      scrollLeft: ref.scrollLeft,
+      scrollRight: ref.scrollTop,
+      zoom: zoomRef.current,
+    };
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      const a = e.touches[0];
+      const b = e.touches[1];
+      lengthRef.current = Math.hypot(
+        a.screenX - b.screenX,
+        a.screenY - b.screenY
+      );
+    }
+  }, []);
   const handleTouchMove = useCallback(
     (e: TouchEvent) => {
       if (e.touches.length === 2) {
         e.preventDefault();
         const a = e.touches[0];
         const b = e.touches[1];
-        const len = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+        const len = Math.hypot(a.screenX - b.screenX, a.screenY - b.screenY);
         setZoom(Math.max(1, (len / lengthRef.current) * startRef.current.zoom));
       } else {
         const { screenX, screenY } = startRef.current;
