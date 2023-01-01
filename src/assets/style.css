@@ -1,145 +1,145 @@
 
 
 .button {
-	cursor: pointer;
-	min-height: 32px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: black;
-	text-decoration: none;
+  cursor: pointer;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  text-decoration: none;
 }
 
 .button[disabled] {
-	color: #888;
+  color: #888;
 }
 
 .palette {
-	display: flex;
+  display: flex;
 }
 
 .palette-colors {
-	position: relative;
-	width: 500px;
-	height: 50px;
-	margin: 10px;
+  position: relative;
+  width: 500px;
+  height: 50px;
+  margin: 10px;
 }
 
 .palette-colors > * {
-	position: relative;
-	width: 50px;
-	height: 50px;
-	float: left;
+  position: relative;
+  width: 50px;
+  height: 50px;
+  float: left;
 }
 
 .palette-selection {
-	position: relative;
-	width: 50px;
-	height: 50px;
+  position: relative;
+  width: 50px;
+  height: 50px;
 }
 
 .palette-selection > * {
-	width: 50px;
-	height: 50px;
-	position: absolute;
+  width: 50px;
+  height: 50px;
+  position: absolute;
 }
 
 .palette-selection > * {
-	border: 2px solid black;
+  border: 2px solid black;
 }
 
 .palette-selection > .fg-color {
-	top: 8px;
-	left: 8px;
+  top: 8px;
+  left: 8px;
 }
 
 .shapes {
-	position: relative;
-	width: 250px;
-	height: 100px;
-	display: grid;
-	grid-template-columns: repeat(5, 50px);
+  position: relative;
+  width: 250px;
+  height: 100px;
+  display: grid;
+  grid-template-columns: repeat(5, 50px);
 }
 
 .shapes > * {
-	position: relative;
-	width: 50px;
-	height: 50px;
+  position: relative;
+  width: 50px;
+  height: 50px;
 }
 
 .shapes > .selected {
-	background-color: grey;
+  background-color: grey;
 }
 
 .tools {
-	display: flex;
-	width: 200px;
+  display: flex;
+  width: 200px;
 }
 
 .tools > * {
-	width: 50px;
-	height: 50px;
+  width: 50px;
+  height: 50px;
 }
 
 .selected {
-	border: 2px black solid;
+  border: 2px black solid;
 }
 
 .toolbar {
-	padding: 2px;
-	margin: 10px 0;
+  padding: 2px;
+  margin: 10px 0;
 }
 
 .toolbar .button.selected {
-	border: 2px white solid;
-	background-color: lightblue;
+  border: 2px white solid;
+  background-color: lightblue;
 }
 
 .toolbar .button, .export .button {
-	outline: 2px solid black;
-	border: 2px white solid;
-	border-radius: 2px;
-	background: white;
-	font-size: 24px;
+  outline: 2px solid black;
+  border: 2px white solid;
+  border-radius: 2px;
+  background: white;
+  font-size: 24px;
 }
 
 .export .button {
-	font-size: 12px;
+  font-size: 12px;
 }
 
 .palettes {
-	display: flex;
-	justify-content: space-between;
-	flex-wrap: wrap;
-	background: transparent;
-	width: 100%;
-	gap: 10px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  background: transparent;
+  width: 100%;
+  gap: 10px;
 }
 
 @media only screen and (max-width: 500px) {
-	.palettes {
-		width: 244px;
-	}
+  .palettes {
+    width: 244px;
+  }
 }
 
 .stats {
-	margin: auto;
-	font-size: 20px;
-	font-weight: bold;
-	min-width: 48px;
-	text-align: right;
+  margin: auto;
+  font-size: 20px;
+  font-weight: bold;
+  min-width: 48px;
+  text-align: right;
 }
 
 @media only screen and (max-width: 500px) {
-	.stats {
-		font-size: 16px;
-		min-width: 32px;
-	}
+  .stats {
+    font-size: 16px;
+    min-width: 32px;
+  }
 }
 
 hr {
-	width: 100%;
-	border: 0;
-	border-top: 1px solid #444;
-	height: 1px;
+  width: 100%;
+  border: 0;
+  border-top: 1px solid #444;
+  height: 1px;
 }
