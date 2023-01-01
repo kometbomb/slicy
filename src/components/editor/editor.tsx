@@ -1,5 +1,6 @@
 import { h } from "preact";
 import { useCallback, useContext } from "preact/hooks";
+import { safeDocument } from "../../ssr";
 import { useEvent } from "../../hooks/event";
 import { mirrorShapeH, mirrorShapeV, rotateShape } from "../../util";
 import { ColorPalette } from "../color-palette";
@@ -8,6 +9,7 @@ import { ShapePalette } from "../shape-palette";
 import { Tile } from "../tile";
 import { ToolPalette } from "../tool-palette";
 import { EditorContext } from "./context";
+import { Root } from "./root";
 
 export type Mode = "cut" | "draw" | "color" | "tile";
 
@@ -19,7 +21,6 @@ export const Editor = () => {
     bgColor,
     fgColor,
     setEnableGrid,
-    enableGrid,
     setShape,
     root,
     setRoot,
@@ -112,18 +113,14 @@ export const Editor = () => {
     [redo, undo]
   );
 
-  useEvent("keypress", handleKeypress);
-  useEvent("keydown", handleKeydown);
+  useEvent(safeDocument, "keypress", handleKeypress);
+  useEvent(safeDocument, "keydown", handleKeydown);
 
   return (
     <div>
-      <div
-        id="root-node"
-        data-testid="root-node"
-        className={["editor-root", enableGrid ? "enableGrid" : ""].join(" ")}
-      >
+      <Root>
         <Tile node={root} setNode={setRoot} />
-      </div>
+      </Root>
       <ToolPalette root={root} />
       <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
         <div className="palettes">

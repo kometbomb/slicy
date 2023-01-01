@@ -3,6 +3,7 @@ import { useCallback } from "preact/hooks";
 import "../assets/modal.css";
 import { useEvent } from "../hooks/event";
 import { useMountable } from "../hooks/mountable";
+import { safeDocument } from "../ssr";
 
 export const ModalContent = ({ children }: { children: ComponentChildren }) => (
   <div className="content">{children}</div>
@@ -33,7 +34,7 @@ export const Modal = ({
     },
     [onClose, isMounted]
   );
-  useEvent("keydown", escHandler);
+  useEvent(safeDocument, "keydown", escHandler);
 
   if (!isMounted) return null;
 

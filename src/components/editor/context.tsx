@@ -20,6 +20,8 @@ export interface EditorContextType {
   setRoot: (root: Node) => void;
   undo: () => void;
   redo: () => void;
+  zoom: number;
+  setZoom: StateUpdater<number>;
 }
 
 export const EditorContext = createContext<EditorContextType>({} as never);
@@ -43,11 +45,14 @@ export const EditorContextProvider = ({
   const [fgColor, setFgColor] = useState<Color>(0);
   const [shape, setShape] = useState<Shape>(0);
   const [mode, setMode] = useState<Mode>("cut");
+  const [zoom, setZoom] = useState(1);
   const [enableGrid, setEnableGrid] = useState(true);
 
   return (
     <EditorContext.Provider
       value={{
+        zoom,
+        setZoom,
         undo,
         redo,
         root,

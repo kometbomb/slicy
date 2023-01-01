@@ -1,11 +1,16 @@
 import { useEffect } from "preact/hooks";
 
-export const useEvent = (
-  event: "keypress" | "keydown",
-  handler: (event: KeyboardEvent) => void
+export const useEvent = <E extends Event>(
+  target: Document | Element | null,
+  event: E["type"],
+  handler: (event: E) => void,
+  options?: AddEventListenerOptions
 ) => {
   useEffect(() => {
-    document.addEventListener(event, handler);
-    return () => document.removeEventListener(event, handler);
-  }, [event, handler]);
+    if (!target) return;
+
+    target.addEventListener(event, handler as EventListener, options);
+    return () =>
+      target.removeEventListener(event, handler as EventListener, options);
+  }, [target, event, handler, options]);
 };
