@@ -40,5 +40,9 @@ export const Modal = ({
 
   const classes = ["modal", ...(isOpen && open ? ["open"] : [])];
 
-  return <div className={classes.join(" ")}>{children}</div>;
+  return (
+    <div className={classes.join(" ")} data-testid="modal-content">
+      {children}
+    </div>
+  );
 };

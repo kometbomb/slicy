@@ -1,7 +1,18 @@
 import { ComponentChildren, createContext, h } from "preact";
-import { StateUpdater, useCallback, useRef, useState } from "preact/hooks";
+import {
+  StateUpdater,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "preact/hooks";
+import { packTree, unpackTree, validatePackedNode } from "../../tree/packed";
+import { useLocalStorage } from "../../hooks/localStorage";
 import { useUndo } from "../../hooks/undo";
-import { Color, Node, Shape } from "../../tree";
+import { Color, isDefaultNodeState, Node, Shape } from "../../tree";
+import { useToast } from "../../hooks/toast";
+import { useDebounce } from "../../hooks/debounce";
+import { RestoreSavedStateModal } from "./restore-saved-state-modal";
 
 export type Mode = "cut" | "draw" | "color" | "tile";
 
@@ -22,6 +33,7 @@ export interface EditorContextType {
   redo: () => void;
   zoom: number;
   setZoom: StateUpdater<number>;
+  hasSavedStateInLocalStorage: boolean;
 }
 
 export const EditorContext = createContext<EditorContextType>({} as never);
@@ -33,20 +45,75 @@ export const EditorContextProvider = ({
 }) => {
   const {
     current: root,
-    set: setRoot,
+    set,
     undo,
     redo,
-  } = useUndo<Node>({
-    bg: 0,
-    fg: 0,
-    shape: 0,
-  });
+  } = useUndo<Node>({ bg: 0, fg: 0, shape: 0 });
+  const { showToast } = useToast();
+  const [hasSavedStateInLocalStorage, setHasSavedStateInLocalStorage] =
+    useState(false);
+
+  /**
+   * Restore backup if found in localStorage
+   */
+  const localStorage = useLocalStorage();
+  const wasInit = useRef(false);
+  useEffect(() => {
+    // Avoid reinit if deps change as this should happen once only on mount
+    if (wasInit.current) return;
+    wasInit.current = true;
+
+    try {
+      const data = JSON.parse(localStorage.getItem("root") || "");
+      if (validatePackedNode(data) && !isDefaultNodeState(unpackTree(data))) {
+        setHasSavedStateInLocalStorage(true);
+      }
+    } catch (error) {
+      // Use the default state instead
+    }
+  }, [localStorage, wasInit, set, showToast]);
+
+  /** Debounced root node write to localStorage */
+  const storeBackup = useDebounce(
+    (node: Node) =>
+      localStorage.setItem("root", JSON.stringify(packTree(node))),
+    1000
+  );
+  const setRoot = useCallback(
+    (node: Node) => {
+      storeBackup(node);
+      set(node);
+    },
+    [storeBackup, set]
+  );
+
   const [bgColor, setBgColor] = useState<Color>(1);
   const [fgColor, setFgColor] = useState<Color>(0);
   const [shape, setShape] = useState<Shape>(0);
   const [mode, setMode] = useState<Mode>("cut");
   const [zoom, setZoom] = useState(1);
   const [enableGrid, setEnableGrid] = useState(true);
+
+  const restoreFromLocalStorage = useCallback(
+    (e: Event) => {
+      e.preventDefault();
+      try {
+        const data = JSON.parse(localStorage.getItem("root") || "");
+        set(unpackTree(data));
+        showToast("Picture restored");
+      } catch (error) {
+        // Use the default state instead
+        showToast("Restore failed", "failure");
+      } finally {
+        setHasSavedStateInLocalStorage(false);
+      }
+    },
+    [localStorage, set, showToast]
+  );
+  const closeRestoreModal = useCallback(() => {
+    setHasSavedStateInLocalStorage(false);
+    localStorage.setItem("root", "[]");
+  }, [localStorage]);
 
   return (
     <EditorContext.Provider
@@ -67,9 +134,15 @@ export const EditorContextProvider = ({
         setMode,
         enableGrid,
         setEnableGrid,
+        hasSavedStateInLocalStorage,
       }}
     >
       {children}
+      <RestoreSavedStateModal
+        open={hasSavedStateInLocalStorage}
+        onYes={restoreFromLocalStorage}
+        onClose={closeRestoreModal}
+      />
     </EditorContext.Provider>
   );
 };

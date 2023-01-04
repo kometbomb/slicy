@@ -1,10 +1,11 @@
-import { useState, useEffect } from "preact/hooks";
+import { useState, useEffect, useRef } from "preact/hooks";
 
 export const useMountable = (open: boolean, onFinished?: () => void) => {
   // Actual modal mount status
-  const [isMounted, setIsMounted] = useState(false);
+  const [isMounted, setIsMounted] = useState(open);
   // Modal requested state
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(open);
+  const closeTimerRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
     // Will follow one render cycle after the mount status changes
@@ -16,11 +17,13 @@ export const useMountable = (open: boolean, onFinished?: () => void) => {
       setIsMounted(true);
     } else {
       // Unmount after 220 ms (animation is ~200 ms)
-      setTimeout(() => {
+      closeTimerRef.current = setTimeout(() => {
         setIsMounted(false);
         if (onFinished) onFinished();
       }, 220);
     }
+
+    return () => clearTimeout(closeTimerRef.current);
   }, [open, setIsMounted, onFinished]);
 
   return { isMounted, setIsMounted, isOpen, setIsOpen };

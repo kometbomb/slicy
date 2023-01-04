@@ -3,18 +3,22 @@ import {
   render,
   screen,
   waitFor,
-  within,
+  within
 } from "@testing-library/preact";
 import { h } from "preact";
 import { useContext } from "preact/hooks";
 import { EditorContext } from "../src/components/editor";
 import {
   EditorContextProvider,
-  EditorContextType,
+  EditorContextType
 } from "../src/components/editor/context";
 import { Editor } from "../src/components/editor/editor";
-import { mockClipboard } from "./mockClipboard";
+import { ToastProvider } from "../src/components/toast";
 import { complexClick } from "./complexClick";
+import { mockClipboard } from "./mockClipboard";
+
+jest.mock("../src/hooks/localStorage")
+jest.mock("../src/hooks/toast")
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -38,10 +42,12 @@ describe("<Editor/>", () => {
 
   beforeEach(() => {
     render(
-      <EditorContextProvider>
-        <Editor />
-        <Helper callback={(editorContext) => (context.data = editorContext)} />
-      </EditorContextProvider>
+      <ToastProvider>
+        <EditorContextProvider>
+          <Editor />
+          <Helper callback={(editorContext) => (context.data = editorContext)} />
+        </EditorContextProvider>
+      </ToastProvider>
     );
   });
 

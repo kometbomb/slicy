@@ -148,11 +148,13 @@ describe("<ExportTools/>", () => {
 
     await waitFor(() => expect(copyDataURL).toHaveBeenCalledTimes(1));
 
-    await waitFor(() => expect(screen.queryByTestId("export-copy")).toBeNull());
-
     expect(showToast).toHaveBeenCalledWith(
       expect.stringMatching(new RegExp("failed", "i")),
       "failure"
+    );
+
+    await waitFor(() =>
+      expect(screen.queryByTestId("export-copy")).not.toBeNull()
     );
 
     return true;
