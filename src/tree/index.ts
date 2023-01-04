@@ -20,3 +20,9 @@ export const isBranch = (node: Node): node is Branch =>
 
 export const isLeaf = (node: Node): node is Leaf =>
   !Array.isArray((node as Branch).nodes);
+
+export const isDefaultNodeState = (node: Node): boolean => {
+  if (isBranch(node)) return false;
+  if (node.bg || node.fg || node.shape) return false;
+  return true;
+};

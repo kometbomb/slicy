@@ -95,7 +95,7 @@
   background-color: lightblue;
 }
 
-.toolbar .button, .export .button {
+.toolbar .button, .export .button, .confirm-buttons .button {
   outline: 2px solid black;
   border: 2px white solid;
   border-radius: 2px;
@@ -103,7 +103,7 @@
   font-size: 24px;
 }
 
-.export .button {
+.export .button, .confirm-buttons .button {
   font-size: 12px;
 }
 
