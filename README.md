@@ -4,6 +4,10 @@
 
 * https://slicy-dev.tic-tac-toad.com/
 
+## Licence/attribution
+
+Uses Hermit Regular for the font: https://pcaro.es/hermit/
+
 ## CLI Commands
 *   `npm install`: Installs dependencies
 
