@@ -122,7 +122,7 @@ export const Root = ({ children }: { children: ComponentChildren }) => {
     [scroll, setZoom]
   );
 
-  useEvent(safeDocument, "wheel", handleWheel, {
+  useEvent(rootRef.current, "wheel", handleWheel, {
     passive: false,
   });
   useEvent(rootRef.current, "mousemove", handleMove);
