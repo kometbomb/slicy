@@ -117,17 +117,24 @@ export const Editor = () => {
   useEvent(safeDocument, "keydown", handleKeydown);
 
   return (
-    <div>
-      <Root>
-        <Tile node={root} setNode={setRoot} />
-      </Root>
-      <ToolPalette root={root} />
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-        <div className="palettes">
-          <ColorPalette />
-          <ShapePalette />
+    <div className="main-layout">
+      <div className="col1">
+        <Root>
+          <Tile node={root} setNode={setRoot} />
+        </Root>
+      </div>
+      <div className="col2">
+        <ToolPalette root={root} />
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+          <div className="palettes">
+            <ColorPalette />
+            <ShapePalette />
+          </div>
+          <ExportTools setRoot={setRoot} root={root} />
         </div>
-        <ExportTools setRoot={setRoot} root={root} />
+        <div id="version" data-testid="version-info">
+          {process.env.PREACT_APP_VERSION}
+        </div>
       </div>
     </div>
   );

@@ -26,8 +26,21 @@ html, body {
 
 #app {
 	height: 100%;
-	max-width: 512px;
 	margin: auto;
+	max-width: 512px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+#app > * {
+	max-height: 1024px;
+}
+
+@media only screen and (min-width: 1024px) {
+	#app {
+		max-width: inherit;
+	}
 }
 
 @media only screen and (min-width: 512px) {
@@ -43,3 +56,27 @@ html, body {
 	margin: 8px;
 	font-size: 10px;
 }
+
+.main-layout {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.main-layout > * {
+	flex: 1;
+	max-width: calc(100vh - 20px);
+}
+
+.main-layout .col2 {
+	max-width: 512px;
+}
+
+@media only screen and (min-width: 1024px) {
+	.main-layout {
+		flex-direction: row;
+		margin: 0 8px;
+	}
+}
+

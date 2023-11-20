@@ -87,7 +87,7 @@
 
 .toolbar {
   padding: 2px;
-  margin: 10px 0;
+  margin-bottom: 10px;
 }
 
 .toolbar .button.selected {
