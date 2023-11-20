@@ -182,7 +182,7 @@ describe("<ExportTools/>", () => {
 });
 
 describe("clipboard availability", () => {
-  it("enables paste button if paste is available", () => {
+  it("uses paste button directly if paste is available", () => {
     Object.assign(navigator, {
       clipboard: {
         readText: jest.fn().mockResolvedValue("[[1],[2],[3],[4]]"),
@@ -193,9 +193,12 @@ describe("clipboard availability", () => {
     expect(
       screen.getByTestId("export-paste-code").getAttribute("disabled")
     ).toBeFalsy();
+    fireEvent.click(screen.getByTestId("export-paste-code"));
+    expect(screen.queryByTestId("modal-import")).toBeNull();
+    expect(pasteNode).toHaveBeenCalledTimes(1);
   });
 
-  it("disables paste button if paste is unavailable", () => {
+  it.only("uses paste button to open a textbox modal if paste is unavailable", async () => {
     Object.assign(navigator, {
       clipboard: {
         readText: undefined,
@@ -205,7 +208,21 @@ describe("clipboard availability", () => {
     render(<ExportTools setRoot={setRoot} root={root} />);
     expect(
       screen.getByTestId("export-paste-code").getAttribute("disabled")
-    ).toBeDefined();
+    ).toBeFalsy();
+    fireEvent.click(screen.getByTestId("export-paste-code"));
+    expect(screen.queryByTestId("import-paste-textbox")).not.toBeNull();
+
+    fireEvent.change(screen.getByTestId("import-paste-textbox"), {
+      target: { value: "[5]" },
+    });
+    fireEvent.click(screen.getByTestId("import-paste-ok"));
+
+    expect(setRoot).toHaveBeenCalledTimes(1);
+    expect(setRoot).toHaveBeenCalledWith({ fg: 5, shape: 0, bg: 0 });
+
+    await waitFor(() =>
+      expect(screen.queryByTestId("import-paste-textbox")).toBeNull()
+    );
   });
 
   it("enables copy button if copy is available", async () => {

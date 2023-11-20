@@ -29,8 +29,11 @@ export const Modal = ({
   const escHandler = useCallback(
     (e: KeyboardEvent) => {
       if (!isMounted) return;
-      e.preventDefault();
-      if (e.key == "Escape") onClose();
+
+      if (e.key == "Escape") {
+        e.preventDefault();
+        onClose();
+      }
     },
     [onClose, isMounted]
   );
