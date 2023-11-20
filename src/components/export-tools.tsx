@@ -1,61 +1,12 @@
 import { h } from "preact";
 import { useCallback, useState } from "preact/hooks";
-import { copyDataURL, copyNode, pasteNode } from "../export/clipboard";
+import { copyNode, pasteNode } from "../export/clipboard";
 import { getDataURL } from "../export/export";
 import { Node } from "../tree";
-import { Grid } from "./grid";
-import { Modal, ModalContent, ModalHeader } from "./modal";
 import { useToast } from "../hooks/toast";
-
-const SavePrompt = ({
-  format,
-  url,
-  onClose,
-}: {
-  format: "svg" | "png";
-  url: string;
-  onClose: () => void;
-}) => {
-  const { showToast } = useToast();
-  return (
-    <Modal onClose={onClose} open={!!url}>
-      <ModalContent>
-        <ModalHeader>{`Export .${format.toLocaleUpperCase()}`}</ModalHeader>
-        <Grid gap={8}>
-          <button
-            class="button"
-            data-testid="export-copy"
-            onClick={async () => {
-              try {
-                await copyDataURL(url);
-                onClose();
-                showToast("File copied to clipboard", "success");
-              } catch (error) {
-                showToast("Copy to clipboard failed", "failure");
-              }
-            }}
-            disabled={!global.ClipboardItem}
-          >
-            Copy to clipboard
-          </button>
-          <a
-            className="button"
-            href={url}
-            rel="noreferrer"
-            target="_blank"
-            data-testid="export-link"
-          >
-            Link to file...
-          </a>
-          <hr />
-          <button class="button" onClick={onClose} data-testid="export-close">
-            OK
-          </button>
-        </Grid>
-      </ModalContent>
-    </Modal>
-  );
-};
+import { SavePrompt } from "./save-prompt";
+import { ImportModal } from "./import-modal";
+import { unpackTree } from "../tree/packed";
 
 export const ExportTools = ({
   root,
@@ -65,6 +16,7 @@ export const ExportTools = ({
   setRoot: (node: Node) => void;
 }) => {
   const { showToast } = useToast();
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [dataUrl, setDataUrl] = useState<string>("");
   const [format, setFormat] = useState<"svg" | "png">("svg");
   const exportImage = useCallback(
@@ -100,9 +52,25 @@ export const ExportTools = ({
     },
     [root, showToast]
   );
+  const handleImportClose = useCallback(() => {
+    setIsImportModalOpen(false);
+  }, []);
+  const handleImport = useCallback(
+    (code: string) => {
+      setRoot(unpackTree(JSON.parse(code)));
+      setIsImportModalOpen(false);
+    },
+    [setRoot]
+  );
   const handlePasteFromClipboard = useCallback(
     async (e: MouseEvent) => {
       e.preventDefault();
+
+      if (typeof window !== "undefined" && !navigator.clipboard?.readText) {
+        setIsImportModalOpen(true);
+        return;
+      }
+
       const node = await pasteNode();
       if (!node) {
         showToast("Paste failed", "failure");
@@ -134,9 +102,6 @@ export const ExportTools = ({
         Copy to clipboard
       </button>
       <button
-        disabled={
-          typeof window !== "undefined" && !navigator.clipboard?.readText
-        }
         data-testid="export-paste-code"
         style={{ flex: "1" }}
         className="button"
@@ -160,6 +125,11 @@ export const ExportTools = ({
       >
         Export .SVG
       </button>
+      <ImportModal
+        open={isImportModalOpen}
+        onOk={handleImport}
+        onClose={handleImportClose}
+      />
       <SavePrompt url={dataUrl} onClose={handlePromptClose} format={format} />
     </div>
   );
