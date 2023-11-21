@@ -126,15 +126,15 @@ export const Root = ({ children }: { children: ComponentChildren }) => {
         const b = e.touches[1];
         const len = Math.hypot(a.screenX - b.screenX, a.screenY - b.screenY);
         setZoom(Math.max(1, (len / lengthRef.current) * startRef.current.zoom));
+      } else {
+        const centerPoint = getCenterPoint(e.touches);
+        const { screenX, screenY } = startRef.current;
+        scroll(
+          screenX - centerPoint.screenX + startRef.current.scrollLeft,
+          screenY - centerPoint.screenY + startRef.current.scrollRight,
+          true
+        );
       }
-
-      const centerPoint = getCenterPoint(e.touches);
-      const { screenX, screenY } = startRef.current;
-      scroll(
-        screenX - centerPoint.screenX + startRef.current.scrollLeft,
-        screenY - centerPoint.screenY + startRef.current.scrollRight,
-        true
-      );
     },
     [scroll, setZoom]
   );
