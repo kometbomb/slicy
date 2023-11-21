@@ -6,10 +6,23 @@ import {
   useRef,
   useState,
 } from "preact/hooks";
+import "../../assets/canvas.css";
 import { useEvent } from "../../hooks/event";
 import { EditorContext } from "./context";
-import "../../assets/canvas.css";
-import { safeDocument } from "../../ssr";
+
+const getCenterPoint = (points: TouchList) => {
+  let accX = 0;
+  let accY = 0;
+  for (let index = 0; index < points.length; ++index) {
+    accX += points[index].screenX;
+    accY += points[index].screenY;
+  }
+
+  return {
+    screenX: accX / Math.max(1, points.length),
+    screenY: accY / Math.max(1, points.length),
+  };
+};
 
 export const Root = ({ children }: { children: ComponentChildren }) => {
   const [width, setW] = useState(512);
@@ -85,9 +98,12 @@ export const Root = ({ children }: { children: ComponentChildren }) => {
   const handleTouchStart = useCallback((e: TouchEvent) => {
     const ref = rootRef.current;
     if (!ref) return;
+
+    const centerPoint = getCenterPoint(e.touches);
+
     startRef.current = {
-      screenX: e.touches[0].screenX,
-      screenY: e.touches[0].screenY,
+      screenX: centerPoint.screenX,
+      screenY: centerPoint.screenY,
       scrollLeft: ref.scrollLeft,
       scrollRight: ref.scrollTop,
       zoom: zoomRef.current,
@@ -110,14 +126,15 @@ export const Root = ({ children }: { children: ComponentChildren }) => {
         const b = e.touches[1];
         const len = Math.hypot(a.screenX - b.screenX, a.screenY - b.screenY);
         setZoom(Math.max(1, (len / lengthRef.current) * startRef.current.zoom));
-      } else {
-        const { screenX, screenY } = startRef.current;
-        scroll(
-          screenX - e.touches[0].screenX + startRef.current.scrollLeft,
-          screenY - e.touches[0].screenY + startRef.current.scrollRight,
-          true
-        );
       }
+
+      const centerPoint = getCenterPoint(e.touches);
+      const { screenX, screenY } = startRef.current;
+      scroll(
+        screenX - centerPoint.screenX + startRef.current.scrollLeft,
+        screenY - centerPoint.screenY + startRef.current.scrollRight,
+        true
+      );
     },
     [scroll, setZoom]
   );
@@ -128,6 +145,7 @@ export const Root = ({ children }: { children: ComponentChildren }) => {
   useEvent(rootRef.current, "mousemove", handleMove);
   useEvent(rootRef.current, "touchmove", handleTouchMove);
   useEvent(rootRef.current, "touchstart", handleTouchStart);
+  useEvent(rootRef.current, "touchend", handleTouchStart);
 
   /**
    * Trigger extra render on mount to make sure rootRef is updated (preact bug?)
