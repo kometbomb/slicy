@@ -33,11 +33,7 @@ html, body {
 	justify-content: center;
 }
 
-#app > * {
-	max-height: 1024px;
-}
-
-@media only screen and (min-width: 1024px) {
+@media only screen and (min-width: 800px) {
 	#app {
 		max-width: inherit;
 	}
@@ -46,7 +42,7 @@ html, body {
 @media only screen and (min-width: 512px) {
 	#app {
 		padding: 10px 0;
-		height: calc(100% - 20px);
+		height: 100%;
 	}
 }
 
@@ -66,14 +62,14 @@ html, body {
 
 .main-layout > * {
 	flex: 1;
-	max-width: min(1024px, 100vh - 20px);
+	max-width: min(1024px, 100vh);
 }
 
 .main-layout .col2 {
 	max-width: 512px;
 }
 
-@media only screen and (min-width: 1024px) {
+@media only screen and (min-width: 800px) {
 	.main-layout {
 		flex-direction: row;
 		margin: 0 8px;
