@@ -4,7 +4,13 @@ import { useToast } from "../hooks/toast";
 import { Grid } from "./grid";
 import { Modal, ModalContent, ModalHeader } from "./modal";
 
-const Inner = ({ onOk }: { onOk: (image: string) => void }) => {
+const Inner = ({
+  onOk,
+  onClose,
+}: {
+  onOk: (image: string) => void;
+  onClose: () => void;
+}) => {
   const [code, setCode] = useState("");
   const { showToast } = useToast();
   const handleOk = useCallback(
@@ -49,6 +55,10 @@ const Inner = ({ onOk }: { onOk: (image: string) => void }) => {
         <button class="button" onClick={handleOk} data-testid="import-paste-ok">
           Import
         </button>
+        <hr />
+        <button class="button" onClick={onClose}>
+          Cancel
+        </button>
       </Grid>
     </ModalContent>
   );
@@ -65,7 +75,7 @@ export const ImportModal = ({
 }) => {
   return (
     <Modal onClose={onClose} open={open}>
-      <Inner onOk={onOk} />
+      <Inner onOk={onOk} onClose={onClose} />
     </Modal>
   );
 };

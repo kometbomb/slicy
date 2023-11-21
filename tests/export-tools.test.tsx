@@ -198,31 +198,45 @@ describe("clipboard availability", () => {
     expect(pasteNode).toHaveBeenCalledTimes(1);
   });
 
-  it.only("uses paste button to open a textbox modal if paste is unavailable", async () => {
-    Object.assign(navigator, {
-      clipboard: {
-        readText: undefined,
-      },
+  describe("paste via textbox", () => {
+    beforeEach(() => {
+      Object.assign(navigator, {
+        clipboard: {
+          readText: undefined,
+        },
+      });
+
+      render(<ExportTools setRoot={setRoot} root={root} />);
     });
 
-    render(<ExportTools setRoot={setRoot} root={root} />);
-    expect(
-      screen.getByTestId("export-paste-code").getAttribute("disabled")
-    ).toBeFalsy();
-    fireEvent.click(screen.getByTestId("export-paste-code"));
-    expect(screen.queryByTestId("import-paste-textbox")).not.toBeNull();
+    it("uses paste button to open a textbox modal if paste is unavailable", async () => {
+      expect(
+        screen.getByTestId("export-paste-code").getAttribute("disabled")
+      ).toBeFalsy();
+      fireEvent.click(screen.getByTestId("export-paste-code"));
+      expect(screen.queryByTestId("import-paste-textbox")).not.toBeNull();
 
-    fireEvent.change(screen.getByTestId("import-paste-textbox"), {
-      target: { value: "[5]" },
+      fireEvent.change(screen.getByTestId("import-paste-textbox"), {
+        target: { value: "[5]" },
+      });
+      fireEvent.click(screen.getByTestId("import-paste-ok"));
+
+      expect(setRoot).toHaveBeenCalledTimes(1);
+      expect(setRoot).toHaveBeenCalledWith({ fg: 5, shape: 0, bg: 0 });
+
+      await waitFor(() =>
+        expect(screen.queryByTestId("import-paste-textbox")).toBeNull()
+      );
     });
-    fireEvent.click(screen.getByTestId("import-paste-ok"));
 
-    expect(setRoot).toHaveBeenCalledTimes(1);
-    expect(setRoot).toHaveBeenCalledWith({ fg: 5, shape: 0, bg: 0 });
-
-    await waitFor(() =>
-      expect(screen.queryByTestId("import-paste-textbox")).toBeNull()
-    );
+    it("closes the dialog when canceling", async () => {
+      fireEvent.click(screen.getByTestId("export-paste-code"));
+      expect(screen.queryByTestId("import-paste-textbox")).not.toBeNull();
+      fireEvent.click(screen.getByText("Cancel"));
+      await waitFor(() =>
+        expect(screen.queryByTestId("import-paste-textbox")).toBeNull()
+      );
+    });
   });
 
   it("enables copy button if copy is available", async () => {
