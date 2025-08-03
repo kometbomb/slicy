@@ -4,8 +4,10 @@ import { Color } from "../tree";
 import { colors } from "./colors";
 import { EditorContext } from "./editor";
 import { Grid } from "./grid";
+import { useTheme } from "./theme";
 
 export const ColorPalette = () => {
+  const { mode: themeMode } = useTheme();
   const { mode, setMode, fgColor, bgColor, setFgColor, setBgColor } =
     useContext(EditorContext);
   const handleClick = useCallback(
@@ -24,7 +26,7 @@ export const ColorPalette = () => {
       cols={6}
       gap={1}
       style={{
-        background: "white",
+        background: themeMode === "light" ? "white" : "#222222",
         width: "244px",
         height: "102px",
         borderWidth: "2px",
