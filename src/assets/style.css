@@ -101,16 +101,16 @@
   font-size: 24px;
 }
 
-@media (prefers-color-scheme: dark) {
-  .toolbar .button, .export .button, .confirm-buttons .button {
+.theme-dark .toolbar .button,
+.theme-dark .export .button,
+.theme-dark .confirm-buttons .button {
     color: #ff8500;
     background-color: #333333;
     border-color: #444444;
   }
 
-  .toolbar .button.selected {
-    background-color: #ffbe22;
-  }
+.theme-dark .toolbar .button.selected {
+  background-color: #ffbe22;
 }
 
 .export .button, .confirm-buttons .button {
@@ -140,11 +140,10 @@
   text-align: right;
 }
 
-@media (prefers-color-scheme: dark) {
-  .stats {
-    color: #aaaaaa;
-  }
+.theme-dark .stats {
+  color: #aaaaaa;
 }
+
 
 @media only screen and (max-width: 500px) {
   .stats {
@@ -158,4 +157,14 @@ hr {
   border: 0;
   border-top: 1px solid #444;
   height: 1px;
+}
+
+.text-button {
+  cursor: pointer;
+  text-decoration: underline;
+  color: #222;
+}
+
+.theme-dark .text-button {
+  color: #eee;
 }
