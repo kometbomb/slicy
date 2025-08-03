@@ -18,9 +18,8 @@ export const ThemeProvider = ({
 }: {
   children: ComponentChildren;
 }) => {
-  const [mode, setMode] = useState<"dark" | "light">(
-    safeWindow?.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches
+  const [mode, setMode] = useState<"dark" | "light">(() =>
+    safeWindow?.matchMedia?.("(prefers-color-scheme: dark)").matches
       ? "dark"
       : "light"
   );

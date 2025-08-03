@@ -1,5 +1,6 @@
 import { ComponentChildren, createContext, h } from "preact";
 import {
+  Dispatch,
   StateUpdater,
   useCallback,
   useEffect,
@@ -23,17 +24,17 @@ export interface EditorContextType {
   bgColor: Color;
   shape: Shape;
   enableGrid: boolean;
-  setMode: StateUpdater<Mode>;
-  setFgColor: StateUpdater<Color>;
-  setBgColor: StateUpdater<Color>;
-  setShape: StateUpdater<Shape>;
-  setEnableGrid: StateUpdater<boolean>;
+  setMode: Dispatch<StateUpdater<Mode>>;
+  setFgColor: Dispatch<StateUpdater<Color>>;
+  setBgColor: Dispatch<StateUpdater<Color>>;
+  setShape: Dispatch<StateUpdater<Shape>>;
+  setEnableGrid: Dispatch<StateUpdater<boolean>>;
   root: Node;
   setRoot: (root: Node) => void;
   undo: () => void;
   redo: () => void;
   zoom: number;
-  setZoom: StateUpdater<number>;
+  setZoom: Dispatch<StateUpdater<number>>;
   hasSavedStateInLocalStorage: boolean;
 }
 
