@@ -3,6 +3,7 @@ import {
   StateUpdater,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "preact/hooks";
@@ -114,29 +115,43 @@ export const EditorContextProvider = ({
     setHasSavedStateInLocalStorage(false);
     localStorage.setItem("root", "[]");
   }, [localStorage]);
+  const value = useMemo(
+    () => ({
+      zoom,
+      setZoom,
+      undo,
+      redo,
+      root,
+      setRoot,
+      bgColor,
+      fgColor,
+      setBgColor,
+      setFgColor,
+      shape,
+      setShape,
+      mode,
+      setMode,
+      enableGrid,
+      setEnableGrid,
+      hasSavedStateInLocalStorage,
+    }),
+    [
+      bgColor,
+      enableGrid,
+      fgColor,
+      hasSavedStateInLocalStorage,
+      mode,
+      redo,
+      root,
+      setRoot,
+      shape,
+      undo,
+      zoom,
+    ]
+  );
 
   return (
-    <EditorContext.Provider
-      value={{
-        zoom,
-        setZoom,
-        undo,
-        redo,
-        root,
-        setRoot,
-        bgColor,
-        fgColor,
-        setBgColor,
-        setFgColor,
-        shape,
-        setShape,
-        mode,
-        setMode,
-        enableGrid,
-        setEnableGrid,
-        hasSavedStateInLocalStorage,
-      }}
-    >
+    <EditorContext.Provider value={value}>
       {children}
       <RestoreSavedStateModal
         open={hasSavedStateInLocalStorage}

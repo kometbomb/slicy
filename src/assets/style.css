@@ -1,5 +1,3 @@
-
-
 .button {
   cursor: pointer;
   min-height: 32px;
@@ -103,6 +101,18 @@
   font-size: 24px;
 }
 
+@media (prefers-color-scheme: dark) {
+  .toolbar .button, .export .button, .confirm-buttons .button {
+    color: #ff8500;
+    background-color: #333333;
+    border-color: #444444;
+  }
+
+  .toolbar .button.selected {
+    background-color: #ffbe22;
+  }
+}
+
 .export .button, .confirm-buttons .button {
   font-size: 12px;
 }
@@ -128,6 +138,12 @@
   font-weight: bold;
   min-width: 48px;
   text-align: right;
+}
+
+@media (prefers-color-scheme: dark) {
+  .stats {
+    color: #aaaaaa;
+  }
 }
 
 @media only screen and (max-width: 500px) {

@@ -20,6 +20,13 @@ html, body {
 	-moz-osx-font-smoothing: grayscale;
 }
 
+@media (prefers-color-scheme: dark) {
+	html, body {
+		background: #222222;
+		color: lightgrey;
+	}
+}
+
 * {
 	box-sizing: border-box;
 }

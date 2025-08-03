@@ -1,8 +1,8 @@
 import { h } from "preact";
 import { useCallback, useContext } from "preact/hooks";
+import { isBranch, Node } from "../tree";
 import { EditorContext, Mode } from "./editor/context";
 import { Grid } from "./grid";
-import { isBranch, Node } from "../tree";
 
 const Separator = () => (
   <div style={{ border: "1px solid #999", width: "1px" }} />

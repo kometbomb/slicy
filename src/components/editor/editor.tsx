@@ -10,10 +10,12 @@ import { Tile } from "../tile";
 import { ToolPalette } from "../tool-palette";
 import { EditorContext } from "./context";
 import { Root } from "./root";
+import { useTheme } from "../theme";
 
 export type Mode = "cut" | "draw" | "color" | "tile";
 
 export const Editor = () => {
+  const { mode } = useTheme();
   const {
     setMode,
     setBgColor,
@@ -117,7 +119,7 @@ export const Editor = () => {
   useEvent(safeDocument, "keydown", handleKeydown);
 
   return (
-    <div className="main-layout">
+    <div className={`main-layout mode-${mode}`}>
       <div className="col1">
         <Root>
           <Tile node={root} setNode={setRoot} />

@@ -5,8 +5,10 @@ import { colors } from "./colors";
 import { EditorContext } from "./editor";
 import { Grid } from "./grid";
 import { shapes } from "./shapes";
+import { useTheme } from "./theme";
 
 export const ShapePalette = () => {
+  const { mode: themeMode } = useTheme();
   const { shape, setShape, fgColor, bgColor, mode, setMode } =
     useContext(EditorContext);
   const handleClick = useCallback(
@@ -19,11 +21,12 @@ export const ShapePalette = () => {
     },
     [setShape, mode, setMode]
   );
+  const bgCssColor = themeMode === "light" ? "white" : "#222222";
   return (
     <Grid
       cols={5}
       style={{
-        background: "white",
+        background: bgCssColor,
         minWidth: "244px",
         height: "102px",
         borderRadius: "3px",
@@ -42,7 +45,7 @@ export const ShapePalette = () => {
           style={{
             minWidth: "16px",
             minHeight: "16px",
-            backgroundColor: index === shape ? colors[bgColor] : "white",
+            backgroundColor: index === shape ? colors[bgColor] : bgCssColor,
           }}
           className="button"
         >
