@@ -10,12 +10,12 @@ import { Tile } from "../tile";
 import { ToolPalette } from "../tool-palette";
 import { EditorContext } from "./context";
 import { Root } from "./root";
-import { useTheme } from "../theme";
+import { DarkMode, useTheme } from "../theme";
 
 export type Mode = "cut" | "draw" | "color" | "tile";
 
 export const Editor = () => {
-  const { mode } = useTheme();
+  const { mode: themeMode, setMode: setThemeMode } = useTheme();
   const {
     setMode,
     setBgColor,
@@ -34,6 +34,13 @@ export const Editor = () => {
     (e: KeyboardEvent) => {
       if (!(e.altKey || e.ctrlKey))
         switch (e.key) {
+          /**
+           * Set dark mode
+           */
+          case "m":
+            setThemeMode(themeMode === "dark" ? "light" : "dark");
+            break;
+
           /**
            * Set modes
            */
@@ -88,7 +95,16 @@ export const Editor = () => {
             break;
         }
     },
-    [bgColor, fgColor, setBgColor, setEnableGrid, setFgColor, setMode, setShape]
+    [
+      bgColor,
+      fgColor,
+      setBgColor,
+      setEnableGrid,
+      setFgColor,
+      setMode,
+      setShape,
+      themeMode,
+    ]
   );
 
   /**
@@ -119,7 +135,7 @@ export const Editor = () => {
   useEvent(safeDocument, "keydown", handleKeydown);
 
   return (
-    <div className={`main-layout mode-${mode}`}>
+    <div className="main-layout">
       <div className="col1">
         <Root>
           <Tile node={root} setNode={setRoot} />
@@ -135,7 +151,7 @@ export const Editor = () => {
           <ExportTools setRoot={setRoot} root={root} />
         </div>
         <div id="version" data-testid="version-info">
-          {process.env.PREACT_APP_VERSION}
+          {process.env.PREACT_APP_VERSION} - <DarkMode />
         </div>
       </div>
     </div>

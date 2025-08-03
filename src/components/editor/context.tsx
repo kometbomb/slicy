@@ -1,5 +1,6 @@
 import { ComponentChildren, createContext, h } from "preact";
 import {
+  Dispatch,
   StateUpdater,
   useCallback,
   useEffect,

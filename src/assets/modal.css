@@ -31,11 +31,10 @@
 	flex: 1;
 }
 
-@media (prefers-color-scheme: dark) {
-	.modal .content {
-		background-color: #222222;
-	}
+.theme-dark .modal .content {
+	background-color: #222222;
 }
+
 
 .modal .heading {
 	margin: 0;

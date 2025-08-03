@@ -7,6 +7,7 @@ import { useToast } from "../hooks/toast";
 import { SavePrompt } from "./save-prompt";
 import { ImportModal } from "./import-modal";
 import { unpackTree } from "../tree/packed";
+import { DarkMode } from "./theme";
 
 export const ExportTools = ({
   root,
