@@ -1,7 +1,6 @@
 import { h } from "preact";
 import { useCallback, useContext } from "preact/hooks";
 import { Shape } from "../tree";
-import { colors } from "./colors";
 import { EditorContext } from "./editor";
 import { Grid } from "./grid";
 import { shapes } from "./shapes";
@@ -9,7 +8,7 @@ import { useTheme } from "./theme";
 
 export const ShapePalette = () => {
   const { mode: themeMode } = useTheme();
-  const { shape, setShape, fgColor, bgColor, mode, setMode } =
+  const { shape, setShape, fgColor, bgColor, mode, setMode, palette } =
     useContext(EditorContext);
   const handleClick = useCallback(
     (e: MouseEvent, shape: Shape) => {
@@ -45,11 +44,11 @@ export const ShapePalette = () => {
           style={{
             minWidth: "16px",
             minHeight: "16px",
-            backgroundColor: index === shape ? colors[bgColor] : bgCssColor,
+            backgroundColor: index === shape ? palette[bgColor] : bgCssColor,
           }}
           className="button"
         >
-          <PaletteShape fill={index === shape ? colors[fgColor] : "grey"} />
+          <PaletteShape fill={index === shape ? palette[fgColor] : "grey"} />
         </div>
       ))}
     </Grid>

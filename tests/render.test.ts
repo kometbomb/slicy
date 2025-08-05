@@ -10,6 +10,7 @@ import { MockContext } from "./fixtures/mockContext";
 import { MockImage } from "./fixtures/mockImage";
 import { mockTree } from "./fixtures/mockTree";
 import * as svg from "../src/export/svg";
+import { defaultPalette } from "../src/components/default-palette";
 
 jest.mock("../src/export/createElement");
 
@@ -30,7 +31,7 @@ describe("render", () => {
   describe("renderPNG()", () => {
     it("renders node tree to PNG", async () => {
       const getSVGDataUrlSpy = jest.spyOn(svg, "getSVGDataUrl");
-      const result = await renderPNG(mockTree);
+      const result = await renderPNG(mockTree, defaultPalette);
       expect(result).toEqual("data:image/png;base64,hello-from-mock");
       expect(createContext).toHaveBeenCalledWith(
         expect.objectContaining({ width: 1024, height: 1024 })
@@ -46,6 +47,7 @@ describe("render", () => {
       // the SVG in a canvas
       expect(getSVGDataUrlSpy).toHaveBeenCalledWith(
         expect.any(Object),
+        defaultPalette,
         1024,
         1024
       );

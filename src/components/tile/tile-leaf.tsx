@@ -1,9 +1,8 @@
 import { h } from "preact";
 import { useCallback, useContext } from "preact/hooks";
 import { Leaf } from "../../tree";
-import { colors } from "../colors";
-import { Mode } from "../editor/editor";
 import { EditorContext } from "../editor/context";
+import { Mode } from "../editor/editor";
 import { shapes } from "../shapes";
 import { TileProps } from "./tile";
 
@@ -15,8 +14,16 @@ const modeCursor: Record<Mode, string> = {
 };
 
 export const TileLeaf = (props: TileProps<Leaf>) => {
-  const { fgColor, bgColor, shape, mode, setBgColor, setFgColor, setShape } =
-    useContext(EditorContext);
+  const {
+    fgColor,
+    bgColor,
+    shape,
+    mode,
+    setBgColor,
+    setFgColor,
+    setShape,
+    palette,
+  } = useContext(EditorContext);
   const { node, setNode, setParentNode } = props;
   const doDrawAction = useCallback(
     (button: "left" | "right") => {
@@ -119,7 +126,7 @@ export const TileLeaf = (props: TileProps<Leaf>) => {
       data-testid="node"
       class="node"
       style={{
-        backgroundColor: colors[props.node.bg],
+        backgroundColor: palette[props.node.bg],
         cursor: modeCursor[mode],
       }}
       onMouseEnter={handleEnter}
@@ -130,7 +137,7 @@ export const TileLeaf = (props: TileProps<Leaf>) => {
       <div className="overlay">
         <div className="overlay2" />
       </div>
-      <Shape fill={colors[node.fg]} />
+      <Shape fill={palette[node.fg]} />
     </div>
   );
 };

@@ -7,6 +7,7 @@ import { renderPNG } from "../src/export/png";
 import { useToast } from "../src/hooks/toast";
 import { unpackTree } from "../src/tree/packed";
 import { mockClipboard } from "./mockClipboard";
+import { defaultPalette } from "../src/components/default-palette";
 
 const copyDataURL = jest.spyOn(clipboard, "copyDataURL");
 const copyNode = jest.spyOn(clipboard, "copyNode");
@@ -20,6 +21,7 @@ beforeEach(() => {
 });
 
 const setRoot = jest.fn();
+const setPalette = jest.fn();
 const root = unpackTree([7, 4, 8]);
 
 describe("<ExportTools/>", () => {
@@ -27,7 +29,14 @@ describe("<ExportTools/>", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    render(<ExportTools setRoot={setRoot} root={root} />);
+    render(
+      <ExportTools
+        setRoot={setRoot}
+        root={root}
+        setPalette={setPalette}
+        palette={defaultPalette}
+      />
+    );
     mocked(renderPNG).mockResolvedValue("data:image/png;base64,");
     mockClipboard();
     console.error = jest.fn();
@@ -37,7 +46,7 @@ describe("<ExportTools/>", () => {
     it("copies tree to clipboard", async () => {
       fireEvent.click(screen.getByTestId("export-copy-code"));
       expect(copyNode).toHaveBeenCalledTimes(1);
-      expect(copyNode).toHaveBeenCalledWith(root);
+      expect(copyNode).toHaveBeenCalledWith(root, defaultPalette);
       expect(navigator.clipboard.writeText).toHaveBeenCalledWith("[7,4,8]");
       await waitFor(() =>
         expect(showToast).toHaveBeenCalledWith(
@@ -189,7 +198,14 @@ describe("clipboard availability", () => {
       },
     });
 
-    render(<ExportTools setRoot={setRoot} root={root} />);
+    render(
+      <ExportTools
+        setRoot={setRoot}
+        root={root}
+        palette={defaultPalette}
+        setPalette={setPalette}
+      />
+    );
     expect(
       screen.getByTestId("export-paste-code").getAttribute("disabled")
     ).toBeFalsy();
@@ -206,7 +222,14 @@ describe("clipboard availability", () => {
         },
       });
 
-      render(<ExportTools setRoot={setRoot} root={root} />);
+      render(
+        <ExportTools
+          setRoot={setRoot}
+          root={root}
+          palette={defaultPalette}
+          setPalette={setPalette}
+        />
+      );
     });
 
     it("uses paste button to open a textbox modal if paste is unavailable", async () => {
@@ -223,6 +246,8 @@ describe("clipboard availability", () => {
 
       expect(setRoot).toHaveBeenCalledTimes(1);
       expect(setRoot).toHaveBeenCalledWith({ fg: 5, shape: 0, bg: 0 });
+      expect(setPalette).toHaveBeenCalledTimes(1);
+      expect(setPalette.mock.lastCall[0]).toEqual(defaultPalette);
 
       await waitFor(() =>
         expect(screen.queryByTestId("import-paste-textbox")).toBeNull()
@@ -246,7 +271,14 @@ describe("clipboard availability", () => {
       },
     });
 
-    render(<ExportTools setRoot={setRoot} root={root} />);
+    render(
+      <ExportTools
+        setRoot={setRoot}
+        root={root}
+        palette={defaultPalette}
+        setPalette={setPalette}
+      />
+    );
     fireEvent.click(screen.getByTestId("export-png"));
     await waitFor(() =>
       expect(
@@ -260,7 +292,14 @@ describe("clipboard availability", () => {
       ClipboardItem: undefined,
     });
 
-    render(<ExportTools setRoot={setRoot} root={root} />);
+    render(
+      <ExportTools
+        setRoot={setRoot}
+        root={root}
+        palette={defaultPalette}
+        setPalette={setPalette}
+      />
+    );
     fireEvent.click(screen.getByTestId("export-png"));
     await waitFor(() =>
       expect(

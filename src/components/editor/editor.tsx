@@ -28,6 +28,8 @@ export const Editor = () => {
     setRoot,
     undo,
     redo,
+    palette,
+    setPalette,
   } = useContext(EditorContext);
 
   const handleKeypress = useCallback(
@@ -103,6 +105,7 @@ export const Editor = () => {
       setFgColor,
       setMode,
       setShape,
+      setThemeMode,
       themeMode,
     ]
   );
@@ -148,7 +151,12 @@ export const Editor = () => {
             <ColorPalette />
             <ShapePalette />
           </div>
-          <ExportTools setRoot={setRoot} root={root} />
+          <ExportTools
+            setRoot={setRoot}
+            root={root}
+            setPalette={setPalette}
+            palette={palette}
+          />
         </div>
         <div id="version" data-testid="version-info">
           {process.env.PREACT_APP_VERSION} - <DarkMode />

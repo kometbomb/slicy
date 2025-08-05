@@ -2,19 +2,22 @@ import { h } from "preact";
 import { useCallback, useState } from "preact/hooks";
 import { copyNode, pasteNode } from "../export/clipboard";
 import { getDataURL } from "../export/export";
-import { Node } from "../tree";
 import { useToast } from "../hooks/toast";
-import { SavePrompt } from "./save-prompt";
+import { Node } from "../tree";
+import { extractRootNodeAndPalette, unpackTree } from "../tree/packed";
 import { ImportModal } from "./import-modal";
-import { unpackTree } from "../tree/packed";
-import { DarkMode } from "./theme";
+import { SavePrompt } from "./save-prompt";
 
 export const ExportTools = ({
   root,
+  palette,
   setRoot,
+  setPalette,
 }: {
   root: Node;
+  palette: string[];
   setRoot: (node: Node) => void;
+  setPalette: (palette: string[]) => void;
 }) => {
   const { showToast } = useToast();
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
@@ -22,10 +25,10 @@ export const ExportTools = ({
   const [format, setFormat] = useState<"svg" | "png">("svg");
   const exportImage = useCallback(
     async (type: "svg" | "png") => {
-      setDataUrl(await getDataURL(root, type));
+      setDataUrl(await getDataURL(root, palette, type));
       setFormat(type);
     },
-    [root]
+    [palette, root]
   );
   const exportPNG = useCallback(
     async (e: MouseEvent) => {
@@ -45,23 +48,25 @@ export const ExportTools = ({
     async (e: MouseEvent) => {
       e.preventDefault();
       try {
-        await copyNode(root);
+        await copyNode(root, palette);
         showToast("Pic copied to clipboard", "success");
       } catch (error) {
         showToast("Copy failed", "failure");
       }
     },
-    [root, showToast]
+    [palette, root, showToast]
   );
   const handleImportClose = useCallback(() => {
     setIsImportModalOpen(false);
   }, []);
   const handleImport = useCallback(
     (code: string) => {
-      setRoot(unpackTree(JSON.parse(code)));
+      const [node, palette] = extractRootNodeAndPalette(JSON.parse(code));
+      setRoot(unpackTree(node));
+      setPalette(palette);
       setIsImportModalOpen(false);
     },
-    [setRoot]
+    [setPalette, setRoot]
   );
   const handlePasteFromClipboard = useCallback(
     async (e: MouseEvent) => {
@@ -72,15 +77,18 @@ export const ExportTools = ({
         return;
       }
 
-      const node = await pasteNode();
-      if (!node) {
+      const image = await pasteNode();
+      if (!image) {
         showToast("Paste failed", "failure");
         return;
       }
+      const [node, palette] = image;
+
       setRoot(node);
+      setPalette(palette);
       showToast("Pic pasted from clipboard", "success");
     },
-    [setRoot, showToast]
+    [setPalette, setRoot, showToast]
   );
   const handlePromptClose = useCallback(() => setDataUrl(""), []);
 

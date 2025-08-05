@@ -1,8 +1,9 @@
 import { h } from "preact";
 import render from "preact-render-to-string";
-import { colors } from "../components/colors";
+import { defaultPalette } from "../components/default-palette";
 import { baseShapes } from "../components/shapes";
 import { isBranch, Node } from "../tree";
+import { Palette } from "src/tree/packed";
 
 const coords = [
   [0, 0],
@@ -11,7 +12,7 @@ const coords = [
   [5, 5],
 ];
 
-const getSVGNode = (node: Node): h.JSX.Element =>
+const getSVGNode = (node: Node, palette: Palette): h.JSX.Element =>
   isBranch(node) ? (
     <g transform={`scale(.5)`}>
       {node.nodes.map((n, index) => (
@@ -19,18 +20,23 @@ const getSVGNode = (node: Node): h.JSX.Element =>
           key={index}
           transform={`translate(${coords[index][0]},${coords[index][1]})`}
         >
-          {getSVGNode(n)}
+          {getSVGNode(n, palette)}
         </g>
       ))}
     </g>
   ) : (
     <g transform={`scale(.5)`}>
-      <rect width="10" height="10" fill={colors[node.bg]} />
-      {baseShapes[node.shape]({ fill: colors[node.fg] })}
+      <rect width="10" height="10" fill={palette[node.bg]} />
+      {baseShapes[node.shape]({ fill: palette[node.fg] })}
     </g>
   );
 
-export const buildSVG = (root: Node, width?: number, height?: number) =>
+export const buildSVG = (
+  root: Node,
+  palette: Palette,
+  width?: number,
+  height?: number
+) =>
   render(
     <svg
       viewBox="0 0 5 5"
@@ -39,12 +45,17 @@ export const buildSVG = (root: Node, width?: number, height?: number) =>
       height={height}
       xmlns="http://www.w3.org/2000/svg"
     >
-      {getSVGNode(root)}
+      {getSVGNode(root, palette)}
     </svg>
   );
 
-export const getSVGDataUrl = (node: Node, width?: number, height?: number) => {
-  const svg = buildSVG(node, width, height);
+export const getSVGDataUrl = (
+  node: Node,
+  palette: Palette,
+  width?: number,
+  height?: number
+) => {
+  const svg = buildSVG(node, palette, width, height);
   return Promise.resolve(
     `data:image/svg+xml;base64,${btoa(
       `<?xml version="1.0" encoding="UTF-8" ?>${svg}`

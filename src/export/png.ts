@@ -1,3 +1,4 @@
+import { Palette } from "src/tree/packed";
 import { Node } from "../tree";
 import { createCanvas, createContext, createImage } from "./createElement";
 import { getSVGDataUrl } from "./svg";
@@ -5,7 +6,10 @@ import { getSVGDataUrl } from "./svg";
 const imageWidth = 1024;
 const imageHeight = 1024;
 
-export const renderPNG = async (root: Node): Promise<string> => {
+export const renderPNG = async (
+  root: Node,
+  palette: Palette
+): Promise<string> => {
   const canvas = createCanvas();
   canvas.width = imageWidth;
   canvas.height = imageHeight;
@@ -15,7 +19,7 @@ export const renderPNG = async (root: Node): Promise<string> => {
   const svgImage = createImage();
   svgImage.width = imageWidth;
   svgImage.height = imageHeight;
-  svgImage.src = await getSVGDataUrl(root, imageWidth, imageHeight);
+  svgImage.src = await getSVGDataUrl(root, palette, imageWidth, imageHeight);
 
   return new Promise<string>((resolve, reject) => {
     svgImage.onload = () => {

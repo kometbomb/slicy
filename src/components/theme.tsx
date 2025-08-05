@@ -28,7 +28,7 @@ export const ThemeProvider = ({
   const localStorage = useLocalStorage();
   const storedMode = localStorage.getItem("theme") as "light" | "dark" | null;
   const [mode, setMode] = useState<"dark" | "light">(() =>
-    !!storedMode
+    typeof storedMode === "string"
       ? storedMode
       : safeWindow?.matchMedia?.("(prefers-color-scheme: dark)").matches
       ? "dark"
@@ -60,7 +60,7 @@ export const ThemeProvider = ({
         .removeEventListener("change", listener);
   }, [setMode]);
 
-  const value = useMemo(() => ({ setMode: innerSet, mode }), [mode]);
+  const value = useMemo(() => ({ setMode: innerSet, mode }), [innerSet, mode]);
 
   return (
     <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
