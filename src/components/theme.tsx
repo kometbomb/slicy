@@ -75,7 +75,7 @@ export const DarkMode = () => {
 
   return (
     <span class="text-button" onClick={handleClick}>
-      {mode === "light" ? "dark mode" : "light mode"}
+      {mode === "light" ? "dark mode" : "light mode"} (m)
     </span>
   );
 };
