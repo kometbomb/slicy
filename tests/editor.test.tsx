@@ -138,6 +138,19 @@ describe("<Editor/>", () => {
       expect(context.editorContext.fgColor).toEqual(9);
     });
 
+    it("edits colors with buttons", async () => {
+      expect(context.editorContext.palette[3]).toEqual("#3f32ae");
+      fireEvent.dblClick(screen.getByTestId("color-3"));
+
+      fireEvent.change(screen.getByTestId("color-input"), {
+        target: { value: "#123456" },
+      });
+
+      await waitFor(() =>
+        expect(context.editorContext.palette[3]).toEqual("#123456")
+      );
+    });
+
     it("selects shapes with buttons", () => {
       complexClick(screen.getByTestId("shape-3"));
       expect(context.editorContext.shape).toEqual(3);

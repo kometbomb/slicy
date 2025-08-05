@@ -15,6 +15,7 @@ import { Color, isDefaultNodeState, Node, Shape } from "../../tree";
 import { useToast } from "../../hooks/toast";
 import { useDebounce } from "../../hooks/debounce";
 import { RestoreSavedStateModal } from "./restore-saved-state-modal";
+import { defaultPalette } from "../default-palette";
 
 export type Mode = "cut" | "draw" | "color" | "tile";
 
@@ -36,6 +37,9 @@ export interface EditorContextType {
   zoom: number;
   setZoom: StateUpdater<number>;
   hasSavedStateInLocalStorage: boolean;
+  palette: string[];
+  setPaletteColor: (index: number, color: string) => void;
+  setPalette: (palette: string[]) => void;
 }
 
 export const EditorContext = createContext<EditorContextType>({} as never);
@@ -95,6 +99,15 @@ export const EditorContextProvider = ({
   const [mode, setMode] = useState<Mode>("cut");
   const [zoom, setZoom] = useState(1);
   const [enableGrid, setEnableGrid] = useState(true);
+  const [palette, setPalette] = useState<string[]>(defaultPalette);
+
+  const setPaletteColor = useCallback(
+    (index: number, color: string) =>
+      setPalette((old) =>
+        old.map((oldColor, oldIndex) => (oldIndex === index ? color : oldColor))
+      ),
+    []
+  );
 
   const restoreFromLocalStorage = useCallback(
     (e: Event) => {
@@ -135,6 +148,9 @@ export const EditorContextProvider = ({
       enableGrid,
       setEnableGrid,
       hasSavedStateInLocalStorage,
+      palette,
+      setPaletteColor,
+      setPalette,
     }),
     [
       bgColor,
@@ -148,6 +164,9 @@ export const EditorContextProvider = ({
       shape,
       undo,
       zoom,
+      palette,
+      setPaletteColor,
+      setPalette,
     ]
   );
 

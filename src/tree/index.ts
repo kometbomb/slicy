@@ -1,3 +1,5 @@
+import { defaultPalette } from "../components/default-palette";
+
 export type Color = number;
 export type Shape = number;
 
