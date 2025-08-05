@@ -85,9 +85,9 @@ it("toggles from clicks", () => {
     "theme-light"
   );
 
-  fireEvent.click(screen.getByText("dark mode"));
-  expect(screen.queryByText("light mode")).toBeTruthy();
-  expect(screen.queryByText("dark mode")).toBeFalsy();
+  fireEvent.click(screen.getByText("dark mode (m)"));
+  expect(screen.queryByText("light mode (m)")).toBeTruthy();
+  expect(screen.queryByText("dark mode (m)")).toBeFalsy();
   expect(document.querySelector("body")?.getAttribute("class")).toBe(
     "theme-dark"
   );
