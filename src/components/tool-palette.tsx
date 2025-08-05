@@ -71,7 +71,7 @@ const UndoButton = () => {
       onContextMenu={handleRedo}
       data-testid="tool-undo"
       className="button"
-      title="Undo/redo (CTRL/CMD-Z, CTRL/CMD/-SHIFT-Y, CTRL/CMD/-Y)"
+      title="Undo/redo (CTRL/CMD-Z, CTRL/CMD/SHIFT-Z, CTRL/CMD/Y)"
       style={{ minWidth: "48px", minHeight: "24px", maxWidth: "48px" }}
     >
       ⏪
