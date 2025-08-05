@@ -37,8 +37,8 @@
 
 .theme-dark .modal .content {
 	background-color: #222222;
+	border-color: #444;
 }
-
 
 .modal .heading {
 	margin: 0;

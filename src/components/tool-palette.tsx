@@ -4,9 +4,7 @@ import { isBranch, Node } from "../tree";
 import { EditorContext, Mode } from "./editor/context";
 import { Grid } from "./grid";
 
-const Separator = () => (
-  <div style={{ border: "1px solid #999", width: "1px" }} />
-);
+const Separator = () => <div className="separator" />;
 
 const ToolButton = ({
   mode,
