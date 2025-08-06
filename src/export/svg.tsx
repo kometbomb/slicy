@@ -1,9 +1,8 @@
 import { h } from "preact";
 import render from "preact-render-to-string";
-import { defaultPalette } from "../components/default-palette";
+import { Palette } from "src/tree/packed";
 import { baseShapes } from "../components/shapes";
 import { isBranch, Node } from "../tree";
-import { Palette } from "src/tree/packed";
 
 const coords = [
   [0, 0],

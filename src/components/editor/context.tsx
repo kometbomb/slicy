@@ -1,6 +1,5 @@
 import { ComponentChildren, createContext, h } from "preact";
 import {
-  Dispatch,
   StateUpdater,
   useCallback,
   useEffect,
@@ -8,21 +7,20 @@ import {
   useRef,
   useState,
 } from "preact/hooks";
+import { useDebounce } from "../../hooks/debounce";
+import { useLocalStorage } from "../../hooks/localStorage";
+import { useToast } from "../../hooks/toast";
+import { useUndo } from "../../hooks/undo";
+import { Color, isDefaultNodeState, Node, Shape } from "../../tree";
 import {
   extractRootNodeAndPalette,
   joinRootNodeAndPalette,
-  packTree,
   Palette,
   unpackTree,
   validatePackedNode,
 } from "../../tree/packed";
-import { useLocalStorage } from "../../hooks/localStorage";
-import { useUndo } from "../../hooks/undo";
-import { Color, isDefaultNodeState, Node, Shape } from "../../tree";
-import { useToast } from "../../hooks/toast";
-import { useDebounce } from "../../hooks/debounce";
-import { RestoreSavedStateModal } from "./restore-saved-state-modal";
 import { defaultPalette, isDefaultPalette } from "../default-palette";
+import { RestoreSavedStateModal } from "./restore-saved-state-modal";
 
 export type Mode = "cut" | "draw" | "color" | "tile";
 
