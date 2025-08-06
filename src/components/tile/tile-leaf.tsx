@@ -22,7 +22,7 @@ export const TileLeaf = (props: TileProps<Leaf>) => {
     setBgColor,
     setFgColor,
     setShape,
-    palette,
+    root: { palette },
   } = useContext(EditorContext);
   const { node, setNode, setParentNode } = props;
   const doDrawAction = useCallback(

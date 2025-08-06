@@ -1,4 +1,6 @@
-export const defaultPalette = [
+import { Palette } from "src/tree/packed";
+
+export const defaultPalette: Readonly<Palette> = [
   "#000000",
   "#ffffff",
   "#baaaff",
@@ -15,4 +17,7 @@ export const defaultPalette = [
   "#6e4e23",
   "#195648",
   "#e30ec2",
-];
+] as const;
+
+export const isDefaultPalette = (palette: Readonly<Palette>) =>
+  defaultPalette.every((_, index) => palette[index] === defaultPalette[index]);

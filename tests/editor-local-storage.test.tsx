@@ -11,14 +11,18 @@ import { EditorContextType } from "../src/components/editor/context";
 import { ToastProvider } from "../src/components/toast";
 import { useLocalStorage } from "../src/hooks/localStorage";
 import { useToast } from "../src/hooks/toast";
+import { defaultPalette } from "../src/components/default-palette";
 
 jest.mock("../src/hooks/localStorage");
 jest.mock("../src/hooks/toast");
 
-beforeEach(() => {
-  jest.clearAllMocks();
+let localStorage: Storage;
 
+beforeEach(() => {
+  localStorage = useLocalStorage();
+  jest.resetAllMocks();
   jest.useFakeTimers();
+  jest.clearAllTimers();
 });
 
 describe("localStorage", () => {
@@ -45,11 +49,6 @@ describe("localStorage", () => {
       </ToastProvider>
     );
 
-  let localStorage: Storage;
-  beforeEach(() => {
-    localStorage = useLocalStorage();
-  });
-
   describe("modal", () => {
     it("loads root node from localstorage on init if modal Yes clicked", async () => {
       const { showToast } = useToast();
@@ -69,7 +68,7 @@ describe("localStorage", () => {
       fireEvent.click(screen.getByText("Yes"));
 
       await waitFor(() =>
-        expect(context.data.root).toEqual({ fg: 5, bg: 2, shape: 1 })
+        expect(context.data.root.node).toEqual({ fg: 5, bg: 2, shape: 1 })
       );
 
       expect(showToast).toHaveBeenCalledWith("Picture restored");
@@ -77,6 +76,7 @@ describe("localStorage", () => {
     });
 
     it("handles invalid root node", async () => {
+      mocked(localStorage.setItem).mockReset();
       const { showToast } = useToast();
 
       mocked(localStorage.getItem).mockReturnValue("invalid");
@@ -91,7 +91,7 @@ describe("localStorage", () => {
       expect(screen.queryByTestId("modal-content")).toBeNull();
 
       expect(showToast).toHaveBeenCalledTimes(0);
-      expect(localStorage.setItem).toHaveBeenCalledTimes(0);
+      expect(localStorage.setItem).not.toHaveBeenCalled();
     });
 
     it("doesn't open restore modal if saved state is default state", async () => {
@@ -128,7 +128,7 @@ describe("localStorage", () => {
       );
 
       await waitFor(() =>
-        expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 })
+        expect(context.data.root.node).toEqual({ fg: 0, bg: 0, shape: 0 })
       );
 
       expect(showToast).toHaveBeenCalledTimes(0);
@@ -152,7 +152,7 @@ describe("localStorage", () => {
       );
 
       await waitFor(() =>
-        expect(context.data.root).toEqual({ fg: 0, bg: 0, shape: 0 })
+        expect(context.data.root.node).toEqual({ fg: 0, bg: 0, shape: 0 })
       );
 
       expect(showToast).toHaveBeenCalledWith("Restore failed", "failure");
@@ -162,17 +162,26 @@ describe("localStorage", () => {
   it("saves root node to localstorage 1000 ms after last edit", async () => {
     renderEditor();
 
-    context.data.setRoot({ fg: 4, bg: 5, shape: 5 });
+    context.data.setRoot({
+      node: { fg: 4, bg: 5, shape: 5 },
+      palette: defaultPalette,
+    });
     await waitFor(() =>
-      expect(context.data.root).toEqual({ fg: 4, bg: 5, shape: 5 })
+      expect(context.data.root.node).toEqual({ fg: 4, bg: 5, shape: 5 })
     );
-    context.data.setRoot({ fg: 4, bg: 5, shape: 6 });
+    context.data.setRoot({
+      node: { fg: 4, bg: 5, shape: 6 },
+      palette: defaultPalette,
+    });
     await waitFor(() =>
-      expect(context.data.root).toEqual({ fg: 4, bg: 5, shape: 6 })
+      expect(context.data.root.node).toEqual({ fg: 4, bg: 5, shape: 6 })
     );
-    context.data.setRoot({ fg: 4, bg: 5, shape: 1 });
+    context.data.setRoot({
+      node: { fg: 4, bg: 5, shape: 1 },
+      palette: defaultPalette,
+    });
     await waitFor(() =>
-      expect(context.data.root).toEqual({ fg: 4, bg: 5, shape: 1 })
+      expect(context.data.root.node).toEqual({ fg: 4, bg: 5, shape: 1 })
     );
 
     jest.advanceTimersByTime(10000);

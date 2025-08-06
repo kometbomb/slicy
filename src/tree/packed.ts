@@ -64,7 +64,7 @@ export const hasPalette = (image: Image): image is [Palette, PackedNode] => {
 
 export const extractRootNodeAndPalette = (
   image: Image
-): [PackedNode, Palette] =>
+): [PackedNode, Readonly<Palette>] =>
   hasPalette(image)
     ? [
         image[1],
@@ -77,8 +77,8 @@ export const extractRootNodeAndPalette = (
 
 export const joinRootNodeAndPalette = (
   node: Node,
-  palette: Palette
-): [Palette, PackedNode] | PackedNode => {
+  palette: Readonly<Palette>
+): [Readonly<Palette>, PackedNode] | PackedNode => {
   const tree = packTree(node);
   let finalPalette = palette.map((color, index) =>
     color === defaultPalette[index] ? "" : color
