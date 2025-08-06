@@ -3,11 +3,11 @@ import { useCallback, useState } from "preact/hooks";
 import { copyNode, pasteNode } from "../export/clipboard";
 import { getDataURL } from "../export/export";
 import { useToast } from "../hooks/toast";
-import { Node } from "../tree";
 import { extractRootNodeAndPalette, unpackTree } from "../tree/packed";
+import { EditFrame } from "./editor/context";
 import { ImportModal } from "./import-modal";
 import { SavePrompt } from "./save-prompt";
-import { EditFrame } from "./editor/context";
+import { defaultPalette } from "./default-palette";
 
 export const ExportTools = ({
   root,
@@ -27,6 +27,12 @@ export const ExportTools = ({
     },
     [root]
   );
+  const resetPalette = useCallback(() => {
+    setRoot({ ...root, palette: [...defaultPalette] });
+  }, [root, setRoot]);
+  const resetImage = useCallback(() => {
+    setRoot({ ...root, node: { fg: 0, bg: 0, shape: 0 } });
+  }, [root, setRoot]);
   const exportPNG = useCallback(
     async (e: MouseEvent) => {
       e.preventDefault();
@@ -129,6 +135,24 @@ export const ExportTools = ({
       >
         Export .SVG
       </button>
+      <div style={{ display: "flex", direction: "row", gap: 16 }}>
+        <button
+          data-testid="reset-palette"
+          style={{ flex: "1" }}
+          className="button"
+          onClick={resetPalette}
+        >
+          Reset palette
+        </button>
+        <button
+          data-testid="reset-image"
+          style={{ flex: "1" }}
+          className="button"
+          onClick={resetImage}
+        >
+          Clear image
+        </button>
+      </div>
       <ImportModal
         open={isImportModalOpen}
         onOk={handleImport}
