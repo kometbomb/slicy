@@ -1,8 +1,8 @@
 import { h } from "preact";
-import { EditorContextProvider, Editor } from "./editor";
-import { ToastProvider } from "./toast";
-import { ThemeProvider, useTheme } from "./theme";
 import "../assets/style.css";
+import { Editor, EditorContextProvider } from "./editor";
+import { ThemeProvider } from "./theme";
+import { ToastProvider } from "./toast";
 
 const App = () => (
   <ThemeProvider>

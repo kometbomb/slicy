@@ -6,8 +6,8 @@ import {
   useMemo,
   useState,
 } from "preact/hooks";
-import { safeWindow } from "../ssr";
 import { useLocalStorage } from "../hooks/localStorage";
+import { safeWindow } from "../ssr";
 
 export type ThemeContextType = {
   setMode: (mode: "dark" | "light") => void;
@@ -34,10 +34,13 @@ export const ThemeProvider = ({
       ? "dark"
       : "light"
   );
-  const innerSet = useCallback((mode: "dark" | "light") => {
-    setMode(mode);
-    localStorage.setItem("theme", mode);
-  }, []);
+  const innerSet = useCallback(
+    (mode: "dark" | "light") => {
+      setMode(mode);
+      localStorage.setItem("theme", mode);
+    },
+    [localStorage]
+  );
 
   useEffect(() => {
     document.body.className = `theme-${mode}`;
