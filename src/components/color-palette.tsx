@@ -19,7 +19,11 @@ export const ColorEdit = ({
   index: number | null;
   onClose: () => void;
 }) => {
-  const { setPaletteColor, palette } = useContext(EditorContext);
+  const {
+    setRoot,
+    root,
+    root: { palette },
+  } = useContext(EditorContext);
   const ref = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -32,10 +36,15 @@ export const ColorEdit = ({
       (event) => {
         if (index === null) return;
 
-        setPaletteColor(index, event.currentTarget.value);
+        setRoot({
+          ...root,
+          palette: root.palette.map((oldColor, oldIndex) =>
+            index === oldIndex ? event.currentTarget.value : oldColor
+          ),
+        });
         onClose();
       },
-      [index, onClose, setPaletteColor]
+      [index, onClose, root, setRoot]
     );
 
   return index !== null ? (
@@ -53,8 +62,15 @@ export const ColorEdit = ({
 export const ColorPalette = () => {
   const { mode: themeMode } = useTheme();
   const [colorEditIndex, setColorEditIndex] = useState<number | null>(null);
-  const { mode, setMode, fgColor, bgColor, setFgColor, setBgColor, palette } =
-    useContext(EditorContext);
+  const {
+    mode,
+    setMode,
+    fgColor,
+    bgColor,
+    setFgColor,
+    setBgColor,
+    root: { palette },
+  } = useContext(EditorContext);
   const handleClick = useCallback(
     (e: MouseEvent, color: Color, button: "left" | "right") => {
       e.preventDefault();

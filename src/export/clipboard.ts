@@ -7,13 +7,15 @@ import {
   validatePackedNode,
 } from "../tree/packed";
 
-export const copyNode = async (node: Node, palette: string[]) => {
+export const copyNode = async (node: Node, palette: Readonly<Palette>) => {
   await navigator.clipboard.writeText(
     JSON.stringify(joinRootNodeAndPalette(node, palette))
   );
 };
 
-export const pasteNode = async (): Promise<[Node, Palette] | null> => {
+export const pasteNode = async (): Promise<
+  [Node, Readonly<Palette>] | null
+> => {
   try {
     const dataText = await navigator.clipboard.readText();
     if (dataText) {

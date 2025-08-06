@@ -96,10 +96,18 @@ describe("<Editor/>", () => {
       await waitFor(() => expect(context.editorContext.mode).toBe("draw"));
       complexClick(within(root).getAllByTestId("node")[0]);
 
-      expect(context.editorContext.root).toEqual({ fg: 1, bg: 2, shape: 4 });
+      expect(context.editorContext.root.node).toEqual({
+        fg: 1,
+        bg: 2,
+        shape: 4,
+      });
 
       complexClick(screen.getByTestId("tool-undo"));
-      expect(context.editorContext.root).toEqual({ fg: 0, bg: 0, shape: 0 });
+      expect(context.editorContext.root.node).toEqual({
+        fg: 0,
+        bg: 0,
+        shape: 0,
+      });
     });
 
     it("triggers redo", async () => {
@@ -111,10 +119,18 @@ describe("<Editor/>", () => {
       await waitFor(() => expect(context.editorContext.mode).toBe("draw"));
       complexClick(within(root).getAllByTestId("node")[0]);
 
-      expect(context.editorContext.root).toEqual({ fg: 1, bg: 2, shape: 4 });
+      expect(context.editorContext.root.node).toEqual({
+        fg: 1,
+        bg: 2,
+        shape: 4,
+      });
 
       complexClick(screen.getByTestId("tool-undo"));
-      expect(context.editorContext.root).toEqual({ fg: 0, bg: 0, shape: 0 });
+      expect(context.editorContext.root.node).toEqual({
+        fg: 0,
+        bg: 0,
+        shape: 0,
+      });
     });
 
     it("toggles grid", () => {
@@ -139,7 +155,7 @@ describe("<Editor/>", () => {
     });
 
     it("edits colors with buttons", async () => {
-      expect(context.editorContext.palette[3]).toEqual("#3f32ae");
+      expect(context.editorContext.root.palette[3]).toEqual("#3f32ae");
       fireEvent.dblClick(screen.getByTestId("color-3"));
 
       fireEvent.change(screen.getByTestId("color-input"), {
@@ -147,7 +163,7 @@ describe("<Editor/>", () => {
       });
 
       await waitFor(() =>
-        expect(context.editorContext.palette[3]).toEqual("#123456")
+        expect(context.editorContext.root.palette[3]).toEqual("#123456")
       );
     });
 
@@ -181,7 +197,7 @@ describe("<Editor/>", () => {
 
           complexClick(within(root).getAllByTestId("node")[0]);
 
-          expect(context.editorContext.root).toEqual({
+          expect(context.editorContext.root.node).toEqual({
             fg: 1,
             bg: 2,
             shape: 4,
@@ -197,7 +213,7 @@ describe("<Editor/>", () => {
 
           fireEvent.contextMenu(within(root).getAllByTestId("node")[0]);
 
-          expect(context.editorContext.root).toEqual({
+          expect(context.editorContext.root.node).toEqual({
             fg: 0,
             bg: 0,
             shape: 0,
@@ -221,7 +237,7 @@ describe("<Editor/>", () => {
 
           complexClick(within(root).getAllByTestId("node")[0]);
 
-          expect(context.editorContext.root).toEqual({
+          expect(context.editorContext.root.node).toEqual({
             fg: 1,
             bg: 0,
             shape: 0,
@@ -233,7 +249,7 @@ describe("<Editor/>", () => {
 
           fireEvent.contextMenu(within(root).getAllByTestId("node")[0]);
 
-          expect(context.editorContext.root).toEqual({
+          expect(context.editorContext.root.node).toEqual({
             fg: 0,
             bg: 2,
             shape: 0,
@@ -254,7 +270,7 @@ describe("<Editor/>", () => {
 
           complexClick(within(root).getAllByTestId("node")[0]);
 
-          expect(context.editorContext.root).toEqual({
+          expect(context.editorContext.root.node).toEqual({
             fg: 0,
             bg: 0,
             shape: 4,
@@ -268,7 +284,7 @@ describe("<Editor/>", () => {
 
           fireEvent.contextMenu(within(root).getAllByTestId("node")[0]);
 
-          expect(context.editorContext.root).toEqual({
+          expect(context.editorContext.root.node).toEqual({
             fg: 0,
             bg: 0,
             shape: 0,
@@ -303,7 +319,7 @@ describe("<Editor/>", () => {
           // Click top-left tile again
           complexClick(within(root).getAllByTestId("node")[0]);
 
-          expect(context.editorContext.root).toEqual({
+          expect(context.editorContext.root.node).toEqual({
             nodes: [
               {
                 nodes: [
@@ -367,7 +383,7 @@ describe("<Editor/>", () => {
           context.editorContext.setMode("cut");
           await waitFor(() => expect(context.editorContext.mode).toBe("cut"));
           await waitFor(() =>
-            expect(context.editorContext.root).toEqual({
+            expect(context.editorContext.root.node).toEqual({
               nodes: [
                 { fg: 0, bg: 0, shape: 0 },
                 { fg: 0, bg: 0, shape: 0 },
@@ -379,7 +395,7 @@ describe("<Editor/>", () => {
 
           doMoves(1);
 
-          expect(context.editorContext.root).toEqual({
+          expect(context.editorContext.root.node).toEqual({
             nodes: [
               { fg: 0, bg: 0, shape: 0 },
               { fg: 0, bg: 0, shape: 0 },
@@ -393,7 +409,7 @@ describe("<Editor/>", () => {
           context.editorContext.setMode("cut");
           await waitFor(() => expect(context.editorContext.mode).toBe("cut"));
           await waitFor(() =>
-            expect(context.editorContext.root).toEqual({
+            expect(context.editorContext.root.node).toEqual({
               nodes: [
                 { fg: 0, bg: 0, shape: 0 },
                 { fg: 0, bg: 0, shape: 0 },
@@ -405,7 +421,7 @@ describe("<Editor/>", () => {
 
           doMoves(2);
 
-          expect(context.editorContext.root).toEqual({
+          expect(context.editorContext.root.node).toEqual({
             nodes: [
               { fg: 0, bg: 0, shape: 0 },
               { fg: 0, bg: 0, shape: 0 },
@@ -425,7 +441,7 @@ describe("<Editor/>", () => {
           doMoves(1);
 
           await waitFor(() =>
-            expect(context.editorContext.root).toEqual({
+            expect(context.editorContext.root.node).toEqual({
               nodes: [
                 { fg: 1, bg: 2, shape: 4 },
                 { fg: 1, bg: 2, shape: 4 },
@@ -444,7 +460,7 @@ describe("<Editor/>", () => {
           doMoves(2);
 
           await waitFor(() =>
-            expect(context.editorContext.root).toEqual({
+            expect(context.editorContext.root.node).toEqual({
               nodes: [
                 { fg: 0, bg: 0, shape: 0 },
                 { fg: 0, bg: 0, shape: 0 },
@@ -466,7 +482,7 @@ describe("<Editor/>", () => {
           doMoves(1);
 
           await waitFor(() =>
-            expect(context.editorContext.root).toEqual({
+            expect(context.editorContext.root.node).toEqual({
               nodes: [
                 { fg: 1, bg: 0, shape: 0 },
                 { fg: 1, bg: 0, shape: 0 },
@@ -486,7 +502,7 @@ describe("<Editor/>", () => {
           doMoves(2);
 
           await waitFor(() =>
-            expect(context.editorContext.root).toEqual({
+            expect(context.editorContext.root.node).toEqual({
               nodes: [
                 { fg: 0, bg: 2, shape: 0 },
                 { fg: 0, bg: 2, shape: 0 },
@@ -502,18 +518,26 @@ describe("<Editor/>", () => {
     describe("redo", () => {
       it("handles empty future", () => {
         context.editorContext.redo();
-        expect(context.editorContext.root).toEqual({ fg: 0, bg: 0, shape: 0 });
+        expect(context.editorContext.root.node).toEqual({
+          fg: 0,
+          bg: 0,
+          shape: 0,
+        });
       });
 
       it("restores future state", async () => {
         await waitFor(() =>
-          expect(context.editorContext.root).toEqual({ fg: 0, bg: 0, shape: 0 })
+          expect(context.editorContext.root.node).toEqual({
+            fg: 0,
+            bg: 0,
+            shape: 0,
+          })
         );
 
         complexClick(within(root).getAllByTestId("node")[0]);
 
         await waitFor(() =>
-          expect(context.editorContext.root).toEqual({
+          expect(context.editorContext.root.node).toEqual({
             nodes: [
               { fg: 0, bg: 0, shape: 0 },
               { fg: 0, bg: 0, shape: 0 },
@@ -526,13 +550,17 @@ describe("<Editor/>", () => {
         context.editorContext.undo();
 
         await waitFor(() =>
-          expect(context.editorContext.root).toEqual({ fg: 0, bg: 0, shape: 0 })
+          expect(context.editorContext.root.node).toEqual({
+            fg: 0,
+            bg: 0,
+            shape: 0,
+          })
         );
 
         context.editorContext.redo();
 
         await waitFor(() =>
-          expect(context.editorContext.root).toEqual({
+          expect(context.editorContext.root.node).toEqual({
             nodes: [
               { fg: 0, bg: 0, shape: 0 },
               { fg: 0, bg: 0, shape: 0 },
@@ -545,13 +573,17 @@ describe("<Editor/>", () => {
 
       it("empties future if new edit is done", async () => {
         await waitFor(() =>
-          expect(context.editorContext.root).toEqual({ fg: 0, bg: 0, shape: 0 })
+          expect(context.editorContext.root.node).toEqual({
+            fg: 0,
+            bg: 0,
+            shape: 0,
+          })
         );
 
         complexClick(within(root).getAllByTestId("node")[0]);
 
         await waitFor(() =>
-          expect(context.editorContext.root).toEqual({
+          expect(context.editorContext.root.node).toEqual({
             nodes: [
               { fg: 0, bg: 0, shape: 0 },
               { fg: 0, bg: 0, shape: 0 },
@@ -564,19 +596,34 @@ describe("<Editor/>", () => {
         context.editorContext.undo();
 
         await waitFor(() =>
-          expect(context.editorContext.root).toEqual({ fg: 0, bg: 0, shape: 0 })
+          expect(context.editorContext.root.node).toEqual({
+            fg: 0,
+            bg: 0,
+            shape: 0,
+          })
         );
 
-        context.editorContext.setRoot({ fg: 9, bg: 9, shape: 9 });
+        context.editorContext.setRoot({
+          node: { fg: 9, bg: 9, shape: 9 },
+          palette: [],
+        });
 
         await waitFor(() =>
-          expect(context.editorContext.root).toEqual({ fg: 9, bg: 9, shape: 9 })
+          expect(context.editorContext.root.node).toEqual({
+            fg: 9,
+            bg: 9,
+            shape: 9,
+          })
         );
 
         context.editorContext.redo();
 
         await waitFor(() =>
-          expect(context.editorContext.root).toEqual({ fg: 9, bg: 9, shape: 9 })
+          expect(context.editorContext.root.node).toEqual({
+            fg: 9,
+            bg: 9,
+            shape: 9,
+          })
         );
       });
     });
@@ -584,18 +631,26 @@ describe("<Editor/>", () => {
     describe("undo", () => {
       it("handles empty history", () => {
         context.editorContext.undo();
-        expect(context.editorContext.root).toEqual({ fg: 0, bg: 0, shape: 0 });
+        expect(context.editorContext.root.node).toEqual({
+          fg: 0,
+          bg: 0,
+          shape: 0,
+        });
       });
 
       it("restores earlier state", async () => {
         await waitFor(() =>
-          expect(context.editorContext.root).toEqual({ fg: 0, bg: 0, shape: 0 })
+          expect(context.editorContext.root.node).toEqual({
+            fg: 0,
+            bg: 0,
+            shape: 0,
+          })
         );
 
         complexClick(within(root).getAllByTestId("node")[0]);
 
         await waitFor(() =>
-          expect(context.editorContext.root).toEqual({
+          expect(context.editorContext.root.node).toEqual({
             nodes: [
               { fg: 0, bg: 0, shape: 0 },
               { fg: 0, bg: 0, shape: 0 },
@@ -617,7 +672,7 @@ describe("<Editor/>", () => {
         complexClick(within(root).getAllByTestId("node")[0]);
 
         await waitFor(() =>
-          expect(context.editorContext.root).toEqual({
+          expect(context.editorContext.root.node).toEqual({
             nodes: [
               { fg: 1, bg: 2, shape: 3 },
               { fg: 0, bg: 0, shape: 0 },
@@ -630,7 +685,7 @@ describe("<Editor/>", () => {
         context.editorContext.undo();
 
         await waitFor(() =>
-          expect(context.editorContext.root).toEqual({
+          expect(context.editorContext.root.node).toEqual({
             nodes: [
               { fg: 0, bg: 0, shape: 0 },
               { fg: 0, bg: 0, shape: 0 },
@@ -643,7 +698,11 @@ describe("<Editor/>", () => {
         context.editorContext.undo();
 
         await waitFor(() =>
-          expect(context.editorContext.root).toEqual({ fg: 0, bg: 0, shape: 0 })
+          expect(context.editorContext.root.node).toEqual({
+            fg: 0,
+            bg: 0,
+            shape: 0,
+          })
         );
       });
     });
@@ -726,19 +785,25 @@ describe("<Editor/>", () => {
     describe("misc", () => {
       describe("undo", () => {
         beforeEach(async () => {
-          context.editorContext.setRoot({ fg: 6, bg: 1, shape: 0 });
+          context.editorContext.setRoot({
+            node: { fg: 6, bg: 1, shape: 0 },
+            palette: [],
+          });
           await waitFor(() =>
             // eslint-disable-next-line jest/no-standalone-expect
-            expect(context.editorContext.root).toEqual({
+            expect(context.editorContext.root.node).toEqual({
               fg: 6,
               bg: 1,
               shape: 0,
             })
           );
-          context.editorContext.setRoot({ fg: 7, bg: 1, shape: 0 });
+          context.editorContext.setRoot({
+            node: { fg: 7, bg: 1, shape: 0 },
+            palette: [],
+          });
           await waitFor(() =>
             // eslint-disable-next-line jest/no-standalone-expect
-            expect(context.editorContext.root).toEqual({
+            expect(context.editorContext.root.node).toEqual({
               fg: 7,
               bg: 1,
               shape: 0,
@@ -748,7 +813,7 @@ describe("<Editor/>", () => {
 
         it("requires a modifier", async () => {
           await waitFor(() =>
-            expect(context.editorContext.root).toEqual({
+            expect(context.editorContext.root.node).toEqual({
               fg: 7,
               bg: 1,
               shape: 0,
@@ -756,7 +821,7 @@ describe("<Editor/>", () => {
           );
           fireEvent.keyDown(document, { key: "z" });
           await waitFor(() =>
-            expect(context.editorContext.root).toEqual({
+            expect(context.editorContext.root.node).toEqual({
               fg: 7,
               bg: 1,
               shape: 0,
@@ -766,7 +831,7 @@ describe("<Editor/>", () => {
 
         it("uses alt/meta as the modifier", async () => {
           await waitFor(() =>
-            expect(context.editorContext.root).toEqual({
+            expect(context.editorContext.root.node).toEqual({
               fg: 7,
               bg: 1,
               shape: 0,
@@ -774,7 +839,7 @@ describe("<Editor/>", () => {
           );
           fireEvent.keyDown(document, { key: "z", altKey: true });
           await waitFor(() =>
-            expect(context.editorContext.root).toEqual({
+            expect(context.editorContext.root.node).toEqual({
               fg: 6,
               bg: 1,
               shape: 0,
@@ -784,7 +849,7 @@ describe("<Editor/>", () => {
 
         it("uses ctrl as the modifier", async () => {
           await waitFor(() =>
-            expect(context.editorContext.root).toEqual({
+            expect(context.editorContext.root.node).toEqual({
               fg: 7,
               bg: 1,
               shape: 0,
@@ -792,7 +857,7 @@ describe("<Editor/>", () => {
           );
           fireEvent.keyDown(document, { key: "z", ctrlKey: true });
           await waitFor(() =>
-            expect(context.editorContext.root).toEqual({
+            expect(context.editorContext.root.node).toEqual({
               fg: 6,
               bg: 1,
               shape: 0,
@@ -802,7 +867,7 @@ describe("<Editor/>", () => {
 
         it("does redo with shift", async () => {
           await waitFor(() =>
-            expect(context.editorContext.root).toEqual({
+            expect(context.editorContext.root.node).toEqual({
               fg: 7,
               bg: 1,
               shape: 0,
@@ -815,7 +880,7 @@ describe("<Editor/>", () => {
             shiftKey: false,
           });
           await waitFor(() =>
-            expect(context.editorContext.root).toEqual({
+            expect(context.editorContext.root.node).toEqual({
               fg: 6,
               bg: 1,
               shape: 0,
@@ -828,7 +893,7 @@ describe("<Editor/>", () => {
             shiftKey: true,
           });
           await waitFor(() =>
-            expect(context.editorContext.root).toEqual({
+            expect(context.editorContext.root.node).toEqual({
               fg: 7,
               bg: 1,
               shape: 0,
@@ -838,7 +903,7 @@ describe("<Editor/>", () => {
 
         it("does redo with y", async () => {
           await waitFor(() =>
-            expect(context.editorContext.root).toEqual({
+            expect(context.editorContext.root.node).toEqual({
               fg: 7,
               bg: 1,
               shape: 0,
@@ -850,7 +915,7 @@ describe("<Editor/>", () => {
             ctrlKey: true,
           });
           await waitFor(() =>
-            expect(context.editorContext.root).toEqual({
+            expect(context.editorContext.root.node).toEqual({
               fg: 7,
               bg: 1,
               shape: 0,

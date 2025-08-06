@@ -8,8 +8,15 @@ import { useTheme } from "./theme";
 
 export const ShapePalette = () => {
   const { mode: themeMode } = useTheme();
-  const { shape, setShape, fgColor, bgColor, mode, setMode, palette } =
-    useContext(EditorContext);
+  const {
+    shape,
+    setShape,
+    fgColor,
+    bgColor,
+    mode,
+    root: { palette },
+    setMode,
+  } = useContext(EditorContext);
   const handleClick = useCallback(
     (e: MouseEvent, shape: Shape) => {
       e.preventDefault();

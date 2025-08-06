@@ -8,16 +8,25 @@ import {
   useRef,
   useState,
 } from "preact/hooks";
-import { packTree, unpackTree, validatePackedNode } from "../../tree/packed";
+import {
+  extractRootNodeAndPalette,
+  joinRootNodeAndPalette,
+  packTree,
+  Palette,
+  unpackTree,
+  validatePackedNode,
+} from "../../tree/packed";
 import { useLocalStorage } from "../../hooks/localStorage";
 import { useUndo } from "../../hooks/undo";
 import { Color, isDefaultNodeState, Node, Shape } from "../../tree";
 import { useToast } from "../../hooks/toast";
 import { useDebounce } from "../../hooks/debounce";
 import { RestoreSavedStateModal } from "./restore-saved-state-modal";
-import { defaultPalette } from "../default-palette";
+import { defaultPalette, isDefaultPalette } from "../default-palette";
 
 export type Mode = "cut" | "draw" | "color" | "tile";
+
+export type EditFrame = { node: Node; palette: Palette };
 
 export interface EditorContextType {
   mode: Mode;
@@ -30,16 +39,13 @@ export interface EditorContextType {
   setBgColor: StateUpdater<Color>;
   setShape: StateUpdater<Shape>;
   setEnableGrid: StateUpdater<boolean>;
-  root: Node;
-  setRoot: (root: Node) => void;
+  root: EditFrame;
+  setRoot: (root: EditFrame) => void;
   undo: () => void;
   redo: () => void;
   zoom: number;
   setZoom: StateUpdater<number>;
   hasSavedStateInLocalStorage: boolean;
-  palette: string[];
-  setPaletteColor: (index: number, color: string) => void;
-  setPalette: (palette: string[]) => void;
 }
 
 export const EditorContext = createContext<EditorContextType>({} as never);
@@ -54,7 +60,10 @@ export const EditorContextProvider = ({
     set,
     undo,
     redo,
-  } = useUndo<Node>({ bg: 0, fg: 0, shape: 0 });
+  } = useUndo<EditFrame>({
+    node: { bg: 0, fg: 0, shape: 0 },
+    palette: [...defaultPalette],
+  });
   const { showToast } = useToast();
   const [hasSavedStateInLocalStorage, setHasSavedStateInLocalStorage] =
     useState(false);
@@ -64,14 +73,21 @@ export const EditorContextProvider = ({
    */
   const localStorage = useLocalStorage();
   const wasInit = useRef(false);
+
   useEffect(() => {
     // Avoid reinit if deps change as this should happen once only on mount
     if (wasInit.current) return;
     wasInit.current = true;
 
     try {
-      const data = JSON.parse(localStorage.getItem("root") || "");
-      if (validatePackedNode(data) && !isDefaultNodeState(unpackTree(data))) {
+      const [data, palette] = extractRootNodeAndPalette(
+        JSON.parse(localStorage.getItem("root") || "")
+      );
+
+      if (
+        validatePackedNode(data) &&
+        !(isDefaultNodeState(unpackTree(data)) && isDefaultPalette(palette))
+      ) {
         setHasSavedStateInLocalStorage(true);
       }
     } catch (error) {
@@ -81,16 +97,19 @@ export const EditorContextProvider = ({
 
   /** Debounced root node write to localStorage */
   const storeBackup = useDebounce(
-    (node: Node) =>
-      localStorage.setItem("root", JSON.stringify(packTree(node))),
+    (node: EditFrame) =>
+      localStorage.setItem(
+        "root",
+        JSON.stringify(joinRootNodeAndPalette(node.node, node.palette))
+      ),
     1000
   );
   const setRoot = useCallback(
-    (node: Node) => {
-      storeBackup(node);
-      set(node);
+    (root: EditFrame) => {
+      set(root);
+      storeBackup(root);
     },
-    [storeBackup, set]
+    [set, storeBackup]
   );
 
   const [bgColor, setBgColor] = useState<Color>(1);
@@ -99,22 +118,15 @@ export const EditorContextProvider = ({
   const [mode, setMode] = useState<Mode>("cut");
   const [zoom, setZoom] = useState(1);
   const [enableGrid, setEnableGrid] = useState(true);
-  const [palette, setPalette] = useState<string[]>(defaultPalette);
-
-  const setPaletteColor = useCallback(
-    (index: number, color: string) =>
-      setPalette((old) =>
-        old.map((oldColor, oldIndex) => (oldIndex === index ? color : oldColor))
-      ),
-    []
-  );
 
   const restoreFromLocalStorage = useCallback(
     (e: Event) => {
       e.preventDefault();
       try {
-        const data = JSON.parse(localStorage.getItem("root") || "");
-        set(unpackTree(data));
+        const [node, palette] = extractRootNodeAndPalette(
+          JSON.parse(localStorage.getItem("root") || "")
+        );
+        setRoot({ node: unpackTree(node), palette: [...palette] });
         showToast("Picture restored");
       } catch (error) {
         // Use the default state instead
@@ -123,12 +135,14 @@ export const EditorContextProvider = ({
         setHasSavedStateInLocalStorage(false);
       }
     },
-    [localStorage, set, showToast]
+    [localStorage, setRoot, showToast]
   );
+
   const closeRestoreModal = useCallback(() => {
     setHasSavedStateInLocalStorage(false);
     localStorage.setItem("root", "[]");
   }, [localStorage]);
+
   const value = useMemo(
     () => ({
       zoom,
@@ -148,9 +162,6 @@ export const EditorContextProvider = ({
       enableGrid,
       setEnableGrid,
       hasSavedStateInLocalStorage,
-      palette,
-      setPaletteColor,
-      setPalette,
     }),
     [
       bgColor,
@@ -164,9 +175,6 @@ export const EditorContextProvider = ({
       shape,
       undo,
       zoom,
-      palette,
-      setPaletteColor,
-      setPalette,
     ]
   );
 

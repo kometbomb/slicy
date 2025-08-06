@@ -11,6 +11,7 @@ import { ToolPalette } from "../tool-palette";
 import { EditorContext } from "./context";
 import { Root } from "./root";
 import { DarkMode, useTheme } from "../theme";
+import { Node } from "../../tree";
 
 export type Mode = "cut" | "draw" | "color" | "tile";
 
@@ -28,8 +29,6 @@ export const Editor = () => {
     setRoot,
     undo,
     redo,
-    palette,
-    setPalette,
   } = useContext(EditorContext);
 
   const handleKeypress = useCallback(
@@ -137,11 +136,13 @@ export const Editor = () => {
   useEvent(safeDocument, "keypress", handleKeypress);
   useEvent(safeDocument, "keydown", handleKeydown);
 
+  const setNode = (node: Node) => setRoot({ ...root, node });
+
   return (
     <div className="main-layout">
       <div className="col1">
         <Root>
-          <Tile node={root} setNode={setRoot} />
+          <Tile node={root.node} setNode={setNode} />
         </Root>
       </div>
       <div className="col2">
@@ -151,12 +152,7 @@ export const Editor = () => {
             <ColorPalette />
             <ShapePalette />
           </div>
-          <ExportTools
-            setRoot={setRoot}
-            root={root}
-            setPalette={setPalette}
-            palette={palette}
-          />
+          <ExportTools setRoot={setRoot} root={root} />
         </div>
         <div id="version" data-testid="version-info">
           {process.env.PREACT_APP_VERSION} - <DarkMode />
