@@ -25,7 +25,7 @@ const setRoot = jest.fn();
 const setPalette = jest.fn();
 const root: EditFrame = {
   node: unpackTree([7, 4, 8]),
-  palette: defaultPalette,
+  palette: ["#fff", "#000"],
 };
 
 describe("<ExportTools/>", () => {
@@ -51,7 +51,9 @@ describe("<ExportTools/>", () => {
       fireEvent.click(screen.getByTestId("export-copy-code"));
       expect(copyNode).toHaveBeenCalledTimes(1);
       expect(copyNode).toHaveBeenCalledWith(root.node, root.palette);
-      expect(navigator.clipboard.writeText).toHaveBeenCalledWith("[7,4,8]");
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+        '[["#fff","#000"],[7,4,8]]'
+      );
       await waitFor(() =>
         expect(showToast).toHaveBeenCalledWith(
           expect.stringMatching(new RegExp("copied", "i")),
@@ -69,6 +71,29 @@ describe("<ExportTools/>", () => {
           expect.stringMatching(new RegExp("failed", "i")),
           "failure"
         )
+      );
+    });
+  });
+
+  describe("reset", () => {
+    it("resets palette", async () => {
+      fireEvent.click(screen.getByTestId("reset-palette"));
+
+      await waitFor(() =>
+        expect(setRoot).toHaveBeenCalledWith({
+          node: { bg: 8, fg: 7, shape: 4 },
+          palette: defaultPalette,
+        })
+      );
+    });
+    it("resets image", async () => {
+      fireEvent.click(screen.getByTestId("reset-image"));
+
+      await waitFor(() =>
+        expect(setRoot).toHaveBeenCalledWith({
+          node: unpackTree([]),
+          palette: ["#fff", "#000"],
+        })
       );
     });
   });
