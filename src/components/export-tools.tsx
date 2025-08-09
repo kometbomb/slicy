@@ -1,13 +1,17 @@
-import { h } from "preact";
+import { ComponentChildren, h } from "preact";
 import { useCallback, useState } from "preact/hooks";
 import { copyNode, pasteNode } from "../export/clipboard";
 import { getDataURL } from "../export/export";
 import { useToast } from "../hooks/toast";
 import { extractRootNodeAndPalette, unpackTree } from "../tree/packed";
+import { defaultPalette } from "./default-palette";
 import { EditFrame } from "./editor/context";
 import { ImportModal } from "./import-modal";
 import { SavePrompt } from "./save-prompt";
-import { defaultPalette } from "./default-palette";
+
+const Row = ({ children }: { children: ComponentChildren }) => (
+  <div style={{ display: "flex", direction: "row", gap: 16 }}>{children}</div>
+);
 
 export const ExportTools = ({
   root,
@@ -103,39 +107,43 @@ export const ExportTools = ({
         flex: "1",
       }}
     >
-      <button
-        data-testid="export-copy-code"
-        style={{ flex: "1" }}
-        className="button"
-        onClick={handleCopyToClipboard}
-      >
-        Copy to clipboard
-      </button>
-      <button
-        data-testid="export-paste-code"
-        style={{ flex: "1" }}
-        className="button"
-        onClick={handlePasteFromClipboard}
-      >
-        Paste from clipboard
-      </button>
-      <button
-        data-testid="export-png"
-        style={{ flex: "1" }}
-        className="button"
-        onClick={exportPNG}
-      >
-        Export .PNG
-      </button>
-      <button
-        data-testid="export-svg"
-        style={{ flex: "1" }}
-        className="button"
-        onClick={exportSVG}
-      >
-        Export .SVG
-      </button>
-      <div style={{ display: "flex", direction: "row", gap: 16 }}>
+      <Row>
+        <button
+          data-testid="export-copy-code"
+          style={{ flex: "1" }}
+          className="button"
+          onClick={handleCopyToClipboard}
+        >
+          Copy to clipboard
+        </button>
+        <button
+          data-testid="export-paste-code"
+          style={{ flex: "1" }}
+          className="button"
+          onClick={handlePasteFromClipboard}
+        >
+          Paste from clipboard
+        </button>
+      </Row>
+      <Row>
+        <button
+          data-testid="export-png"
+          style={{ flex: "1" }}
+          className="button"
+          onClick={exportPNG}
+        >
+          Export .PNG
+        </button>
+        <button
+          data-testid="export-svg"
+          style={{ flex: "1" }}
+          className="button"
+          onClick={exportSVG}
+        >
+          Export .SVG
+        </button>
+      </Row>
+      <Row>
         <button
           data-testid="reset-palette"
           style={{ flex: "1" }}
@@ -152,7 +160,7 @@ export const ExportTools = ({
         >
           Clear image
         </button>
-      </div>
+      </Row>
       <ImportModal
         open={isImportModalOpen}
         onOk={handleImport}
